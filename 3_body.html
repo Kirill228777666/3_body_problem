@@ -1,0 +1,1574 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Симулятор трех тел</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    
+    body {
+      background: linear-gradient(to bottom, #1c2541, #0b132b);
+      color: #f0f0f0;
+      margin: 0;
+      padding: 0;
+      font-family: sans-serif;
+      
+    }
+
+    h1 {
+      text-align: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 3em;
+      margin-bottom: 30px;
+      
+      opacity: 0;
+      animation: fadeInUp 1.5s ease-out 0.5s forwards;
+      
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .ThreeBodyProblem-hasTopMarginSmall { margin-top: 5px; }
+    .ThreeBodyProblem-hasNegativeBottomMarginNormal { margin-bottom: -10px; }
+    .ThreeBodyProblem-alert {
+      color: red;
+      border: 1px solid red;
+      background: #ffeeee;
+      padding: 5px;
+    }
+
+    .ThreeBodyProblem-container {
+      background-color: #000000;
+      position: relative;
+      height: 700px;
+      background-image: url("https://i.ytimg.com/vi/1qiuIpSqkfo/maxresdefault.jpg");
+      background-position: center bottom;
+      background-repeat: repeat;
+      background-size: 874px 780px;
+      opacity: 0;
+      transition: opacity 1.5s ease-in;
+    }
+    .ThreeBodyProblem-container.visible {
+      opacity: 1;
+    }
+
+    .ThreeBodyProblem-isTextCentered { text-align: center; }
+    .ThreeBodyProblem-isHiddenBlock { display: none; }
+    .ThreeBodyProblem-centerOfMass {
+      position: absolute;
+      width: 11px;
+      top: 50%;
+      left: 50%;
+      margin-left: -5.5px;
+      margin-top: -5.5px;
+      z-index: 998;
+    }
+    .ThreeBodyProblem-earth,
+    .ThreeBodyProblem-jupiter,
+    .ThreeBodyProblem-sun {
+      position: absolute;
+      width: 60px;
+      top: -1000px;
+      left: -1000px;
+      z-index: 1000;
+    }
+    .ThreeBodyProblem-bodyImage {
+      position: absolute;
+      width: 100%;
+      top: 0;
+      left: 0;
+    }
+    .ThreeBodyProblem-spin {
+      animation: spin 0.5s linear infinite;
+    }
+    @keyframes spin { 100% { transform: rotate(-360deg); } }
+    .ThreeBodyProblem-canvas { display: block; }
+    .isUnselectable {
+      user-select: none;
+      -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    }
+    .ThreeBodyProblem-hudContainer {
+      position: absolute;
+      height: 100%;
+      width: 100%;
+      z-index: 1001;
+      left: 0;
+      top: 0;
+    }
+    .ThreeBodyProblem-hudContainerChild {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .ThreeBodyProblem-leftBottomButtonCantainer {
+      position: absolute;
+      left: 15px;
+      right: 15px;
+      bottom: 10px;
+      height: 40px;
+    }
+    .ThreeBodyProblem-leftBottomButton {
+      height: 40px;
+      width: 40px;
+      float: left;
+    }
+    .ThreeBodyProblem-leftBottomImage { height: 100%; border: 0; }
+    .ThreeBodyProblem-doesChangeOpacityOnHover {
+      opacity: 0.8;
+      filter: alpha(opacity=80);
+    }
+    .ThreeBodyProblem-doesChangeOpacityOnHover:hover {
+      opacity: 1.0;
+      filter: alpha(opacity=100);
+    }
+    .ThreeBodyProblem-reload {
+      position: absolute;
+      bottom: 10px;
+      right: 15px;
+      width: 40px;
+      height: 40px;
+    }
+    .ThreeBodyProblem-reloadIcon { width: 100%; border: 0; }
+    .ThreeBodyProblem-slider { margin: 0 auto; }
+    .ThreeBodyProblem-sliderSun .SickSlider-head { background-color: #ff9400; }
+    .ThreeBodyProblem-sliderEarth .SickSlider-head { background-color: #6780FF; }
+    .ThreeBodyProblem-sliderJupiter .SickSlider-head { background-color: #4BCF79; }
+
+    .ThreeBodyProblem-button {
+      --btn-bg1: #2f2f35;
+      --btn-bg2: #2a2a30;
+      --btn-border: rgba(255,255,255,.10);
+      --btn-text: #f3f3f5;
+      --btn-hover: #3a3a42;
+      --btn-active: #26262b;
+
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: .5rem;
+      height: 40px;
+      padding: 0 14px;
+      border: 1px solid var(--btn-border);
+      border-radius: 10px;
+      background: linear-gradient(180deg, var(--btn-bg1), var(--btn-bg2));
+      color: var(--btn-text);
+      font-weight: 600;
+      letter-spacing: .1px;
+      text-decoration: none;
+      cursor: pointer;
+      box-shadow: 0 1px 0 rgba(255,255,255,.06), 0 4px 12px rgba(0,0,0,.15);
+      transition: transform .12s ease, box-shadow .18s ease, background .18s ease, filter .18s ease;
+    }
+    .ThreeBodyProblem-button:hover {
+      transform: translateY(-1px);
+      background: var(--btn-hover);
+      box-shadow: 0 6px 18px rgba(0,0,0,.25), 0 1px 0 rgba(255,255,255,.08);
+    }
+    .ThreeBodyProblem-button:active {
+      transform: translateY(0);
+      background: var(--btn-active);
+      filter: brightness(.98);
+      box-shadow: 0 2px 8px rgba(0,0,0,.18);
+    }
+    .ThreeBodyProblem-button:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(255,255,255,.12), 0 0 0 6px rgba(255, 165, 0, .18);
+    }
+    .ThreeBodyProblem-button--isSelected {
+      border-color: rgba(255,165,0,.28);
+      background: linear-gradient(180deg, #35353c, #2c2c32);
+      box-shadow: inset 0 0 0 1px rgba(255,165,0,.18);
+    }
+
+    .ThreeBodyProblem-button:hover {
+      transform: translateY(-1px);
+      background-position: 100% 50%;
+      box-shadow: 0 12px 28px var(--btn-glow), inset 0 1px 0 rgba(255,255,255,.25);
+    }
+    .ThreeBodyProblem-button:active {
+      transform: translateY(0);
+      filter: brightness(.96);
+    }
+    .ThreeBodyProblem-button:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(255,140,34,.35), 0 8px 20px var(--btn-glow);
+    }
+    .ThreeBodyProblem-button--isSelected {
+      background: linear-gradient(135deg, #ff9f4d, #ff6c00);
+      box-shadow: 0 10px 30px var(--btn-glow), inset 0 1px 0 rgba(255,255,255,.25);
+      border-color: rgba(255,140,34,.55);
+    }
+
+    .SickSlider {
+      position: relative;
+      height: 60px;
+      cursor: pointer;
+    }
+    .SickSlider-stripe {
+      height: 5px;
+      width: 100%;
+      background-color: #999999;
+      position: absolute;
+      top: 28px;
+      left: 0;
+    }
+    .SickSlider-head {
+      position: absolute;
+      top: 10px;
+      left: 0;
+      width: 30px;
+      height: 40px;
+      background-color: #999999;
+      border: 1px solid #FFFFFF;
+    }
+    .ThreeBodyProblem-controlsArea {
+      background-color: rgba(28, 37, 65, 0.7);
+      padding: 20px;
+      margin-top: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      animation: fadeInUp 2s ease-out 1.5s forwards;
+    }
+    .ThreeBodyProblem-body--circle {
+      background-image: none !important;
+      border-radius: 50%;
+    }
+    .ThreeBodyProblem-body--circle .ThreeBodyProblem-bodyImage { display: none; }
+    .ThreeBodyProblem-sun--circle { background-color: red; }
+    .ThreeBodyProblem-earth--circle { background-color: blue; }
+    .ThreeBodyProblem-jupiter--circle { background-color: green; }
+
+    #loader-wrapper {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle farthest-corner at center, #3C4B57 0%, #1C262B 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease;
+    }
+    #loader-wrapper.hidden {
+      opacity: 0;
+    }
+    .loader {
+      position: absolute;
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      perspective: 800px;
+    }
+    .inner {
+      position: absolute;
+      box-sizing: border-box;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+    }
+    .inner.one {
+      left: 0;
+      top: 0;
+      animation: rotate-one 1s linear infinite;
+      border-bottom: 3px solid #EFEFFA;
+    }
+    .inner.two {
+      right: 0;
+      top: 0;
+      animation: rotate-two 1s linear infinite;
+      border-right: 3px solid #EFEFFA;
+    }
+    .inner.three {
+      right: 0;
+      bottom: 0;
+      animation: rotate-three 1s linear infinite;
+      border-top: 3px solid #EFEFFA;
+    }
+    @keyframes rotate-one {
+      0% { transform: rotateX(35deg) rotateY(-45deg) rotateZ(0deg); }
+      100% { transform: rotateX(35deg) rotateY(-45deg) rotateZ(360deg); }
+    }
+    @keyframes rotate-two {
+      0% { transform: rotateX(50deg) rotateY(10deg) rotateZ(0deg); }
+      100% { transform: rotateX(50deg) rotateY(10deg) rotateZ(360deg); }
+    }
+    @keyframes rotate-three {
+      0% { transform: rotateX(35deg) rotateY(55deg) rotateZ(0deg); }
+      100% { transform: rotateX(35deg) rotateY(55deg) rotateZ(360deg); }
+    }
+
+    .instruction-container {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInInstruction 1.5s ease-out 6s forwards;
+    }
+
+    @keyframes fadeInInstruction {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    
+
+    :root{
+      --ui-bg: rgba(255,255,255,.06);
+      --ui-border: rgba(255,255,255,.14);
+      --ui-shadow: 0 8px 24px rgba(0,0,0,.35);
+      --ui-accent: #7bf0ff;
+    }
+    body{ font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif !important; letter-spacing: 0.1px; }
+    .ThreeBodyProblem-leftBottomButtonCantainer{ height: 56px !important; bottom: 16px !important; }
+    .ThreeBodyProblem-leftBottomButton{
+       height: 56px !important; width: 56px !important; margin-right: 10px;
+       border-radius: 14px; background: var(--ui-bg); border:1px solid var(--ui-border);
+       -webkit-backdrop-filter: saturate(140%) blur(8px);
+       backdrop-filter: saturate(140%) blur(8px);
+       box-shadow: var(--ui-shadow);
+       display:flex; align-items:center; justify-content:center;
+       transition: transform .15s ease, box-shadow .2s ease, border-color .2s ease, background .2s ease;
+    }
+    .ThreeBodyProblem-leftBottomButton:hover{ transform: translateY(-2px); border-color: var(--ui-accent); box-shadow: 0 10px 30px rgba(0,0,0,.4) }
+    .ThreeBodyProblem-leftBottomButton:active{ transform: translateY(0); }
+    .ThreeBodyProblem-leftBottomImage{ width: 26px !important; height: 26px !important; opacity: .95; filter: drop-shadow(0 2px 6px rgba(0,0,0,.35)); }
+
+    .instruction-container{
+       max-width: 900px !important; margin: 32px auto 48px !important;
+       background: rgba(255,255,255,.06) !important;
+       border: 1px solid var(--ui-border) !important;
+       border-radius: 16px !important; padding: 20px 22px !important;
+       box-shadow: var(--ui-shadow) !important;
+    }
+    .instruction-container h2{
+      font-family: 'Playfair Display', serif !important;
+      font-weight: 700; letter-spacing: .2px; margin: 0 0 16px !important;
+    }
+    .instruction-container h3{
+      margin: 16px 0 8px !important; font-weight: 600; color: #9fd3ff !important;
+    }
+    .instruction-container p, .instruction-container li{
+      font-size: 15.5px !important; line-height: 1.6 !important; color: #eaf0ff !important;
+    }
+    .instruction-container ul{ padding-left: 18px !important; }
+    .instruction-container li{ margin: 8px 0 !important; }
+
+    .instruction-container .formula mjx-container { margin: 0 .15em; }
+    .instruction-container .big-formula mjx-container { display:block; text-align:center; margin: 8px auto; }
+
+  </style>
+
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+</head>
+<body>
+
+  <div id="loader-wrapper">
+    <div class="loader">
+      <div class="inner one"></div>
+      <div class="inner two"></div>
+      <div class="inner three"></div>
+    </div>
+    <div class="loader">
+      <div class="inner one"></div>
+      <div class="inner two"></div>
+      <div class="inner three"></div>
+    </div>
+  </div>
+
+  <h1>Симулятор трех тел</h1>
+  <p id="ThreeBodyProblem-notSupportedMessage" class="ThreeBodyProblem-alert ThreeBodyProblem-isHiddenBlock">
+    Пожалуйста, используйте современный браузер для просмотра симуляции.
+  </p>
+  <div class="ThreeBodyProblem-container isFullScreenWide isUnselectable">
+    <div class="ThreeBodyProblem-sun">
+      <img src="https://evgenii.com/image/blog/2018-09-27-three-body-problem-simulator/sun.png" class="ThreeBodyProblem-spin ThreeBodyProblem-bodyImage" alt="Sun" />
+    </div>
+    <div class="ThreeBodyProblem-earth">
+      <img src="https://evgenii.com/image/blog/2018-09-27-three-body-problem-simulator/earth.png" alt="Earth" class="ThreeBodyProblem-spin ThreeBodyProblem-bodyImage"/>
+    </div>
+    <div class="ThreeBodyProblem-jupiter">
+      <img src="https://evgenii.com/image/blog/2018-09-27-three-body-problem-simulator/jupiter_juno.png" alt="Jupiter" class="ThreeBodyProblem-spin ThreeBodyProblem-bodyImage" />
+    </div>
+    <img src="https://evgenii.com/image/blog/2018-09-27-three-body-problem-simulator/center_of_mass.png" alt="Center of mass" class="ThreeBodyProblem-centerOfMass" />
+    <canvas class="ThreeBodyProblem-canvas"></canvas>
+    <div class="ThreeBodyProblem-hudContainer">
+      <div class="ThreeBodyProblem-hudContainerChild">
+        <div class="ThreeBodyProblem-leftBottomButtonCantainer">
+          <a class="ThreeBodyProblem-leftBottomButton ThreeBodyProblem-mass1Button ThreeBodyProblem-doesChangeOpacityOnHover" href="#" title="Mass 1">
+            <img src="https://evgenii.com/image/blog/2018-09-27-three-body-problem-simulator/mass_one_icon.png" alt="Mass 1" class="ThreeBodyProblem-leftBottomImage">
+          </a>
+          <a class="ThreeBodyProblem-leftBottomButton ThreeBodyProblem-mass2Button ThreeBodyProblem-doesChangeOpacityOnHover" href="#" title="Mass 2">
+            <img src="https://evgenii.com/image/blog/2018-09-27-three-body-problem-simulator/mass_two_icon.png" alt="Mass 2" class="ThreeBodyProblem-leftBottomImage">
+          </a>
+          <a class="ThreeBodyProblem-leftBottomButton ThreeBodyProblem-mass3Button ThreeBodyProblem-doesChangeOpacityOnHover" href="#" title="Mass 3">
+            <img src="https://evgenii.com/image/blog/2018-09-27-three-body-problem-simulator/mass_three_icon.png" alt="Mass 3" class="ThreeBodyProblem-leftBottomImage">
+          </a>
+          <a class="ThreeBodyProblem-leftBottomButton ThreeBodyProblem-speedButton ThreeBodyProblem-doesChangeOpacityOnHover" href="#" title="Speed">
+            <img src="https://evgenii.com/image/blog/2018-09-27-three-body-problem-simulator/clock_icon.png" alt="Speed" class="ThreeBodyProblem-leftBottomImage">
+          </a>
+          <a class="ThreeBodyProblem-leftBottomButton ThreeBodyProblem-softeningButton ThreeBodyProblem-doesChangeOpacityOnHover" href="#" title="Softening">
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMjAgNiA5IDExdjhsMy0zIDgtNnoiLz48cGF0aCBkPSJNNCAxNGE4IDggMCAxIDEgMTYgMCIvPjwvc3ZnPg==" alt="Softening" class="ThreeBodyProblem-leftBottomImage">
+          </a>
+        </div>
+        <a class="ThreeBodyProblem-reload ThreeBodyProblem-doesChangeOpacityOnHover" href="#" title="Reload">
+          <img src="https://evgenii.com/image/blog/2016-09-17-ridiculous-strawberry-picking/reload_icon.png" alt="Restart" class="ThreeBodyProblem-reloadIcon">
+        </a>
+        <button class="ThreeBodyProblem-pause ThreeBodyProblem-button" style="position: absolute; bottom: 10px; right: 65px; width: 90px; height: 40px; z-index: 1002;">Пауза</button>
+      </div>
+    </div>
+  </div>
+  <div class="ThreeBodyProblem-controlsArea">
+    <div class="ThreeBodyProblem-isTextCentered ThreeBodyProblem-hasTopMarginSmall ThreeBodyProblem-hasNegativeBottomMarginNormal isUnselectable">
+      <span class="ThreeBodyProblem-sliderLabel">0.01</span>
+    </div>
+    <div class="SickSlider ThreeBodyProblem-slider isUnselectable">
+      <div class="SickSlider-stripe"></div>
+      <div class="SickSlider-head"></div>
+    </div>
+    <div class="ThreeBodyProblem-isTextCentered">
+      <button class="ThreeBodyProblem-preset ThreeBodyProblem-button ThreeBodyProblem-button--isSelected" data-name="FigureEight">Figure eight</button>
+      <button class="ThreeBodyProblem-preset ThreeBodyProblem-button" data-name="SunEarthJupiter">Sun, Earth and Jupiter</button>
+      <button class="ThreeBodyProblem-preset ThreeBodyProblem-button" data-name="LagrangePoint5">Lagrange point L5</button>
+      <button class="ThreeBodyProblem-preset ThreeBodyProblem-button" data-name="Kepler16">Kepler-16</button>
+      <button class="ThreeBodyProblem-preset ThreeBodyProblem-button" data-name="Chaotic">Chaotic</button>
+    </div>
+    
+    
+  </div>
+
+  <div class="instruction-container" style="max-width: 900px; margin: 30px auto; padding: 20px; background-color: rgba(28, 37, 65, 0.7); border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); color: #f0f0f0; font-family: sans-serif;">
+    <h2 style="text-align: center; margin-bottom: 20px; font-family: 'Playfair Display', serif;">Инструкция по использованию симулятора трех тел</h2>
+
+    <div style="margin-bottom: 25px;">
+      <h3 style="color: #6780FF;">Общее описание</h3>
+      <p>Данный симулятор демонстрирует классическую задачу трех тел в физике — проблему предсказания движения трех массивных объектов, взаимодействующих гравитационно. В отличие от задачи двух тел, которая имеет аналитическое решение, задача трех тел в общем случае не имеет точного решения и демонстрирует хаотическое поведение.</p>
+    </div>
+
+    <div style="margin-bottom: 25px;">
+      <h3 style="color: #6780FF;">Режимы симуляции</h3>
+      <ul style="list-style-type: none; padding-left: 10px;">
+        <li style="margin-bottom: 12px;"><strong style="color: #ff8b22;">Figure eight (Восьмерка)</strong> — Особое периодическое решение задачи трех тел, когда три объекта равной массы движутся по траектории в форме восьмерки.</li>
+        <li style="margin-bottom: 12px;"><strong style="color: #ff8b22;">Sun, Earth and Jupiter (Солнце, Земля и Юпитер)</strong> — Упрощенная модель движения Солнца, Земли и Юпитера с сохранением приблизительных соотношений масс.</li>
+        <li style="margin-bottom: 12px;"><strong style="color: #ff8b22;">Lagrange point L5 (Точка Лагранжа L5)</strong> — Демонстрация точки равновесия L5 в системе из трех тел.</li>
+        <li style="margin-bottom: 12px;"><strong style="color: #ff8b22;">Kepler-16 (Кеплер-16)</strong> — Симуляция, основанная на реальной звездной системе Kepler-16, где планета вращается вокруг двух звезд.</li>
+        <li style="margin-bottom: 12px;"><strong style="color: #ff8b22;">Chaotic (Хаотический режим)</strong> — Демонстрация хаотического движения трех тел с равными массами, начинающими движение из равностороннего треугольника.</li>
+      </ul>
+    </div>
+
+    <div style="margin-bottom: 25px;">
+      <h3 style="color: #6780FF;">Управление симуляцией</h3>
+      <p>В нижней части экрана симуляции расположены кнопки управления:</p>
+      <ul style="list-style-type: none; padding-left: 10px;">
+        <li style="margin-bottom: 12px;"><img src="https://evgenii.com/image/blog/2018-09-27-three-body-problem-simulator/mass_one_icon.png" alt="Mass 1" style="width: 20px; vertical-align: middle;"> — Настройка массы первого тела (красного в режиме восьмерки/хаоса или Солнца в других режимах).</li>
+        <li style="margin-bottom: 12px;"><img src="https://evgenii.com/image/blog/2018-09-27-three-body-problem-simulator/mass_two_icon.png" alt="Mass 2" style="width: 20px; vertical-align: middle;"> — Настройка массы второго тела (синего в режиме восьмерки/хаоса или Земли в других режимах).</li>
+        <li style="margin-bottom: 12px;"><img src="https://evgenii.com/image/blog/2018-09-27-three-body-problem-simulator/mass_three_icon.png" alt="Mass 3" style="width: 20px; vertical-align: middle;"> — Настройка массы третьего тела (зеленого в режиме восьмерки/хаоса или Юпитера в других режимах).</li>
+        <li style="margin-bottom: 12px;"><img src="https://evgenii.com/image/blog/2018-09-27-three-body-problem-simulator/clock_icon.png" alt="Speed" style="width: 20px; vertical-align: middle;"> — Регулировка скорости симуляции.</li>
+        <li style="margin-bottom: 12px;"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" style="vertical-align: middle;"><path d="M20 6 9 11v8l3-3 8-6z" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 14a8 8 0 1 1 16 0" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> — Настройка параметра смягчения гравитации (epsilon), помогает избежать сингулярностей при близком прохождении тел.</li>
+        <li style="margin-bottom: 12px;"><img src="https://evgenii.com/image/blog/2016-09-17-ridiculous-strawberry-picking/reload_icon.png" alt="Restart" style="width: 20px; vertical-align: middle;"> — Перезапуск симуляции с текущими параметрами.</li>
+      </ul>
+    </div>
+
+    <div style="margin-bottom: 25px;">
+      <h3 style="color: #6780FF;">Как пользоваться слайдером</h3>
+      <p>После нажатия на любую из кнопок управления активируется слайдер, расположенный в центре панели управления. Перемещая ползунок слайдера, вы изменяете выбранный параметр:</p>
+      <p>Над слайдером отображается текущее значение выбранного параметра.</p>
+    </div>
+
+    <div style="margin-bottom: 25px;">
+      <h3 style="color: #6780FF;">Физическая основа симуляции</h3>
+      <p>Задача трех тел — одна из фундаментальных проблем в классической механике и небесной механике. Она формулируется следующим образом: предсказать движение трех тел, взаимодействующих только через гравитационные силы, зная их начальные положения, массы и скорости.</p>
+
+      <p style="margin-top: 10px;">Основные физические принципы, используемые в симуляции:</p>
+      <ul style="list-style-type: none; padding-left: 10px;">
+        <li style="margin-bottom: 12px;">• <strong>Уравнение гравитационного взаимодействия:</strong> <span class='formula'>\(F = G \dfrac{m_1 m_2}{r^2}\)</span>, где F — сила притяжения, G — гравитационная постоянная, m₁ и m₂ — массы тел, r — расстояние между ними.</li>
+        <li style="margin-bottom: 12px;">• <strong>Параметр смягчения гравитации (ε):</strong> Модифицирует закон Ньютона для избежания сингулярностей при очень сильных сближениях тел. Использованная формула: <span class='formula'>\(F = G \dfrac{m_1 m_2}{\left(r^2 + \varepsilon^2\right)^{3/2}}\)</span>.</li>
+        <li style="margin-bottom: 12px;">• <strong>Второй закон Ньютона:</strong> <span class='formula'>\(F = m a\)</span>, где F — сила, m — масса, a — ускорение. В сочетании с законом гравитации это дает систему дифференциальных уравнений.</li>
+        <li style="margin-bottom: 12px;">• <strong>Метод Рунге-Кутты:</strong> Численный метод для решения обыкновенных дифференциальных уравнений. Метод 4-го порядка обеспечивает хороший баланс между точностью и эффективностью.</li>
+      </ul>
+    </div>
+
+    <div style="margin-bottom: 25px;">
+      <h3 style="color: #6780FF;">Теоретические аспекты</h3>
+      <ul style="list-style-type: none; padding-left: 10px;">
+        <li style="margin-bottom: 12px;">• <strong>Отсутствие аналитического решения:</strong> В отличие от задачи двух тел, которая имеет точное решение через эллиптические орбиты (законы Кеплера), задача трех тел в общем случае не имеет аналитического решения.</li>
+        <li style="margin-bottom: 12px;">• <strong>Хаотичность:</strong> Система трех тел демонстрирует хаотическое поведение — небольшие изменения начальных условий могут привести к радикально различающимся траекториям со временем (эффект "бабочки").</li>
+        <li style="margin-bottom: 12px;">• <strong>Особые решения:</strong> Существуют некоторые особые случаи, когда движение трех тел является периодическим или квази-периодическим. "Figure eight" — один из таких случаев, открытый относительно недавно (в 1993 году Муром, а в 2000 году Шенсине и Монтгомери дали строгое доказательство).</li>
+        <li style="margin-bottom: 12px;">• <strong>Точки Лагранжа:</strong> Особые точки в системе трех тел, где малое тело может оставаться относительно неподвижным по отношению к двум более массивным телам. L5 — одна из этих точек, где силы гравитации уравновешиваются.</li>
+      </ul>
+    </div>
+
+    <div style="margin-bottom: 25px;">
+      <h3 style="color: #6780FF;">Астрофизические примеры</h3>
+      <ul style="list-style-type: none; padding-left: 10px;">
+        <li style="margin-bottom: 12px;">• <strong>Солнце-Земля-Луна:</strong> Классический пример системы трех тел в нашей Солнечной системе.</li>
+        <li style="margin-bottom: 12px;">• <strong>Солнце-Юпитер-астероиды:</strong> Астероиды в точках Лагранжа L4 и L5 Юпитера ("троянцы" и "греки") демонстрируют стабильность в трехтельной системе.</li>
+        <li style="margin-bottom: 12px;">• <strong>Системы с экзопланетами:</strong> Kepler-16 — реальная двойная звездная система с планетой, вращающейся вокруг обеих звезд (как Татуин из "Звездных войн").</li>
+        <li style="margin-bottom: 12px;">• <strong>Тройные звезды:</strong> Такие системы как Альфа Центавра (состоящая из трех звезд) представляют собой натуральные примеры задачи трех тел.</li>
+      </ul>
+    </div>
+
+    <div style="margin-bottom: 25px;">
+      <h3 style="color: #6780FF;">Исторический контекст</h3>
+      <ul style="list-style-type: none; padding-left: 10px;">
+        <li style="margin-bottom: 12px;">• <strong>Работы Ньютона:</strong> Сам Исаак Ньютон занимался задачей трех тел, но не смог найти общее решение.</li>
+        <li style="margin-bottom: 12px;">• <strong>Теорема Брунса-Пуанкаре:</strong> В 1887 году было доказано, что не существует общего аналитического решения задачи трех тел в терминах алгебраических формул и интегралов.</li>
+        <li style="margin-bottom: 12px;">• <strong>Ограниченная задача трех тел:</strong> Эйлер и Лагранж нашли некоторые частные решения для случая, когда масса третьего тела пренебрежимо мала.</li>
+        <li style="margin-bottom: 12px;">• <strong>Современные исследования:</strong> С развитием компьютерного моделирования были открыты новые типы орбит и решений, включая конфигурацию "восьмерка", показанную в этой симуляции.</li>
+      </ul>
+    </div>
+
+    <div style="margin-bottom: 25px;">
+      <h3 style="color: #6780FF;">Отладочная консоль</h3>
+      <p>Для более глубокого анализа работы симуляции вы можете использовать консоль разработчика браузера (DevTools):</p>
+      <ul style="list-style-type: none; padding-left: 10px;">
+        <li style="margin-bottom: 12px;">• <strong>Открытие консоли:</strong> Нажмите F12 или Ctrl+Shift+I (Cmd+Option+I на Mac), чтобы открыть инструменты разработчика, затем перейдите на вкладку "Console" (Консоль).</li>
+        <li style="margin-bottom: 12px;">• <strong>Отладочная информация:</strong> Каждые 500 мс симулятор выводит подробные данные о текущем состоянии системы, включая:
+          <ul style="padding-left: 20px; margin-top: 5px;">
+            <li>Текущее время</li>
+            <li>Название активного пресета</li>
+            <li>Временной масштаб</li>
+            <li>Координаты и скорости каждого тела</li>
+            <li>Массы тел</li>
+          </ul>
+        </li>
+        <li style="margin-bottom: 12px;">• <strong>Расширенный анализ:</strong> Вы можете использовать консоль для наблюдения за параметрами симуляции в реальном времени и отслеживания изменений в системе при модификации параметров.</li>
+        <li style="margin-bottom: 12px;">• <strong>Взаимодействие с симуляцией:</strong> Продвинутые пользователи могут использовать консоль для программного изменения параметров симуляции с помощью JavaScript, обращаясь к глобальным объектам <code>physics</code> и <code>simulation</code>.</li>
+      </ul>
+    </div>
+
+    <p style="font-style: italic; text-align: center; margin-top: 20px;">Задача трех тел остается одной из классических нерешенных проблем физики и демонстрирует, как даже простые системы могут порождать сложное и непредсказуемое поведение.</p>
+  </div>
+
+  <p class="ThreeBodyProblem-debugOutput"></p>
+  <script>
+(function(){
+      "use strict";
+
+      function SickSlider(sliderElementSelector) {
+        var that = {
+          onSliderChange: null,
+          previousSliderValue: -42,
+          didRequestUpdateOnNextFrame: false
+        };
+        that.init = function(sliderElementSelector) {
+          that.slider = document.querySelector(sliderElementSelector);
+          that.sliderHead = that.slider.querySelector(".SickSlider-head");
+          var sliding = false;
+          that.slider.addEventListener("mousedown", function(e) {
+            sliding = true;
+            that.updateHeadPositionOnTouch(e);
+          });
+          that.slider.addEventListener("touchstart", function(e) {
+            sliding = true;
+            that.updateHeadPositionOnTouch(e);
+          });
+          that.slider.onselectstart = function () { return false; };
+          document.addEventListener("mouseup", function(){ sliding = false; });
+          document.addEventListener("dragend", function(){ sliding = false; });
+          document.addEventListener("touchend", function(e) { sliding = false; });
+          document.addEventListener("mousemove", function(e) {
+            if (!sliding) { return; }
+            that.updateHeadPositionOnTouch(e);
+          });
+          document.addEventListener("touchmove", function(e) {
+            if (!sliding) { return; }
+            that.updateHeadPositionOnTouch(e);
+          });
+          that.slider.addEventListener("touchmove", function(e) {
+            if (typeof e.preventDefault !== 'undefined' && e.preventDefault !== null) {
+              e.preventDefault();
+            }
+          });
+        };
+        that.sliderValueFromCursor = function(e) {
+          var pointerX = e.pageX;
+          if (e.touches && e.touches.length > 0) { pointerX = e.touches[0].pageX; }
+          pointerX = pointerX - that.slider.offsetLeft;
+          var headLeft = (pointerX - 16);
+          if (headLeft < 0) { headLeft = 0; }
+          if ((headLeft + that.sliderHead.offsetWidth) > that.slider.offsetWidth) {
+            headLeft = that.slider.offsetWidth - that.sliderHead.offsetWidth;
+          }
+          var sliderWidthWithoutHead = that.slider.offsetWidth - that.sliderHead.offsetWidth;
+          var sliderValue = 1;
+          if (sliderWidthWithoutHead !== 0) {
+            sliderValue = headLeft / sliderWidthWithoutHead;
+          }
+          return sliderValue;
+        };
+        that.changePosition = function(sliderValue) {
+          var headLeft = (that.slider.offsetWidth - that.sliderHead.offsetWidth) * sliderValue;
+          that.sliderHead.style.left = headLeft + "px";
+        };
+        that.updateHeadPositionOnTouch = function(e) {
+          var sliderValue = that.sliderValueFromCursor(e);
+          if (Math.round(that.previousSliderValue * 10000) === Math.round(sliderValue * 10000)) { return; }
+          that.previousSliderValue = sliderValue;
+          if (!that.didRequestUpdateOnNextFrame) {
+            that.didRequestUpdateOnNextFrame = true;
+            window.requestAnimationFrame(that.updateOnFrame);
+          }
+        };
+        that.updateOnFrame = function() {
+          that.changePosition(that.previousSliderValue);
+          if (that.onSliderChange) { that.onSliderChange(that.previousSliderValue); }
+          that.didRequestUpdateOnNextFrame = false;
+        };
+        that.init(sliderElementSelector);
+        return that;
+      }
+
+      var debug = (function(){
+        var debugOutput = document.querySelector(".ThreeBodyProblem-debugOutput");
+        function print(text) {
+          var date = new Date();
+          debugOutput.innerHTML = text + " " + date.getMilliseconds();
+        }
+        return { print: print };
+      })();
+
+      var rungeKutta = (function() {
+        function calculate(h, u, derivative) {
+          var a = [h/2, h/2, h, 0];
+          var b = [h/6, h/3, h/3, h/6];
+          var u0 = [];
+          var ut = [];
+          var dimension = u.length;
+          for (var i = 0; i < dimension; i++) {
+            u0.push(u[i]);
+            ut.push(0);
+          }
+          for (var j = 0; j < 4; j++) {
+            var du = derivative();
+            for (i = 0; i < dimension; i++) {
+              u[i] = u0[i] + a[j]*du[i];
+              ut[i] = ut[i] + b[j]*du[i];
+            }
+          }
+          for (i = 0; i < dimension; i++) {
+            u[i] = u0[i] + ut[i];
+          }
+        }
+        return { calculate: calculate };
+      })();
+
+      var physics = (function() {
+        var constants = {
+          gravitationalConstant: 6.67408 * Math.pow(10, -11),
+          averageDensity: 1410
+        };
+        var state = { u: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] };
+        var initialConditions = { bodies: 3 };
+        function calculateRadiusFromMass(mass, density) {
+          return Math.pow(3/4 * mass / ( Math.PI * density), 1/3);
+        }
+        function calculateDiameters() {
+          var diameters = [];
+          for (var iBody = 0; iBody < initialConditions.bodies; iBody++) {
+            var density = (initialConditions.densities && initialConditions.densities[iBody]) ? initialConditions.densities[iBody] : constants.averageDensity;
+            diameters.push(2 * calculateRadiusFromMass(initialConditions.masses[iBody], density));
+          }
+          return diameters;
+        }
+        function calculateCenterOfMassVelocity(){
+          var centerOfMassVelocity = {x: 0, y: 0};
+          var sumOfMasses = 0;
+          for (var iBody = 0; iBody < initialConditions.bodies; iBody++) {
+            var bodyStart = iBody * 4;
+            centerOfMassVelocity.x += initialConditions.masses[iBody] * state.u[bodyStart + 2];
+            centerOfMassVelocity.y += initialConditions.masses[iBody] * state.u[bodyStart + 3];
+            sumOfMasses += initialConditions.masses[iBody];
+          }
+          centerOfMassVelocity.x /= sumOfMasses;
+          centerOfMassVelocity.y /= sumOfMasses;
+          return centerOfMassVelocity;
+        }
+        function calculateCenterOfMass(){
+          var centerOfMass = {x: 0, y: 0};
+          var sumOfMasses = 0;
+          for (var iBody = 0; iBody < initialConditions.bodies; iBody++) {
+            var bodyStart = iBody * 4;
+            centerOfMass.x += initialConditions.masses[iBody] * state.u[bodyStart + 0];
+            centerOfMass.y += initialConditions.masses[iBody] * state.u[bodyStart + 1];
+            sumOfMasses += initialConditions.masses[iBody];
+          }
+          centerOfMass.x /= sumOfMasses;
+          centerOfMass.y /= sumOfMasses;
+          return centerOfMass;
+        }
+        function resetStateToInitialConditions() {
+          var iBody, bodyStart;
+          for (iBody = 0; iBody < initialConditions.bodies; iBody++) {
+            bodyStart = iBody * 4;
+            var position = initialConditions.positions[iBody];
+            state.u[bodyStart + 0] = position.r * Math.cos(position.theta);
+            state.u[bodyStart + 1] = position.r * Math.sin(position.theta);
+            var velocity = initialConditions.velocities[iBody];
+            state.u[bodyStart + 2] = velocity.r * Math.cos(velocity.theta);
+            state.u[bodyStart + 3] = velocity.r * Math.sin(velocity.theta);
+          }
+          var centerOfMassVelocity = calculateCenterOfMassVelocity();
+          var centerOfMass = calculateCenterOfMass();
+          for (iBody = 0; iBody < initialConditions.bodies; iBody++) {
+            bodyStart = iBody * 4;
+            state.u[bodyStart + 0] -= centerOfMass.x;
+            state.u[bodyStart + 1] -= centerOfMass.y;
+            state.u[bodyStart + 2] -= centerOfMassVelocity.x;
+            state.u[bodyStart + 3] -= centerOfMassVelocity.y;
+          }
+        }
+        function acceleration(iFromBody, coordinate) {
+          var result = 0;
+          var iFromBodyStart = iFromBody * 4;
+          var softeningSq;
+          if (initialConditions.softeningParameterSquared !== undefined) {
+            softeningSq = initialConditions.softeningParameterSquared;
+          } else if (initialConditions.dimensionless === true) {
+             softeningSq = 0.01;
+          } else {
+             softeningSq = 4.06e13;
+          }
+          for (var iToBody = 0; iToBody < initialConditions.bodies; iToBody++) {
+            if (iFromBody === iToBody) { continue; }
+            var iToBodyStart = iToBody * 4;
+            var distanceX = state.u[iToBodyStart + 0] - state.u[iFromBodyStart + 0];
+            var distanceY = state.u[iToBodyStart + 1] - state.u[iFromBodyStart + 1];
+            var distanceSq = distanceX * distanceX + distanceY * distanceY;
+            if (distanceSq === 0) continue;
+            var gravitationalConstant = (initialConditions.dimensionless !== true) ? constants.gravitationalConstant : 1;
+            var denominator = Math.pow(distanceSq + softeningSq, 1.5);
+            if (denominator === 0) continue;
+            result += gravitationalConstant *
+              initialConditions.masses[iToBody] *
+              (state.u[iToBodyStart + coordinate] - state.u[iFromBodyStart + coordinate]) /
+              denominator;
+          }
+          return result;
+        }
+        function derivative() {
+          var du = new Array(initialConditions.bodies * 4);
+          for (var iBody = 0; iBody < initialConditions.bodies; iBody++) {
+            var bodyStart = iBody * 4;
+            du[bodyStart + 0] = state.u[bodyStart + 2];
+            du[bodyStart + 1] = state.u[bodyStart + 3];
+            du[bodyStart + 2] = acceleration(iBody, 0);
+            du[bodyStart + 3] = acceleration(iBody, 1);
+          }
+          return du;
+        }
+        function updatePosition(timestep) {
+          rungeKutta.calculate(timestep, state.u, derivative);
+        }
+        function calculateNewPosition() {
+          for (var iBody = 0; iBody < initialConditions.bodies; iBody++) {
+            var bodyStart = iBody * 4;
+
+          }
+        }
+        function largestDistanceMeters() {
+          var result = 0;
+          for (var iBody = 0; iBody < initialConditions.bodies; iBody++) {
+            var position = initialConditions.positions[iBody];
+            if (result < position.r) { result = position.r; }
+          }
+          return result;
+        }
+        function changeInitialConditions(conditions) {
+          initialConditions.dimensionless = conditions.dimensionless;
+          initialConditions.masses = conditions.masses.slice();
+          initialConditions.positions = conditions.positions;
+          initialConditions.velocities = conditions.velocities;
+          initialConditions.timeScaleFactor = conditions.timeScaleFactor;
+          initialConditions.massSlider = conditions.massSlider;
+          initialConditions.timeScaleFactorSlider = conditions.timeScaleFactorSlider;
+          initialConditions.densities = conditions.densities;
+          initialConditions.paleOrbitalPaths = conditions.paleOrbitalPaths;
+          initialConditions.currentPresetName = conditions.name;
+          initialConditions.softeningParameterSquared = conditions.softeningParameterSquared;
+        }
+        return {
+          resetStateToInitialConditions: resetStateToInitialConditions,
+          updatePosition: updatePosition,
+          calculateNewPosition: calculateNewPosition,
+          initialConditions: initialConditions,
+          state: state,
+          calculateDiameters: calculateDiameters,
+          calculateRadiusFromMass: calculateRadiusFromMass,
+          calculateCenterOfMass: calculateCenterOfMass,
+          calculateCenterOfMassVelocity: calculateCenterOfMassVelocity,
+          largestDistanceMeters: largestDistanceMeters,
+          changeInitialConditions: changeInitialConditions,
+          constants: constants
+        };
+      })();
+
+         var graphics = (function() {
+        var canvas = null,
+            context = null,
+            canvasHeight = 600,
+            metersPerPixel = 100,
+            minimumSizePixels = 10,
+            maximumSizePixels = 80,
+            colors = {
+              orbitalPaths: ["#ff8b22", "#6c81ff", "#4ccd7a"],
+              paleOrbitalPaths: ["#ab681c", "#4957ae", "#359256"]
+            },
+            bodyPositions = [
+              {x: null, y: null},
+              {x: null, y: null},
+              {x: null, y: null}
+            ],
+            previousBodyPositions = [
+              {x: null, y: null},
+              {x: null, y: null},
+              {x: null, y: null}
+            ],
+            bodyElemenets = [],
+            currentBodySizes = [10, 10, 10];
+
+        function drawBody(position, size, bodyElement) {
+
+          var newLeft = position.x - (size / 2);
+          var newTop = position.y - (size / 2);
+
+          bodyElement.style.left = newLeft + "px";
+          bodyElement.style.top = newTop + "px";
+        }
+
+        function updateObjectSizes(sizes) {
+          for (var iBody = 0; iBody < sizes.length; iBody++) {
+            currentBodySizes[iBody] = sizes[iBody] / metersPerPixel;
+            if (currentBodySizes[iBody] < minimumSizePixels) { currentBodySizes[iBody] = minimumSizePixels; }
+            if (currentBodySizes[iBody] > maximumSizePixels) { currentBodySizes[iBody] = maximumSizePixels; }
+            bodyElemenets[iBody].style.width = currentBodySizes[iBody] + "px";
+            bodyElemenets[iBody].style.height = currentBodySizes[iBody] + "px";
+          }
+        }
+        function drawOrbitalLine(newPosition, previousPosition, color) {
+          if (previousPosition.x === null) {
+            previousPosition.x = newPosition.x;
+            previousPosition.y = newPosition.y;
+            return;
+          }
+          context.beginPath();
+          context.strokeStyle = color;
+          context.moveTo(previousPosition.x, previousPosition.y);
+          context.lineTo(newPosition.x, newPosition.y);
+          context.stroke();
+          previousPosition.x = newPosition.x;
+          previousPosition.y = newPosition.y;
+        }
+        function calculateNewPositions(stateU) { 
+          const middleX = Math.floor(canvas.width / 2);
+          const middleY = Math.floor(canvas.height / 2);
+          for (var iBody = 0; iBody < stateU.length / 4; iBody++) {
+            var bodyStart = iBody * 4;
+            var x = stateU[bodyStart + 0];
+            var y = stateU[bodyStart + 1];
+            bodyPositions[iBody].x = x / metersPerPixel + middleX;
+            bodyPositions[iBody].y = -y / metersPerPixel + middleY;
+          }
+        }
+        function drawBodies() {
+          for (var iBody = 0; iBody < bodyPositions.length; iBody++) {
+            var bodyPosition = bodyPositions[iBody];
+            
+            if (bodyElemenets[iBody] && currentBodySizes[iBody] !== undefined) {
+                 drawBody(bodyPosition, currentBodySizes[iBody], bodyElemenets[iBody]);
+            }
+          }
+        }
+        function drawOrbitalLines(paleOrbitalPaths) {
+          for (var iBody = 0; iBody < bodyPositions.length; iBody++) {
+            var orbitalPathColors = paleOrbitalPaths ? colors.paleOrbitalPaths : colors.orbitalPaths;
+            drawOrbitalLine(bodyPositions[iBody], previousBodyPositions[iBody], orbitalPathColors[iBody]);
+          }
+        }
+        function showCanvasNotSupportedMessage() {
+          document.getElementById("ThreeBodyProblem-notSupportedMessage").style.display ='block';
+        }
+        function fitToContainer() {
+          var container = document.querySelector(".ThreeBodyProblem-container");
+          canvasHeight = container.clientHeight;
+          canvas.style.width = '100%';
+          canvas.style.height = canvasHeight + 'px';
+          canvas.width  = canvas.offsetWidth;
+          canvas.height = canvas.offsetHeight;
+        }
+        function initCanvas() {
+          canvas = document.querySelector(".ThreeBodyProblem-canvas");
+          if (!(window.requestAnimationFrame && canvas && canvas.getContext)) { return true; }
+          context = canvas.getContext("2d");
+          if (!context) { return true; }
+          return false;
+        }
+        function init(success) {
+          if (initCanvas()) { showCanvasNotSupportedMessage(); return; }
+          fitToContainer();
+          var earthElement = document.querySelector(".ThreeBodyProblem-earth");
+          var sunElement = document.querySelector(".ThreeBodyProblem-sun");
+          var jupiterElement = document.querySelector(".ThreeBodyProblem-jupiter");
+          bodyElemenets = [sunElement, earthElement, jupiterElement];
+          success();
+        }
+        function clearScene(largestDistanceMeters) {
+          context.clearRect(0, 0, canvas.width, canvas.height);
+          previousBodyPositions = [{x: null, y: null}, {x: null, y: null}, {x: null, y: null}];
+          if (canvas.offsetWidth > 0 && canvas.offsetHeight > 0) { 
+            metersPerPixel = 2.3 * largestDistanceMeters / Math.min(canvas.offsetWidth, canvas.offsetHeight);
+          } else {
+            metersPerPixel = 2.3 * largestDistanceMeters / 600; 
+          }
+        }
+        function getBoundaries() {
+          const paddingPixels = 10;
+          var effectiveWidth = canvas.width - (paddingPixels * 2);
+          var middleX = Math.floor(effectiveWidth / 2);
+          var middleY = Math.floor(canvas.height / 2);
+          return {
+            x_min: -middleX * metersPerPixel,
+            x_max: middleX * metersPerPixel,
+            y_min: -middleY * metersPerPixel,
+            y_max: middleY * metersPerPixel
+          };
+        }
+        return {
+          fitToContainer: fitToContainer,
+          drawOrbitalLines: drawOrbitalLines,
+          drawBodies: drawBodies,
+          updateObjectSizes: updateObjectSizes,
+          clearScene: clearScene,
+          calculateNewPositions: calculateNewPositions,
+          init: init,
+          getBoundaries: getBoundaries
+        };
+      })();
+
+      var simulation = (function() {
+        var calculationsPerFrame = 500;
+        var framesPerSecond = 120;
+        var drawTimesPerFrame = 10;
+        var drawIndex = Math.ceil(calculationsPerFrame / drawTimesPerFrame);
+        const restitution = 0.8;
+        let lastTimestamp = 0;
+        let animationFrameId = null;
+        let lastLogTime = 0;
+        const logInterval = 500;
+        let paused = false;
+        function animate(currentTime) {
+          if (paused) {
+            animationFrameId = window.requestAnimationFrame(animate);
+            return;
+          }
+          if (!lastTimestamp) {
+            lastTimestamp = currentTime;
+          }
+          lastTimestamp = currentTime;
+          var timestep = physics.initialConditions.timeScaleFactor / framesPerSecond / calculationsPerFrame;
+          for (var i = 0; i < calculationsPerFrame; i++) {
+            physics.updatePosition(timestep);
+            var boundaries = graphics.getBoundaries();
+            for (var j = 0; j < physics.initialConditions.bodies; j++) {
+              var idx = j * 4;
+              var x = physics.state.u[idx];
+              var y = physics.state.u[idx + 1];
+              var mass = physics.initialConditions.masses[j];
+              var density = (physics.initialConditions.densities && physics.initialConditions.densities[j]) ? physics.initialConditions.densities[j] : physics.constants.averageDensity;
+              var radius = physics.calculateRadiusFromMass(mass, density);
+              var safetyMargin = radius * 0.1;
+              var effectiveRadius = radius + safetyMargin;
+              if (x - effectiveRadius < boundaries.x_min) {
+                physics.state.u[idx] = boundaries.x_min + effectiveRadius;
+                physics.state.u[idx + 2] = -physics.state.u[idx + 2] * restitution;
+              }
+              if (x + effectiveRadius > boundaries.x_max) {
+                physics.state.u[idx] = boundaries.x_max - effectiveRadius;
+                physics.state.u[idx + 2] = -physics.state.u[idx + 2] * restitution;
+              }
+              if (y - effectiveRadius < boundaries.y_min) {
+                physics.state.u[idx + 1] = boundaries.y_min + effectiveRadius;
+                physics.state.u[idx + 3] = -physics.state.u[idx + 3] * restitution;
+              }
+              if (y + effectiveRadius > boundaries.y_max) {
+                physics.state.u[idx + 1] = boundaries.y_max - effectiveRadius;
+                physics.state.u[idx + 3] = -physics.state.u[idx + 3] * restitution;
+              }
+            }
+            if (i % drawIndex === 0) {
+              graphics.calculateNewPositions(physics.state.u);
+              graphics.drawOrbitalLines(physics.initialConditions.paleOrbitalPaths);
+            }
+          }
+          graphics.drawBodies();
+          if (currentTime - lastLogTime >= logInterval) {
+            const logData = {
+              timestamp: new Date().toISOString(),
+              currentPreset: physics.initialConditions.currentPresetName || 'Unknown',
+              timeScaleFactor: physics.initialConditions.timeScaleFactor,
+              centerOfMass: physics.calculateCenterOfMass(),
+              centerOfMassVelocity: physics.calculateCenterOfMassVelocity(),
+              bodies: []
+            };
+            for (let j = 0; j < physics.initialConditions.bodies; j++) {
+              const idx = j * 4;
+              logData.bodies.push({
+                id: j,
+                mass: physics.initialConditions.masses[j],
+                position: { x: physics.state.u[idx], y: physics.state.u[idx + 1] },
+                velocity: { x: physics.state.u[idx + 2], y: physics.state.u[idx + 3] }
+              });
+            }
+            console.log("Simulation State:", logData);
+            lastLogTime = currentTime;
+          }
+          animationFrameId = window.requestAnimationFrame(animate);
+        }
+        function start() {
+          graphics.init(function() {
+            physics.resetStateToInitialConditions();
+            graphics.clearScene(physics.largestDistanceMeters());
+            graphics.updateObjectSizes(physics.calculateDiameters());
+            window.addEventListener('resize', function(){
+              graphics.fitToContainer();
+              graphics.clearScene(physics.largestDistanceMeters());
+              graphics.calculateNewPositions(physics.state.u);
+              graphics.drawOrbitalLines(physics.initialConditions.paleOrbitalPaths);
+              graphics.drawBodies();
+            });
+            if (animationFrameId) {
+              window.cancelAnimationFrame(animationFrameId);
+            }
+            animationFrameId = window.requestAnimationFrame(animate);
+          });
+        }
+        function pause() {
+          paused = true;
+        }
+        function resume() {
+          paused = false;
+        }
+        function isPaused() {
+          return paused;
+        }
+        return { start: start, pause: pause, resume: resume, isPaused: isPaused };
+      })();
+
+      var cssHelper = (function(){
+        function hasClass(element, className) {
+          return (' ' + element.className + ' ').indexOf(' ' + className + ' ') > -1;
+        }
+        function removeClass(element, className) {
+          element.className = element.className.replace(new RegExp('(?:^|\\s)' + className + '(?:\\s|$)'), ' ').trim();
+        }
+        function addClass(element, className) {
+          if (hasClass(element, className)) return;
+          element.className = (element.className + " " + className).trim();
+        }
+        return { hasClass: hasClass, removeClass: removeClass, addClass: addClass };
+      })();
+
+      var simulations = (function(){
+        var content = { didChangeModel: null };
+        var vigure8Position = {x: 0.97000436, y: -0.24308753};
+        var vigure8Velocity = {x: -0.93240737, y: -0.86473146};
+        function polarFromCartesian(coordinates) {
+          var angle = (coordinates.x === 0 && coordinates.y === 0) ? 0 : Math.atan2(coordinates.y, coordinates.x); 
+          return { r: Math.sqrt(coordinates.x * coordinates.x + coordinates.y * coordinates.y), theta: angle };
+        }
+        var allPresets = {
+          "FigureEight": {
+            name: "FigureEight",
+            dimensionless: true,
+            masses: [1, 1, 1],
+            massSlider: { min: 0.1, max: 5, power: 3 },
+            timeScaleFactor: 1,
+            timeScaleFactorSlider: { min: 0.00, max: 20, power: 1 },
+            positions: [
+              polarFromCartesian(vigure8Position),
+              polarFromCartesian({x: -vigure8Position.x, y: -vigure8Position.y}),
+              polarFromCartesian({x: 0, y: 0})
+            ],
+            velocities: [
+              polarFromCartesian({x: -vigure8Velocity.x / 2, y: -vigure8Velocity.y/2}),
+              polarFromCartesian({x: -vigure8Velocity.x / 2, y: -vigure8Velocity.y/2}),
+              polarFromCartesian(vigure8Velocity)
+            ]
+          },
+          "SunEarthJupiter": {
+            name: "SunEarthJupiter",
+            masses: [1.98855e30, 5.972e24, 1.898e27],
+            densities: [0.01, 0.01, 0.01], 
+            massSlider: { min: 3e10, max: 3e31, power: 3 },
+            timeScaleFactor: 3600 * 24 * 30,
+            timeScaleFactorSlider: { min: 0, max: 3600 * 24 * 365 * 1000, power: 5 },
+            positions: [
+              { r: 0, theta: 0 },
+              { r: 1.496e11, theta: 0 },
+              { r: 7.78e11, theta: 0 }
+            ],
+            velocities: [
+              { r: 0, theta: Math.PI/2 },
+              { r: 30e3, theta: Math.PI/2 },
+              { r: 13.1e3, theta: Math.PI/2 }
+            ]
+          },
+          "LagrangePoint5": {
+            name: "LagrangePoint5",
+            masses: [1.98855e30, 5.972e24, 1.898e28], 
+            densities: [0.001, 0.0001, 0.0001],
+            paleOrbitalPaths: true,
+            massSlider: { min: 3e10, max: 3e31, power: 5 },
+            timeScaleFactor: 3600 * 24 * 30,
+            timeScaleFactorSlider: { min: 0, max: 3600 * 24 * 365 * 1500, power: 5 },
+            positions: [
+              { r: 0, theta: 0 },
+              { r: 7.5e11, theta: -Math.PI/3 - Math.PI/10 }, 
+              { r: 7.78e11, theta: 0 } 
+            ],
+            velocities: [
+              { r: 0, theta: Math.PI/2 },
+              { r: 13.3e3, theta: Math.PI/6 - Math.PI/10 },
+              { r: 13.1e3, theta: Math.PI/2 }
+            ]
+          },
+          "Kepler16": {
+            name: "Kepler16",
+            masses: [0.6897 * 1.98855e30, 0.20255 * 1.98855e30, 0.3333 * 1.898e27], 
+            massSlider: { min: 3e10, max: 3e31, power: 5 },
+            timeScaleFactor: 3600 * 24 * 10, 
+            timeScaleFactorSlider: { min: 0, max: 3600 * 24 * 365 * 15, power: 5 },
+            positions: [ 
+              { r: (0.20255 * 0.22431 * 1.496e11) / (0.6897 + 0.20255), theta: 0 },
+              { r: (0.6897 * 0.22431 * 1.496e11) / (0.6897 + 0.20255), theta: Math.PI },
+              { r: 0.7048 * 1.496e11, theta: 0 }
+            ],
+            velocities: [ 
+              { r: 13e3, theta: Math.PI/2 },
+              { r: 44e3, theta: 3*Math.PI/2 },
+              { r: 33e3, theta: Math.PI/2 }
+            ]
+          },
+          "Chaotic": {
+            name: "Chaotic",
+            dimensionless: true,
+            masses: [1, 1, 1],
+            massSlider: { min: 0.1, max: 10, power: 3 },
+            timeScaleFactor: 3.9335,
+            timeScaleFactorSlider: { min: 0.00, max: 20, power: 1 },
+            positions: [
+              { r: 1, theta: 0 },
+              { r: 1, theta: 2*Math.PI/3 },
+              { r: 1, theta: 4*Math.PI/3 }
+            ],
+            velocities: [
+              { r: 0.55, theta: Math.PI/2 },
+              { r: 0.55, theta: 2*Math.PI/3 + Math.PI/2 },
+              { r: 0.55, theta: 4*Math.PI/3 + Math.PI/2 }
+            ]
+          }
+        };
+        function didClickElement(element) {
+          if (!element) return;
+          if (!cssHelper.hasClass(element, "ThreeBodyProblem-preset")) {
+            if (element.parentElement) didClickElement(element.parentElement);
+            return;
+          }
+          var name = element.getAttribute("data-name");
+          var preset = allPresets[name];
+          if (content.didChangeModel !== null && preset) { content.didChangeModel(preset); }
+          var presetElements = document.querySelectorAll(".ThreeBodyProblem-preset");
+          for (var iPreset = 0; iPreset < presetElements.length; iPreset++) {
+            cssHelper.removeClass(presetElements[iPreset], 'ThreeBodyProblem-button--isSelected');
+          }
+          cssHelper.addClass(element, "ThreeBodyProblem-button--isSelected");
+        }
+        function didClick(e) {
+          if (!e) { e = window.event; }
+          if (e.target) didClickElement(e.target);
+        }
+        function init() {
+          var presetElements = document.querySelectorAll(".ThreeBodyProblem-preset");
+          for (var iPreset = 0; iPreset < presetElements.length; iPreset++) {
+            presetElements[iPreset].onclick = didClick;
+          }
+          return allPresets.FigureEight; 
+        }
+        return { init: init, content: content };
+      })();
+
+      var oddPowerCurve = (function(){
+        function calcualteL(defaultOutput, power) {
+          if (power === 0) return 1;
+          return -Math.pow(defaultOutput, 1 / power);
+        }
+        function calcualteA(defaultOutput, power) {
+          if (power === 0) return 1;
+          return Math.pow(1 - defaultOutput, 1 / power) - calcualteL(defaultOutput, power);
+        }
+        function sliderInputValue(defaultOutput, output, power) {
+          if (power === 0) return 1;
+          var a = calcualteA(defaultOutput, power);
+          if (a === 0) { a = 1; }
+          var l = calcualteL(defaultOutput, power);
+          var sign = (output - defaultOutput) < 0 ? -1 : 1;
+          return (sign * Math.pow(Math.abs(output - defaultOutput), 1 / power) - l) / a;
+        }
+        function sliderOutputValue(defaultOutput, input, power) {
+          if (power === 0) return 1;
+          var a = calcualteA(defaultOutput, power);
+          var l = calcualteL(defaultOutput, power);
+          var result = Math.pow(a * input + l, power) + defaultOutput;
+          if (result < 0) { result = 0; }
+          return result;
+        }
+        return { sliderInputValue: sliderInputValue, sliderOutputValue: sliderOutputValue };
+      })();
+
+      var userInput = (function(){
+        var sliderLabelElement = document.querySelector(".ThreeBodyProblem-sliderLabel");
+        var restartButton = document.querySelector(".ThreeBodyProblem-reload");
+        var mass1Button = document.querySelector(".ThreeBodyProblem-mass1Button");
+        var mass2Button = document.querySelector(".ThreeBodyProblem-mass2Button");
+        var mass3Button = document.querySelector(".ThreeBodyProblem-mass3Button");
+        var speedButton = document.querySelector(".ThreeBodyProblem-speedButton");
+        var softeningButton = document.querySelector(".ThreeBodyProblem-softeningButton");
+        var sliderElement = document.querySelector(".ThreeBodyProblem-slider");
+        var slider, currentSlider = "mass", currentMassSliderIndex = 0, currentModel;
+        function getSofteningSliderSettings(isDimensionless) {
+          if (isDimensionless) {
+            return { min: -3, max: 0, power: 1, defaultLogEpsilon: -1 }; 
+          } else {
+            return { min: 5, max: 8, power: 1, defaultLogEpsilon: Math.log10(Math.sqrt(4.06e13)) }; 
+          }
+        }
+        function calculateDefaultSliderOutput(sliderSettings) {
+          var defaultValue = getCurrentSimulationValue(currentModel); 
+          var min = sliderSettings.min;
+          var max = sliderSettings.max;
+          if (min === undefined || max === undefined || min === max) return 0.5;
+          var defaultOutput = (defaultValue - min) / (max - min);
+          return Math.max(0, Math.min(1, defaultOutput));
+        }
+        function didUpdateSlider(sliderValue) {
+          var sliderText, sliderSettings = getCurrentSliderSettings();
+          var newValue;
+          if (sliderSettings.power !== undefined && sliderSettings.power !== 1) {
+            if (sliderSettings.power % 2 === 1) {
+              var defaultOutput = calculateDefaultSliderOutput(sliderSettings);
+              sliderValue = oddPowerCurve.sliderOutputValue(defaultOutput, sliderValue, sliderSettings.power);
+            } else {
+              sliderValue = Math.pow(sliderValue, sliderSettings.power);
+            }
+            sliderValue = Math.max(0, Math.min(1, sliderValue));
+          }
+          newValue = sliderSettings.min + (sliderSettings.max - sliderSettings.min) * sliderValue;
+          if (currentSlider === "mass") {
+            newValue = roundSliderValue(newValue);
+            physics.initialConditions.masses[currentMassSliderIndex] = newValue;
+            graphics.updateObjectSizes(physics.calculateDiameters());
+            sliderText = formatMassForSlider(newValue);
+          } else if (currentSlider === "speed") {
+            newValue = roundSliderValue(newValue);
+            physics.initialConditions.timeScaleFactor = newValue;
+            sliderText = formatTimescaleForSlider(newValue);
+          } else if (currentSlider === "softening") {
+            var epsilon = Math.pow(10, newValue); 
+            physics.initialConditions.softeningParameterSquared = epsilon * epsilon;
+            sliderText = formatSofteningForSlider(epsilon);
+          } else {
+             sliderText = "Unknown Slider";
+          }
+          sliderLabelElement.innerText = sliderText;
+        }
+        function getCurrentSliderSettings() {
+          if (currentSlider === "mass") {
+            return physics.initialConditions.massSlider;
+          } else if (currentSlider === "speed") {
+            return physics.initialConditions.timeScaleFactorSlider;
+          } else if (currentSlider === "softening") {
+            return getSofteningSliderSettings(physics.initialConditions.dimensionless);
+          }
+          return { min: 0, max: 1 };
+        }
+        function roundSliderValue(value) {
+          return Math.round(value * 10000) / 10000;
+        }
+        function roundSliderValueText(value) {
+          return parseFloat(roundSliderValue(value)).toFixed(4);
+        }
+        function formatSofteningForSlider(epsilon) {
+            var formatted = epsilon.toExponential(4);
+            var unit = physics.initialConditions.dimensionless ? "" : " m";
+            return "Softening ε: " + formatted + unit;
+        }
+        function bodyNameFromIndex(index) {
+          var modelName = physics.initialConditions.currentPresetName;
+          var isCirclesMode = modelName === "FigureEight" || modelName === "Chaotic";
+          if (isCirclesMode) {
+            switch(index) {
+              case 0: return "Red Body";
+              case 1: return "Blue Body";
+              default: return "Green Body";
+            }
+          } else {
+            switch(index) {
+              case 0: return "the Sun";
+              case 1: return "the Earth";
+              default: return "Jupiter";
+            }
+          }
+        }
+        function formatMassForSlider(mass) {
+          var formatted = roundSliderValueText(mass);
+          if (mass > 10000 || mass < 0.001 && mass !== 0) { formatted = mass.toExponential(4); }
+          formatted = "Mass of " + bodyNameFromIndex(currentMassSliderIndex) + " : " + formatted;
+          if (physics.initialConditions.dimensionless !== true) { formatted += " kg"; }
+          return formatted;
+        }
+        function formatTimescaleForSlider(value) {
+          var timeHumanized = timeHumanReadable(value);
+          var formatted = roundSliderValueText(timeHumanized.value);
+          if (timeHumanized.value > 10000 || timeHumanized.value < 0.001 && timeHumanized.value !== 0) { formatted = timeHumanized.value.toExponential(4); }
+          formatted = "Simulation speed: " + formatted + " " + timeHumanized.unit + " per second";
+          return formatted;
+        }
+        function timeHumanReadable(time) {
+          var result = { unit: 'second', value: time };
+          if (result.value < 60) return result;
+          result.value /= 60; result.unit = 'minute';
+          if (result.value < 60) return result;
+          result.value /= 60; result.unit = 'hour';
+          if (result.value < 24) return result;
+          result.value /= 24; result.unit = 'day';
+          if (result.value < 365) return result;
+          result.value /= 365; result.unit = 'year';
+          if (result.value < 100) return result;
+          result.value /= 100; result.unit = 'century';
+          if (result.value < 10) return result;
+          result.value = Math.floor(result.value * 10) / 10; 
+          return result;
+        }
+        function didClickRestart() {
+          physics.resetStateToInitialConditions();
+          graphics.clearScene(physics.largestDistanceMeters());
+          graphics.updateObjectSizes(physics.calculateDiameters());
+          return false;
+        }
+        function getCurrentSimulationValue() {
+          if (currentSlider === "mass") {
+             return physics.initialConditions.masses[currentMassSliderIndex];
+          } else if (currentSlider === "speed") {
+            return physics.initialConditions.timeScaleFactor;
+          } else if (currentSlider === "softening") {
+            var settings = getSofteningSliderSettings(physics.initialConditions.dimensionless);
+            var currentEpsilonSq = physics.initialConditions.softeningParameterSquared;
+            var epsilon;
+            if (currentEpsilonSq !== undefined && currentEpsilonSq > 0) {
+                epsilon = Math.sqrt(currentEpsilonSq);
+            } else { 
+                epsilon = Math.pow(10, settings.defaultLogEpsilon);
+                physics.initialConditions.softeningParameterSquared = epsilon * epsilon; 
+            }
+            return Math.log10(epsilon); 
+          }
+          return 0;
+        }
+        function resetSlider() {
+          cssHelper.removeClass(sliderElement, "ThreeBodyProblem-sliderSun");
+          cssHelper.removeClass(sliderElement, "ThreeBodyProblem-sliderEarth");
+          cssHelper.removeClass(sliderElement, "ThreeBodyProblem-sliderJupiter");
+          var sliderSettings = getCurrentSliderSettings();
+          var simulationValue = getCurrentSimulationValue();
+          var sliderText;
+          if (currentSlider === "mass") {
+            sliderText = formatMassForSlider(simulationValue);
+            switch(currentMassSliderIndex) {
+              case 0: cssHelper.addClass(sliderElement, "ThreeBodyProblem-sliderSun"); break;
+              case 1: cssHelper.addClass(sliderElement, "ThreeBodyProblem-sliderEarth"); break;
+              default: cssHelper.addClass(sliderElement, "ThreeBodyProblem-sliderJupiter");
+            }
+          } else if (currentSlider === "speed") {
+            sliderText = formatTimescaleForSlider(simulationValue);
+          } else if (currentSlider === "softening") {
+            var epsilon = Math.pow(10, simulationValue); 
+            sliderText = formatSofteningForSlider(epsilon);
+          } else {
+             sliderText = "Unknown Slider";
+          }
+          sliderLabelElement.innerText = sliderText;
+          var sliderPosition;
+          if (sliderSettings.min !== undefined && sliderSettings.max !== undefined && sliderSettings.min !== sliderSettings.max) {
+            sliderPosition = (simulationValue - sliderSettings.min) / (sliderSettings.max - sliderSettings.min);
+            sliderPosition = Math.max(0, Math.min(1, sliderPosition));
+          } else {
+            sliderPosition = 0.5;
+          }
+          if (sliderSettings.power !== undefined && sliderSettings.power !== 1) {
+            if (sliderSettings.power % 2 === 1) {
+               var defaultOutputPreset = calculateDefaultSliderOutput(sliderSettings);
+               sliderPosition = oddPowerCurve.sliderInputValue(defaultOutputPreset, sliderPosition, sliderSettings.power);
+            } else {
+              sliderPosition = Math.pow(sliderPosition, 1 / sliderSettings.power);
+            }
+            sliderPosition = Math.max(0, Math.min(1, sliderPosition));
+          }
+          if (slider && typeof slider.changePosition === 'function') {
+              slider.changePosition(sliderPosition);
+              slider.previousSliderValue = sliderPosition;
+          }
+        }
+        function didChangeModel(model) {
+          currentModel = model;
+          physics.changeInitialConditions(currentModel);
+          var sunElement = document.querySelector(".ThreeBodyProblem-sun");
+          var earthElement = document.querySelector(".ThreeBodyProblem-earth");
+          var jupiterElement = document.querySelector(".ThreeBodyProblem-jupiter");
+          var bodies = [sunElement, earthElement, jupiterElement];
+          var colorClasses = ["ThreeBodyProblem-sun--circle", "ThreeBodyProblem-earth--circle", "ThreeBodyProblem-jupiter--circle"];
+          var useCircles = model.name === "FigureEight" || model.name === "Chaotic";
+
+          bodies.forEach(function(body, index) {
+            cssHelper.removeClass(body, "ThreeBodyProblem-body--circle");
+            cssHelper.removeClass(body, colorClasses[index]); 
+          });
+
+          if (useCircles) {
+            bodies.forEach(function(body, index) {
+              cssHelper.addClass(body, "ThreeBodyProblem-body--circle");
+              cssHelper.addClass(body, colorClasses[index]); 
+            });
+          }
+
+          didClickRestart();
+          resetSlider();
+        }
+        function didClickMass1() { currentSlider = "mass"; currentMassSliderIndex = 0; resetSlider(); return false; }
+        function didClickMass2() { currentSlider = "mass"; currentMassSliderIndex = 1; resetSlider(); return false; }
+        function didClickMass3() { currentSlider = "mass"; currentMassSliderIndex = 2; resetSlider(); return false; }
+        function didClickSpeed() { currentSlider = "speed"; currentMassSliderIndex = 0; resetSlider(); return false; }
+        function didClickSoftening() { currentSlider = "softening"; currentMassSliderIndex = 0; resetSlider(); return false; }
+        function init() {
+          currentModel = simulations.init();
+          physics.changeInitialConditions(currentModel); 
+          simulations.content.didChangeModel = didChangeModel;
+          slider = SickSlider(".ThreeBodyProblem-slider");
+          slider.onSliderChange = didUpdateSlider;
+          resetSlider(); 
+          restartButton.onclick = didClickRestart;
+          mass1Button.onclick = didClickMass1;
+          mass2Button.onclick = didClickMass2;
+          mass3Button.onclick = didClickMass3;
+          speedButton.onclick = didClickSpeed;
+          softeningButton.onclick = didClickSoftening;
+          
+          var pauseButton = document.querySelector('.ThreeBodyProblem-pause');
+          if (pauseButton) {
+            pauseButton.onclick = function() {
+              if (simulation.isPaused()) {
+                simulation.resume();
+                pauseButton.textContent = 'Пауза';
+              } else {
+                simulation.pause();
+                pauseButton.textContent = 'Продолжить';
+              }
+              return false;
+            };
+          }
+        }
+        return { init: init };
+      })();
+
+      userInput.init();
+
+      (function() {
+        var currentPresetName = physics.initialConditions.currentPresetName;
+        var useCircles = currentPresetName === "FigureEight" || currentPresetName === "Chaotic";
+        var sunElement = document.querySelector(".ThreeBodyProblem-sun");
+        var earthElement = document.querySelector(".ThreeBodyProblem-earth");
+        var jupiterElement = document.querySelector(".ThreeBodyProblem-jupiter");
+        var bodies = [sunElement, earthElement, jupiterElement];
+        var colorClasses = ["ThreeBodyProblem-sun--circle", "ThreeBodyProblem-earth--circle", "ThreeBodyProblem-jupiter--circle"];
+
+        bodies.forEach(function(body, index) {
+            cssHelper.removeClass(body, "ThreeBodyProblem-body--circle");
+            cssHelper.removeClass(body, colorClasses[index]);
+        });
+
+        if (useCircles) {
+          bodies.forEach(function(body, index) {
+            cssHelper.addClass(body, "ThreeBodyProblem-body--circle");
+            cssHelper.addClass(body, colorClasses[index]);
+          });
+        }
+      })();
+
+      setTimeout(function(){
+        var loaderWrapper = document.getElementById('loader-wrapper');
+        if(loaderWrapper){
+          loaderWrapper.classList.add('hidden');
+          setTimeout(function(){
+            if(loaderWrapper.parentNode){
+              loaderWrapper.parentNode.removeChild(loaderWrapper);
+            }
+          }, 500); 
+        }
+      }, 3000);
+
+      setTimeout(function(){
+        var container = document.querySelector('.ThreeBodyProblem-container');
+        container.classList.add('visible');
+        simulation.start();
+      }, 5000); 
+
+})();
+  </script>
+  
+
+<script>
+
+(function(){
+  var original = window.SickSlider;
+  if (!original) return;
+  window.SickSlider = function(selector){
+    var inst = original(selector);
+    try {
+      return new Proxy(inst, {
+        set: function(target, prop, value){
+          if (prop === 'onSliderChange' && typeof value === 'function') {
+            var wrapped = function(v){
+              var labelEl = document.querySelector('.ThreeBodyProblem-sliderLabel');
+              var text = labelEl ? labelEl.textContent.trim() : '';
+              var isMass = /^Mass\b/i.test(text);
+              if (isMass) { v = 1 - v; } 
+              value(v);
+            };
+            return Reflect.set(target, prop, wrapped);
+          }
+          return Reflect.set(target, prop, value);
+        }
+      });
+    } catch(e) {
+      
+      return inst;
+    }
+  };
+})();
+</script>
+
+</body>
+</html>
