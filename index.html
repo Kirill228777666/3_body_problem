@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Симулятор трех тел</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+</head>
+<body>
+
+  <div id="loader-wrapper">
+    <div class="loader">
+      <div class="inner one"></div>
+      <div class="inner two"></div>
+      <div class="inner three"></div>
+    </div>
+    <div class="loader">
+      <div class="inner one"></div>
+      <div class="inner two"></div>
+      <div class="inner three"></div>
+    </div>
+  </div>
+
+  <h1>Симулятор трех тел</h1>
+  <p id="ThreeBodyProblem-notSupportedMessage" class="ThreeBodyProblem-alert ThreeBodyProblem-isHiddenBlock">
+    Пожалуйста, используйте современный браузер для просмотра симуляции.
+  </p>
+  <div class="ThreeBodyProblem-container isFullScreenWide isUnselectable">
+    <div class="ThreeBodyProblem-sun">
+      <img src="https://evgenii.com/image/blog/2018-09-27-three-body-problem-simulator/sun.png" class="ThreeBodyProblem-spin ThreeBodyProblem-bodyImage" alt="Sun" />
+    </div>
+    <div class="ThreeBodyProblem-earth">
+      <img src="https://evgenii.com/image/blog/2018-09-27-three-body-problem-simulator/earth.png" alt="Earth" class="ThreeBodyProblem-spin ThreeBodyProblem-bodyImage"/>
+    </div>
+    <div class="ThreeBodyProblem-jupiter">
+      <img src="https://evgenii.com/image/blog/2018-09-27-three-body-problem-simulator/jupiter_juno.png" alt="Jupiter" class="ThreeBodyProblem-spin ThreeBodyProblem-bodyImage" />
+    </div>
+    <img src="https://evgenii.com/image/blog/2018-09-27-three-body-problem-simulator/center_of_mass.png" alt="Center of mass" class="ThreeBodyProblem-centerOfMass" />
+    <canvas class="ThreeBodyProblem-canvas"></canvas>
+    <div class="ThreeBodyProblem-hudContainer">
+      <div class="ThreeBodyProblem-hudContainerChild">
+        <div class="ThreeBodyProblem-leftBottomButtonCantainer">
+          <a class="ThreeBodyProblem-leftBottomButton ThreeBodyProblem-mass1Button ThreeBodyProblem-doesChangeOpacityOnHover" href="#" title="Mass 1">
+            <img src="https://evgenii.com/image/blog/2018-09-27-three-body-problem-simulator/mass_one_icon.png" alt="Mass 1" class="ThreeBodyProblem-leftBottomImage">
+          </a>
+          <a class="ThreeBodyProblem-leftBottomButton ThreeBodyProblem-mass2Button ThreeBodyProblem-doesChangeOpacityOnHover" href="#" title="Mass 2">
+            <img src="https://evgenii.com/image/blog/2018-09-27-three-body-problem-simulator/mass_two_icon.png" alt="Mass 2" class="ThreeBodyProblem-leftBottomImage">
+          </a>
+          <a class="ThreeBodyProblem-leftBottomButton ThreeBodyProblem-mass3Button ThreeBodyProblem-doesChangeOpacityOnHover" href="#" title="Mass 3">
+            <img src="https://evgenii.com/image/blog/2018-09-27-three-body-problem-simulator/mass_three_icon.png" alt="Mass 3" class="ThreeBodyProblem-leftBottomImage">
+          </a>
+          <a class="ThreeBodyProblem-leftBottomButton ThreeBodyProblem-speedButton ThreeBodyProblem-doesChangeOpacityOnHover" href="#" title="Speed">
+            <img src="https://evgenii.com/image/blog/2018-09-27-three-body-problem-simulator/clock_icon.png" alt="Speed" class="ThreeBodyProblem-leftBottomImage">
+          </a>
+          <a class="ThreeBodyProblem-leftBottomButton ThreeBodyProblem-softeningButton ThreeBodyProblem-doesChangeOpacityOnHover" href="#" title="Softening">
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMjAgNiA5IDExdjhsMy0zIDgtNnoiLz48cGF0aCBkPSJNNCAxNGE4IDggMCAxIDEgMTYgMCIvPjwvc3ZnPg==" alt="Softening" class="ThreeBodyProblem-leftBottomImage">
+          </a>
+        </div>
+        <a class="ThreeBodyProblem-reload ThreeBodyProblem-doesChangeOpacityOnHover" href="#" title="Reload">
+          <img src="https://evgenii.com/image/blog/2016-09-17-ridiculous-strawberry-picking/reload_icon.png" alt="Restart" class="ThreeBodyProblem-reloadIcon">
+        </a>
+        <button class="ThreeBodyProblem-pause ThreeBodyProblem-button" style="position: absolute; bottom: 10px; right: 65px; width: 90px; height: 40px; z-index: 1002;">Пауза</button>
+      </div>
+    </div>
+  </div>
+  
+  <div class="ThreeBodyProblem-controlsArea">
+    <div class="ThreeBodyProblem-isTextCentered ThreeBodyProblem-hasTopMarginSmall ThreeBodyProblem-hasNegativeBottomMarginNormal isUnselectable">
+      <span class="ThreeBodyProblem-sliderLabel">0.01</span>
+    </div>
+    <div class="SickSlider ThreeBodyProblem-slider isUnselectable">
+      <div class="SickSlider-stripe"></div>
+      <div class="SickSlider-head"></div>
+    </div>
+    <div class="ThreeBodyProblem-isTextCentered">
+      <button class="ThreeBodyProblem-preset ThreeBodyProblem-button ThreeBodyProblem-button--isSelected" data-name="FigureEight">Figure eight</button>
+      <button class="ThreeBodyProblem-preset ThreeBodyProblem-button" data-name="SunEarthJupiter">Sun, Earth and Jupiter</button>
+      <button class="ThreeBodyProblem-preset ThreeBodyProblem-button" data-name="LagrangePoint5">Lagrange point L5</button>
+      <button class="ThreeBodyProblem-preset ThreeBodyProblem-button" data-name="Kepler16">Kepler-16</button>
+      <button class="ThreeBodyProblem-preset ThreeBodyProblem-button" data-name="Chaotic">Chaotic</button>
+    </div>
+  </div>
+
+  <div class="instruction-container" style="max-width: 900px; margin: 30px auto; padding: 20px; background-color: rgba(28, 37, 65, 0.7); border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); color: #f0f0f0; font-family: sans-serif;">
+    <h2 style="text-align: center; margin-bottom: 20px; font-family: 'Playfair Display', serif;">Инструкция по использованию симулятора трех тел</h2>
+
+    <div style="margin-bottom: 25px;">
+      <h3 style="color: #6780FF;">Общее описание</h3>
+      <p>Данный симулятор демонстрирует классическую задачу трех тел в физике — проблему предсказания движения трех массивных объектов, взаимодействующих гравитационно. В отличие от задачи двух тел, которая имеет аналитическое решение, задача трех тел в общем случае не имеет точного решения и демонстрирует хаотическое поведение.</p>
+    </div>
+
+    <div style="margin-bottom: 25px;">
+      <h3 style="color: #6780FF;">Режимы симуляции</h3>
+      <ul style="list-style-type: none; padding-left: 10px;">
+        <li style="margin-bottom: 12px;"><strong style="color: #ff8b22;">Figure eight (Восьмерка)</strong> — Особое периодическое решение задачи трех тел, когда три объекта равной массы движутся по траектории в форме восьмерки.</li>
+        <li style="margin-bottom: 12px;"><strong style="color: #ff8b22;">Sun, Earth and Jupiter (Солнце, Земля и Юпитер)</strong> — Упрощенная модель движения Солнца, Земли и Юпитера с сохранением приблизительных соотношений масс.</li>
+        <li style="margin-bottom: 12px;"><strong style="color: #ff8b22;">Lagrange point L5 (Точка Лагранжа L5)</strong> — Демонстрация точки равновесия L5 в системе из трех тел.</li>
+        <li style="margin-bottom: 12px;"><strong style="color: #ff8b22;">Kepler-16 (Кеплер-16)</strong> — Симуляция, основанная на реальной звездной системе Kepler-16, где планета вращается вокруг двух звезд.</li>
+        <li style="margin-bottom: 12px;"><strong style="color: #ff8b22;">Chaotic (Хаотический режим)</strong> — Демонстрация хаотического движения трех тел с равными массами, начинающими движение из равностороннего треугольника.</li>
+      </ul>
+    </div>
+
+    <div style="margin-bottom: 25px;">
+      <h3 style="color: #6780FF;">Управление симуляцией</h3>
+      <p>В нижней части экрана симуляции расположены кнопки управления:</p>
+      <ul style="list-style-type: none; padding-left: 10px;">
+        <li style="margin-bottom: 12px;"><img src="https://evgenii.com/image/blog/2018-09-27-three-body-problem-simulator/mass_one_icon.png" alt="Mass 1" style="width: 20px; vertical-align: middle;"> — Настройка массы первого тела (красного в режиме восьмерки/хаоса или Солнца в других режимах).</li>
+        <li style="margin-bottom: 12px;"><img src="https://evgenii.com/image/blog/2018-09-27-three-body-problem-simulator/mass_two_icon.png" alt="Mass 2" style="width: 20px; vertical-align: middle;"> — Настройка массы второго тела (синего в режиме восьмерки/хаоса или Земли в других режимах).</li>
+        <li style="margin-bottom: 12px;"><img src="https://evgenii.com/image/blog/2018-09-27-three-body-problem-simulator/mass_three_icon.png" alt="Mass 3" style="width: 20px; vertical-align: middle;"> — Настройка массы третьего тела (зеленого в режиме восьмерки/хаоса или Юпитера в других режимах).</li>
+        <li style="margin-bottom: 12px;"><img src="https://evgenii.com/image/blog/2018-09-27-three-body-problem-simulator/clock_icon.png" alt="Speed" style="width: 20px; vertical-align: middle;"> — Регулировка скорости симуляции.</li>
+        <li style="margin-bottom: 12px;"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" style="vertical-align: middle;"><path d="M20 6 9 11v8l3-3 8-6z" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 14a8 8 0 1 1 16 0" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> — Настройка параметра смягчения гравитации (epsilon), помогает избежать сингулярностей при близком прохождении тел.</li>
+        <li style="margin-bottom: 12px;"><img src="https://evgenii.com/image/blog/2016-09-17-ridiculous-strawberry-picking/reload_icon.png" alt="Restart" style="width: 20px; vertical-align: middle;"> — Перезапуск симуляции с текущими параметрами.</li>
+      </ul>
+    </div>
+
+    <div style="margin-bottom: 25px;">
+      <h3 style="color: #6780FF;">Как пользоваться слайдером</h3>
+      <p>После нажатия на любую из кнопок управления активируется слайдер, расположенный в центре панели управления. Перемещая ползунок слайдера, вы изменяете выбранный параметр:</p>
+      <p>Над слайдером отображается текущее значение выбранного параметра.</p>
+    </div>
+
+    <div style="margin-bottom: 25px;">
+      <h3 style="color: #6780FF;">Физическая основа симуляции</h3>
+      <p>Задача трех тел — одна из фундаментальных проблем в классической механике и небесной механике. Она формулируется следующим образом: предсказать движение трех тел, взаимодействующих только через гравитационные силы, зная их начальные положения, массы и скорости.</p>
+
+      <p style="margin-top: 10px;">Основные физические принципы, используемые в симуляции:</p>
+      <ul style="list-style-type: none; padding-left: 10px;">
+        <li style="margin-bottom: 12px;">• <strong>Уравнение гравитационного взаимодействия:</strong> <span class='formula'>\(F = G \dfrac{m_1 m_2}{r^2}\)</span>, где F — сила притяжения, G — гравитационная постоянная, m₁ и m₂ — массы тел, r — расстояние между ними.</li>
+        <li style="margin-bottom: 12px;">• <strong>Параметр смягчения гравитации (ε):</strong> Модифицирует закон Ньютона для избежания сингулярностей при очень сильных сближениях тел. Использованная формула: <span class='formula'>\(F = G \dfrac{m_1 m_2}{\left(r^2 + \varepsilon^2\right)^{3/2}}\)</span>.</li>
+        <li style="margin-bottom: 12px;">• <strong>Второй закон Ньютона:</strong> <span class='formula'>\(F = m a\)</span>, где F — сила, m — масса, a — ускорение. В сочетании с законом гравитации это дает систему дифференциальных уравнений.</li>
+        <li style="margin-bottom: 12px;">• <strong>Метод Рунге-Кутты:</strong> Численный метод для решения обыкновенных дифференциальных уравнений. Метод 4-го порядка обеспечивает хороший баланс между точностью и эффективностью.</li>
+      </ul>
+    </div>
+
+    <div style="margin-bottom: 25px;">
+      <h3 style="color: #6780FF;">Теоретические аспекты</h3>
+      <ul style="list-style-type: none; padding-left: 10px;">
+        <li style="margin-bottom: 12px;">• <strong>Отсутствие аналитического решения:</strong> В отличие от задачи двух тел, которая имеет точное решение через эллиптические орбиты (законы Кеплера), задача трех тел в общем случае не имеет аналитического решения.</li>
+        <li style="margin-bottom: 12px;">• <strong>Хаотичность:</strong> Система трех тел демонстрирует хаотическое поведение — небольшие изменения начальных условий могут привести к радикально различающимся траекториям со временем (эффект "бабочки").</li>
+        <li style="margin-bottom: 12px;">• <strong>Особые решения:</strong> Существуют некоторые особые случаи, когда движение трех тел является периодическим или квази-периодическим. "Figure eight" — один из таких случаев, открытый относительно недавно (в 1993 году Муром, а в 2000 году Шенсине и Монтгомери дали строгое доказательство).</li>
+        <li style="margin-bottom: 12px;">• <strong>Точки Лагранжа:</strong> Особые точки в системе трех тел, где малое тело может оставаться относительно неподвижным по отношению к двум более массивным телам. L5 — одна из этих точек, где силы гравитации уравновешиваются.</li>
+      </ul>
+    </div>
+
+    <div style="margin-bottom: 25px;">
+      <h3 style="color: #6780FF;">Астрофизические примеры</h3>
+      <ul style="list-style-type: none; padding-left: 10px;">
+        <li style="margin-bottom: 12px;">• <strong>Солнце-Земля-Луна:</strong> Классический пример системы трех тел в нашей Солнечной системе.</li>
+        <li style="margin-bottom: 12px;">• <strong>Солнце-Юпитер-астероиды:</strong> Астероиды в точках Лагранжа L4 и L5 Юпитера ("троянцы" и "греки") демонстрируют стабильность в трехтельной системе.</li>
+        <li style="margin-bottom: 12px;">• <strong>Системы с экзопланетами:</strong> Kepler-16 — реальная двойная звездная система с планетой, вращающейся вокруг обеих звезд (как Татуин из "Звездных войн").</li>
+        <li style="margin-bottom: 12px;">• <strong>Тройные звезды:</strong> Такие системы как Альфа Центавра (состоящая из трех звезд) представляют собой натуральные примеры задачи трех тел.</li>
+      </ul>
+    </div>
+
+    <div style="margin-bottom: 25px;">
+      <h3 style="color: #6780FF;">Исторический контекст</h3>
+      <ul style="list-style-type: none; padding-left: 10px;">
+        <li style="margin-bottom: 12px;">• <strong>Работы Ньютона:</strong> Сам Исаак Ньютон занимался задачей трех тел, но не смог найти общее решение.</li>
+        <li style="margin-bottom: 12px;">• <strong>Теорема Брунса-Пуанкаре:</strong> В 1887 году было доказано, что не существует общего аналитического решения задачи трех тел в терминах алгебраических формул и интегралов.</li>
+        <li style="margin-bottom: 12px;">• <strong>Ограниченная задача трех тел:</strong> Эйлер и Лагранж нашли некоторые частные решения для случая, когда масса третьего тела пренебрежимо мала.</li>
+        <li style="margin-bottom: 12px;">• <strong>Современные исследования:</strong> С развитием компьютерного моделирования были открыты новые типы орбит и решений, включая конфигурацию "восьмерка", показанную в этой симуляции.</li>
+      </ul>
+    </div>
+
+    <div style="margin-bottom: 25px;">
+      <h3 style="color: #6780FF;">Отладочная консоль</h3>
+      <p>Для более глубокого анализа работы симуляции вы можете использовать консоль разработчика браузера (DevTools):</p>
+      <ul style="list-style-type: none; padding-left: 10px;">
+        <li style="margin-bottom: 12px;">• <strong>Открытие консоли:</strong> Нажмите F12 или Ctrl+Shift+I (Cmd+Option+I на Mac), чтобы открыть инструменты разработчика, затем перейдите на вкладку "Console" (Консоль).</li>
+        <li style="margin-bottom: 12px;">• <strong>Отладочная информация:</strong> Каждые 500 мс симулятор выводит подробные данные о текущем состоянии системы, включая:
+          <ul style="padding-left: 20px; margin-top: 5px;">
+            <li>Текущее время</li>
+            <li>Название активного пресета</li>
+            <li>Временной масштаб</li>
+            <li>Координаты и скорости каждого тела</li>
+            <li>Массы тел</li>
+          </ul>
+        </li>
+        <li style="margin-bottom: 12px;">• <strong>Расширенный анализ:</strong> Вы можете использовать консоль для наблюдения за параметрами симуляции в реальном времени и отслеживания изменений в системе при модификации параметров.</li>
+        <li style="margin-bottom: 12px;">• <strong>Взаимодействие с симуляцией:</strong> Продвинутые пользователи могут использовать консоль для программного изменения параметров симуляции с помощью JavaScript, обращаясь к глобальным объектам <code>physics</code> и <code>simulation</code>.</li>
+      </ul>
+    </div>
+
+    <p style="font-style: italic; text-align: center; margin-top: 20px;">Задача трех тел остается одной из классических нерешенных проблем физики и демонстрирует, как даже простые системы могут порождать сложное и непредсказуемое поведение.</p>
+  </div>
+
+  <p class="ThreeBodyProblem-debugOutput"></p>
+
+  <!-- Подключение JavaScript файлов -->
+  <script src="script.js"></script>
+  <script src="physics.js"></script>
+  <script src="graphics.js"></script>
+  <script src="simulation.js"></script>
+  <script src="ui.js"></script>
+
+</body>
+</html>
