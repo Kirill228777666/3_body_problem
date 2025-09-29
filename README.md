@@ -30,7 +30,16 @@ The simulator includes several predefined scenarios such as:
 - `physics.js` – core physics and numerical integration  
 - `simulation.js` – simulation loop and boundary handling  
 - `ui.js` – sliders, buttons, and Runge-Kutta integration method  
-- `script.js` – presets, user interaction, and input handling   
+- `script.js` – presets, user interaction, and input handling  
+
+---
+
+## 🖥️ How to Run
+1. Clone or download this repository.  
+2. Open **`index.html`** in any modern browser (Chrome, Firefox, Edge, Safari).  
+3. Select one of the presets or adjust parameters using the control buttons and slider.  
+
+⚠️ No installation is required. Just open the file locally, everything runs in the browser.  
 
 ---
 
@@ -48,21 +57,21 @@ The simulator includes several predefined scenarios such as:
   \[
   F = G \dfrac{m_1 m_2}{r^2}
   \]
-- Modified with softening parameter ε to avoid infinite forces:  
+
+- Modified with softening parameter ε (to avoid infinite forces):  
   \[
-  F = G \dfrac{m_1 m_2}{(r^2 + \varepsilon^2)^{3/2}}
+  F = G \dfrac{m_1 m_2}{\left(r^2 + \varepsilon^2\right)^{3/2}}
   \]
+
 - Second law of motion:  
   \[
   F = m a
   \]
-- Numerical integration: **Runge–Kutta 4th order method**  
+
+- Numerical integration method:  
+  **Runge–Kutta 4th order**, which balances accuracy and performance.  
 
 ---
 
-## 🖥️ How to Run
-1. Clone or download this repository.  
-2. Open **`index.html`** in any modern browser (Chrome, Firefox, Edge, Safari).  
-3. Select one of the presets or adjust parameters using the control buttons and slider.  
-
-⚠️ No installation is required. Just open the file locally, everything runs in the browser. 
+## 📜 License
+This project is open-source and free to use for educational and personal purposes.
