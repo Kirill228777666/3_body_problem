@@ -58,8 +58,3 @@ The simulation is based on classical mechanics:
 - A softening parameter is added to avoid infinite forces when bodies get too close.  
 - Newton’s second law of motion connects force, mass, and acceleration.  
 - The system of differential equations is solved numerically using the **Runge–Kutta 4th order method**, which provides good accuracy and performance.  
-
----
-
-## 📜 License
-This project is open-source and free to use for educational and personal purposes.
