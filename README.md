@@ -16,7 +16,7 @@ The simulator includes several predefined scenarios such as:
 - Interactive UI with adjustable parameters:
   - Mass of each body  
   - Simulation speed  
-  - Gravitational softening (ε parameter)  
+  - Gravitational softening (epsilon parameter)  
 - Multiple preset scenarios  
 - Pause/Resume functionality  
 - Real-time visualization with orbital trails  
@@ -52,24 +52,12 @@ The simulator includes several predefined scenarios such as:
 
 ---
 
-## 🧮 Physics Background
-- Newton’s law of gravitation:  
-  \[
-  F = G \dfrac{m_1 m_2}{r^2}
-  \]
-
-- Modified with softening parameter ε (to avoid infinite forces):  
-  \[
-  F = G \dfrac{m_1 m_2}{\left(r^2 + \varepsilon^2\right)^{3/2}}
-  \]
-
-- Second law of motion:  
-  \[
-  F = m a
-  \]
-
-- Numerical integration method:  
-  **Runge–Kutta 4th order**, which balances accuracy and performance.  
+## 🧮 Math Behind
+The simulation is based on classical mechanics:
+- Newton’s law of universal gravitation — bodies attract each other with a force proportional to their masses and inversely proportional to the square of the distance between them.  
+- A softening parameter is added to avoid infinite forces when bodies get too close.  
+- Newton’s second law of motion connects force, mass, and acceleration.  
+- The system of differential equations is solved numerically using the **Runge–Kutta 4th order method**, which provides good accuracy and performance.  
 
 ---
 
