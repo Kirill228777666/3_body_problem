@@ -1,14 +1,11 @@
-// Симулятор трех тел - JavaScript код
 (function(){
   "use strict";
 
-  // Инициализация MathJax
   window.MathJax = {
     tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] },
     svg: { fontCache: 'global' }
   };
 
-  // SickSlider класс
   function SickSlider(sliderElementSelector) {
     var that = {
       onSliderChange: null,
@@ -95,7 +92,6 @@
     return that;
   }
 
-  // Отладочная функция
   var debug = (function(){
     var debugOutput = document.querySelector(".ThreeBodyProblem-debugOutput");
     function print(text) {
@@ -105,7 +101,6 @@
     return { print: print };
   })();
 
-  // Метод Рунге-Кутты
   var rungeKutta = (function() {
     function calculate(h, u, derivative) {
       var a = [h/2, h/2, h, 0];
@@ -134,7 +129,6 @@
     return { calculate: calculate };
   })();
 
-  // Экспорт функций в глобальную область видимости
   window.SickSlider = SickSlider;
   window.debug = debug;
   window.rungeKutta = rungeKutta;
