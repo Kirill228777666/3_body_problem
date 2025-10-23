@@ -1,4 +1,3 @@
-// Графический движок для симуляции трех тел
 var graphics = (function() {
   var canvas = null,
       context = null,
