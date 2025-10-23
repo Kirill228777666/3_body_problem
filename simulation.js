@@ -62,7 +62,7 @@ var simulation = (function() {
     if (currentTime - lastLogTime >= logInterval) {
       const logData = {
         timestamp: new Date().toISOString(),
-        currentPreset: physics.initialConditions.currentPresetName || 'Unknown',
+        currentPreset: physics.initialConditions.currentPresetName || 'Неизвестно',
         timeScaleFactor: physics.initialConditions.timeScaleFactor,
         centerOfMass: physics.calculateCenterOfMass(),
         centerOfMassVelocity: physics.calculateCenterOfMassVelocity(),
@@ -77,7 +77,7 @@ var simulation = (function() {
           velocity: { x: physics.state.u[idx + 2], y: physics.state.u[idx + 3] }
         });
       }
-      console.log("Simulation State:", logData);
+      console.log("Состояние симуляции:", logData);
       lastLogTime = currentTime;
     }
     animationFrameId = window.requestAnimationFrame(animate);
