@@ -1,4 +1,3 @@
-// Физический движок для симуляции трех тел
 var physics = (function() {
   var constants = {
     gravitationalConstant: 6.67408 * Math.pow(10, -11),
