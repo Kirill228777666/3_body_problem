@@ -97,6 +97,13 @@ h1 {
   z-index: 1001;
   left: 0;
   top: 0;
+  /* Добавляем, чтобы дочерние абсолютные элементы не могли выйти за его пределы */
+  pointer-events: none;
+}
+
+.ThreeBodyProblem-hudContainer > * {
+  /* Возвращаем кликабельность дочерним элементам */
+  pointer-events: auto;
 }
 
 .ThreeBodyProblem-hudContainerChild {
@@ -110,15 +117,14 @@ h1 {
 .ThreeBodyProblem-leftBottomButtonCantainer {
   position: absolute;
   left: 15px;
-  right: 15px;
-  bottom: 10px;
-  height: 40px;
+  bottom: 16px;
+  display: flex;
+  gap: 10px;
 }
 
 .ThreeBodyProblem-leftBottomButton {
   height: 40px;
   width: 40px;
-  float: left;
 }
 
 .ThreeBodyProblem-leftBottomImage { 
@@ -137,15 +143,28 @@ h1 {
 }
 
 .ThreeBodyProblem-reload {
-  position: absolute;
-  bottom: 10px;
-  right: 15px;
-  width: 40px;
-  height: 40px;
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: var(--ui-bg);
+  border: 1px solid var(--ui-border);
+  -webkit-backdrop-filter: saturate(140%) blur(8px);
+  backdrop-filter: saturate(140%) blur(8px);
+  box-shadow: var(--ui-shadow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform .15s ease, box-shadow .2s ease, border-color .2s ease, background .2s ease;
+}
+.ThreeBodyProblem-reload:hover {
+  transform: translateY(-2px);
+  border-color: var(--ui-accent);
+  box-shadow: 0 10px 30px rgba(0,0,0,.4);
 }
 
 .ThreeBodyProblem-reloadIcon { 
-  width: 100%; 
+  width: 26px;
+  height: 26px;
   border: 0; 
 }
 
@@ -172,7 +191,6 @@ h1 {
   --btn-text: #f3f3f5;
   --btn-hover: #3a3a42;
   --btn-active: #26262b;
-
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -363,7 +381,6 @@ h1 {
   100% { transform: rotateX(35deg) rotateY(55deg) rotateZ(360deg); }
 }
 
-/* ▼▼▼ СТИЛИ ДЛЯ МОДАЛЬНОГО ОКНА ▼▼▼ */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -424,13 +441,11 @@ h1 {
 }
 
 .instruction-container {
-  /* Убираем старую анимацию и отступы, т.к. теперь это часть модального окна */
   opacity: 1;
   transform: none;
   animation: none;
-  margin: 0 !important; /* Важно, чтобы убрать внешний отступ */
+  margin: 0 !important;
 }
-/* ▲▲▲ КОНЕЦ СТИЛЕЙ ДЛЯ МОДАЛЬНОГО ОКНА ▲▲▲ */
 
 :root{
   --ui-bg: rgba(255,255,255,.06);
@@ -446,13 +461,22 @@ body{
 
 .ThreeBodyProblem-leftBottomButtonCantainer{ 
   height: 56px !important; 
-  bottom: 16px !important; 
+}
+
+.ThreeBodyProblem-rightBottomButtonContainer {
+  position: absolute;
+  right: 15px;
+  bottom: 16px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 1001;
 }
 
 .ThreeBodyProblem-leftBottomButton{
   height: 56px !important; 
   width: 56px !important; 
-  margin-right: 10px;
   border-radius: 14px; 
   background: var(--ui-bg); 
   border:1px solid var(--ui-border);
@@ -480,6 +504,10 @@ body{
   height: 26px !important; 
   opacity: .95; 
   filter: drop-shadow(0 2px 6px rgba(0,0,0,.35)); 
+}
+
+.ThreeBodyProblem-pause {
+    height: 56px !important;
 }
 
 .instruction-container{
