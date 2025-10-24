@@ -229,11 +229,14 @@
   <!-- Инициализация и обновление графиков -->
   <script>
     (function() {
-      const MAX_POINTS = 2000; // ограничение длины историй для производительности
+      // ▼▼▼ ИЗМЕНЕНИЕ 1: Создаем глобальный объект для управления графиками ▼▼▼
+      window.chartManager = {};
+
+      const MAX_POINTS = 2000;
       let chartsInited = false;
       let velocityChart = null;
       let energyChart = null;
-      let frameIndex = 0; // ось X: номер шага (не «секунды», но растёт синхронно с обновлениями)
+      let frameIndex = 0;
 
       function trimData(chart) {
         const d = chart.data;
@@ -242,6 +245,30 @@
           chart.data.datasets.forEach(ds => ds.data.shift());
         }
       }
+
+      // ▼▼▼ ИЗМЕНЕНИЕ 2: Новая функция для сброса графиков ▼▼▼
+      function resetCharts() {
+        if (!chartsInited) return;
+
+        frameIndex = 0; // Сбрасываем счетчик кадров
+
+        // Очистка графика скоростей
+        velocityChart.data.labels = [];
+        velocityChart.data.datasets.forEach(dataset => {
+          dataset.data = [];
+        });
+        velocityChart.update('none');
+
+        // Очистка графика энергии
+        energyChart.data.labels = [];
+        energyChart.data.datasets.forEach(dataset => {
+          dataset.data = [];
+        });
+        energyChart.update('none');
+      }
+      
+      // ▼▼▼ ИЗМЕНЕНИЕ 3: Делаем функцию resetCharts доступной глобально ▼▼▼
+      window.chartManager.reset = resetCharts;
 
       function initCharts() {
         if (chartsInited) return;
@@ -304,7 +331,6 @@
 
         chartsInited = true;
 
-        // при раскрытии details делаем resize, чтобы канвасы корректно заполнили ширину
         document.getElementById('vel-details')?.addEventListener('toggle', () => setTimeout(() => velocityChart?.resize(), 0));
         document.getElementById('eng-details')?.addEventListener('toggle', () => setTimeout(() => energyChart?.resize(), 0));
         window.addEventListener('resize', () => {
@@ -314,18 +340,21 @@
       }
 
       function updateCharts() {
-        // Дожидаемся, когда physics и методы готовы
+        if (window.simulation && typeof simulation.isPaused === 'function' && simulation.isPaused()) {
+          requestAnimationFrame(updateCharts);
+          return;
+        }
+
         if (window.physics && typeof physics.getSpeeds === 'function' && typeof physics.getTotalEnergy === 'function') {
           if (!chartsInited) initCharts();
 
           if (chartsInited) {
-            const speeds = physics.getSpeeds();        // [v1,v2,v3]
-            const energy = physics.getTotalEnergy();   // число
+            const speeds = physics.getSpeeds();
+            const energy = physics.getTotalEnergy();
 
             frameIndex += 1;
             const label = String(frameIndex);
 
-            // Скорости
             velocityChart.data.labels.push(label);
             for (let i = 0; i < 3; i++) {
               velocityChart.data.datasets[i].data.push(speeds[i] ?? null);
@@ -333,7 +362,6 @@
             trimData(velocityChart);
             velocityChart.update('none');
 
-            // Энергия
             energyChart.data.labels.push(label);
             energyChart.data.datasets[0].data.push(energy);
             trimData(energyChart);
@@ -343,7 +371,6 @@
         requestAnimationFrame(updateCharts);
       }
 
-      // Стартуем цикл после загрузки
       window.addEventListener('load', () => {
         initCharts();
         requestAnimationFrame(updateCharts);
