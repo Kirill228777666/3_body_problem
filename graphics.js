@@ -70,9 +70,8 @@ var graphics = (function() {
   function drawBodies() {
     for (var iBody = 0; iBody < bodyPositions.length; iBody++) {
       var bodyPosition = bodyPositions[iBody];
-      
       if (bodyElemenets[iBody] && currentBodySizes[iBody] !== undefined) {
-           drawBody(bodyPosition, currentBodySizes[iBody], bodyElemenets[iBody]);
+        drawBody(bodyPosition, currentBodySizes[iBody], bodyElemenets[iBody]);
       }
     }
   }
