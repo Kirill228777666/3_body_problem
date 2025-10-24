@@ -147,17 +147,14 @@ var userInput = (function(){
   var sliderElement = document.querySelector(".ThreeBodyProblem-slider");
   var slider, currentSlider="mass", currentMassSliderIndex=0, currentModel;
 
-  // --- РЕДАКТОР ЧИСЛА НАД ПОЛЗУНКОМ (ввод с клавиатуры) ---
   var sliderEditInput = null;
   function ensureSliderEdit() {
     if (sliderEditInput) return;
     sliderEditInput = document.createElement('input');
     sliderEditInput.type = 'text';
     sliderEditInput.className = 'ThreeBodyProblem-sliderEditInput';
-    // Вписываемся в существующий блок с меткой
     var labelContainer = sliderLabelElement && sliderLabelElement.parentElement ? sliderLabelElement.parentElement : null;
     (labelContainer || document.body).appendChild(sliderEditInput);
-    // Базовые стили (без style.css правок)
     sliderEditInput.style.display = 'none';
     sliderEditInput.style.margin = '6px auto 0 auto';
     sliderEditInput.style.padding = '6px 10px';
@@ -173,15 +170,12 @@ var userInput = (function(){
   }
 
   function showMassEdit() {
-    if (currentSlider !== 'mass') return; // редактируем только массы
+    if (currentSlider !== 'mass') return;
     ensureSliderEdit();
-    // Значение из модели, без единиц измерения
     var val = physics.initialConditions.masses[currentMassSliderIndex];
     sliderEditInput.value = String(val);
-    // Показать input, скрыть метку
     sliderLabelElement.style.display = 'none';
     sliderEditInput.style.display = 'block';
-    // Фокус и выделение
     setTimeout(function(){ sliderEditInput.focus(); sliderEditInput.select(); }, 0);
   }
 
@@ -192,15 +186,12 @@ var userInput = (function(){
       var num = Number(raw);
       if (Number.isFinite(num)) {
         var set = getCurrentSliderSettings();
-        // Ограничиваем диапазоном слайдера
         if (typeof set.min === 'number') num = Math.max(set.min, num);
         if (typeof set.max === 'number') num = Math.min(set.max, num);
         num = Math.round(num*10000)/10000;
         physics.initialConditions.masses[currentMassSliderIndex] = num;
         graphics.updateObjectSizes(physics.calculateDiameters());
-        // Обновляем подпись и позицию бегунка
         sliderLabelElement.innerText = formatMassForSlider(num);
-        // Пересчитываем позицию ползунка из значения
         resetSlider();
       }
     }
@@ -210,14 +201,12 @@ var userInput = (function(){
 
   function attachSliderEditEvents(){
     ensureSliderEdit();
-    // Клик по метке — открыть ввод (только для масс)
     if (sliderLabelElement){
       sliderLabelElement.style.cursor = 'text';
       sliderLabelElement.addEventListener('click', function(){
         if (currentSlider === 'mass') showMassEdit();
       });
     }
-    // Enter — применить, Esc — отменить, blur — применить
     sliderEditInput.addEventListener('keydown', function(e){
       if (e.key === 'Enter'){ e.preventDefault(); finishMassEdit(true); }
       else if (e.key === 'Escape'){ e.preventDefault(); finishMassEdit(false); }
@@ -225,7 +214,6 @@ var userInput = (function(){
     sliderEditInput.addEventListener('blur', function(){ finishMassEdit(true); });
   }
 
-  // ---------- УТИЛИТЫ ДЛЯ КНОПОК ----------
   function removeAllTextNodes(node){
     var walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT, null, false);
     var toRemove = [];
@@ -253,60 +241,43 @@ var userInput = (function(){
   }
 
   function stripToOnlyDot(btn){
-    // Скрыть любые IMG
     var imgs = btn.querySelectorAll('img, svg, picture, canvas');
     imgs.forEach(function(img){ img.style.display = 'none'; });
-
-    // Удалить все видимые подписи
     removeAllTextNodes(btn);
-
-    // Убрать отступы вокруг (на случай встроенных <span>)
     var nonDotChildren = btn.querySelectorAll(':scope > *:not(.tbp-dot)');
     nonDotChildren.forEach(function(ch){
-      // оставляем структуру, но не показываем текст
       if (ch.tagName !== 'IMG' && ch.tagName !== 'SVG' && ch.tagName !== 'PICTURE' && !ch.classList.contains('tbp-dot')) {
         ch.style.display = 'none';
       }
     });
-
-    // Сброс «ссылочного» вида
     btn.style.textDecoration = 'none';
     btn.style.color = 'inherit';
   }
 
   function restorePlanetLook(btn){
-    // Показать изображения обратно
     var imgs = btn.querySelectorAll('img, svg, picture, canvas');
     imgs.forEach(function(img){ img.style.display = ''; });
-
-    // Убрать кружок, если был
     var dot = btn.querySelector('.tbp-dot');
     if (dot && dot.parentNode) dot.parentNode.removeChild(dot);
-
-    // Вернуть текст если он есть в разметке (мы ничего не добавляем)
     btn.style.textDecoration = '';
     btn.style.color = '';
-    // Ничего не вставляем текстом — используем то, что было изначально (иконки/картинки/подписи вернутся сами).
   }
 
   function updateMassButtonsAppearance(useCircles){
     var btns = [mass1Button, mass2Button, mass3Button];
-    var colors = ['#e53935','#1e88e5','#43a047']; // красный, синий, зелёный
+    var colors = ['#e53935','#1e88e5','#43a047'];
     var titles = ['Красное тело','Синее тело','Зелёное тело'];
 
     btns.forEach(function(btn, i){
       if (!btn) return;
       if (useCircles) {
-        // делаем ИКОНКУ-ТОЧКУ БЕЗ ТЕКСТА
         ensureDot(btn, colors[i], titles[i]);
         stripToOnlyDot(btn);
       } else {
-        // возвращаем «планетный» вид (картинки на кнопках)
         restorePlanetLook(btn);
       }
     });
   }
-  // ---------- КОНЕЦ УТИЛИТ ----------
 
   function getSofteningSliderSettings(isDimensionless){
     return isDimensionless
@@ -412,7 +383,6 @@ var userInput = (function(){
     physics.resetStateToInitialConditions();
     graphics.clearScene(physics.largestDistanceMeters());
     graphics.updateObjectSizes(physics.calculateDiameters());
-    // ▼▼▼ ИЗМЕНЕНИЕ: Вызываем функцию сброса графиков ▼▼▼
     if (window.chartManager && typeof window.chartManager.reset === 'function') {
       window.chartManager.reset();
     }
@@ -434,7 +404,6 @@ var userInput = (function(){
   }
 
   function resetSlider(){
-    // Если был активен ручной ввод, скрываем его
     if (typeof sliderEditInput !== 'undefined' && sliderEditInput) {
       sliderEditInput.style.display = 'none';
       if (sliderLabelElement) sliderLabelElement.style.display = '';
@@ -502,9 +471,7 @@ var userInput = (function(){
       });
     }
 
-    // Ключевое: обновляем кнопки (только иконки-кружки в абстрактных режимах)
     updateMassButtonsAppearance(useCircles);
-
     didClickRestart();
     resetSlider();
   }
@@ -524,8 +491,6 @@ var userInput = (function(){
     slider.onSliderChange = didUpdateSlider;
 
     resetSlider();
-
-    // Включаем режим ручного ввода значений масс
     attachSliderEditEvents();
 
     if (restartButton) restartButton.onclick = didClickRestart;
@@ -544,9 +509,40 @@ var userInput = (function(){
       };
     }
 
-    // Применяем вид кнопок на старте
     var useCircles = (currentModel.name==="FigureEight" || currentModel.name==="Chaotic");
     updateMassButtonsAppearance(useCircles);
+
+    // ▼▼▼ ЛОГИКА ДЛЯ МОДАЛЬНОГО ОКНА ▼▼▼
+    var infoButton = document.getElementById('info-button');
+    var infoModal = document.getElementById('info-modal');
+    var closeModalButton = infoModal.querySelector('.modal-close-button');
+
+    if (infoButton && infoModal && closeModalButton) {
+      // Открыть модальное окно
+      infoButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        cssHelper.removeClass(infoModal, 'is-hidden');
+      });
+
+      // Закрыть по кнопке "X"
+      closeModalButton.addEventListener('click', function() {
+        cssHelper.addClass(infoModal, 'is-hidden');
+      });
+
+      // Закрыть по клику на фон
+      infoModal.addEventListener('click', function(e) {
+        if (e.target === infoModal) {
+          cssHelper.addClass(infoModal, 'is-hidden');
+        }
+      });
+
+      // Закрыть по клавише Escape
+      window.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && !cssHelper.hasClass(infoModal, 'is-hidden')) {
+          cssHelper.addClass(infoModal, 'is-hidden');
+        }
+      });
+    }
   }
 
   return { init:init };
@@ -555,7 +551,6 @@ var userInput = (function(){
 // Инициализация пользовательского интерфейса
 userInput.init();
 
-// Инициализация стилей для круговых тел + первичная синхронизация кнопок
 (function(){
   var presetName = physics.initialConditions.currentPresetName;
   var useCircles = (presetName==="FigureEight" || presetName==="Chaotic");
@@ -577,18 +572,12 @@ userInput.init();
     });
   }
 
-  // синхронизация кнопок на самый первый рендер
   var m1=document.querySelector(".ThreeBodyProblem-mass1Button");
   var m2=document.querySelector(".ThreeBodyProblem-mass2Button");
   var m3=document.querySelector(".ThreeBodyProblem-mass3Button");
-  if (m1 && m2 && m3) {
-    // используем точно те же функции, что и внутри модуля
-    // (доступны через замыкание userInput — уже вызван init)
-    // поэтому здесь ничего не дублируем — кнопки уже приведены в порядок
-  }
+  if (m1 && m2 && m3) { }
 })();
 
-// Управление загрузчиком
 setTimeout(function(){
   var loaderWrapper = document.getElementById('loader-wrapper');
   if(loaderWrapper){
@@ -601,14 +590,12 @@ setTimeout(function(){
   }
 }, 3000);
 
-// Запуск симуляции
 setTimeout(function(){
   var container = document.querySelector('.ThreeBodyProblem-container');
   container.classList.add('visible');
   simulation.start();
 }, 5000);
 
-// Прокси для SickSlider
 (function(){
   var original = window.SickSlider;
   if (!original) return;
@@ -619,7 +606,6 @@ setTimeout(function(){
         set:function(target, prop, value){
           if (prop==='onSliderChange' && typeof value==='function'){
             var wrapped = function(v){
-              // русская метка "Масса ..." — не инвертируем v
               value(v);
             };
             return Reflect.set(target, prop, wrapped);
