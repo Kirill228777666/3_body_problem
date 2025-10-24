@@ -47,7 +47,7 @@ var simulations = (function(){
       name: "SunEarthJupiter",
       masses: [1.98855e30, 5.972e24, 1.898e27],
       densities: [0.01,0.01,0.01],
-      massSlider: { min: 3e10, max: 3e31, power: 3 },
+      massSlider: { min: 3e10, max: 3e31, power: 5 },
       timeScaleFactor: 3600*24*30,
       timeScaleFactorSlider: { min: 0, max: 3600*24*365*1000, power: 5 },
       positions: [{r:0,theta:0},{r:1.496e11,theta:0},{r:7.78e11,theta:0}],
@@ -146,6 +146,84 @@ var userInput = (function(){
   var softeningButton = document.querySelector(".ThreeBodyProblem-softeningButton");
   var sliderElement = document.querySelector(".ThreeBodyProblem-slider");
   var slider, currentSlider="mass", currentMassSliderIndex=0, currentModel;
+
+  // --- РЕДАКТОР ЧИСЛА НАД ПОЛЗУНКОМ (ввод с клавиатуры) ---
+  var sliderEditInput = null;
+  function ensureSliderEdit() {
+    if (sliderEditInput) return;
+    sliderEditInput = document.createElement('input');
+    sliderEditInput.type = 'text';
+    sliderEditInput.className = 'ThreeBodyProblem-sliderEditInput';
+    // Вписываемся в существующий блок с меткой
+    var labelContainer = sliderLabelElement && sliderLabelElement.parentElement ? sliderLabelElement.parentElement : null;
+    (labelContainer || document.body).appendChild(sliderEditInput);
+    // Базовые стили (без style.css правок)
+    sliderEditInput.style.display = 'none';
+    sliderEditInput.style.margin = '6px auto 0 auto';
+    sliderEditInput.style.padding = '6px 10px';
+    sliderEditInput.style.fontSize = '14px';
+    sliderEditInput.style.textAlign = 'center';
+    sliderEditInput.style.borderRadius = '8px';
+    sliderEditInput.style.border = '1px solid rgba(255,255,255,.18)';
+    sliderEditInput.style.background = 'rgba(255,255,255,.06)';
+    sliderEditInput.style.color = '#f0f0f0';
+    sliderEditInput.style.boxShadow = '0 6px 18px rgba(0,0,0,.25)';
+    sliderEditInput.style.width = 'min(520px, 92%)';
+    sliderEditInput.style.maxWidth = '520px';
+  }
+
+  function showMassEdit() {
+    if (currentSlider !== 'mass') return; // редактируем только массы
+    ensureSliderEdit();
+    // Значение из модели, без единиц измерения
+    var val = physics.initialConditions.masses[currentMassSliderIndex];
+    sliderEditInput.value = String(val);
+    // Показать input, скрыть метку
+    sliderLabelElement.style.display = 'none';
+    sliderEditInput.style.display = 'block';
+    // Фокус и выделение
+    setTimeout(function(){ sliderEditInput.focus(); sliderEditInput.select(); }, 0);
+  }
+
+  function finishMassEdit(apply) {
+    if (!sliderEditInput) return;
+    if (apply) {
+      var raw = sliderEditInput.value.trim().replace(',', '.');
+      var num = Number(raw);
+      if (Number.isFinite(num)) {
+        var set = getCurrentSliderSettings();
+        // Ограничиваем диапазоном слайдера
+        if (typeof set.min === 'number') num = Math.max(set.min, num);
+        if (typeof set.max === 'number') num = Math.min(set.max, num);
+        num = Math.round(num*10000)/10000;
+        physics.initialConditions.masses[currentMassSliderIndex] = num;
+        graphics.updateObjectSizes(physics.calculateDiameters());
+        // Обновляем подпись и позицию бегунка
+        sliderLabelElement.innerText = formatMassForSlider(num);
+        // Пересчитываем позицию ползунка из значения
+        resetSlider();
+      }
+    }
+    sliderEditInput.style.display = 'none';
+    sliderLabelElement.style.display = '';
+  }
+
+  function attachSliderEditEvents(){
+    ensureSliderEdit();
+    // Клик по метке — открыть ввод (только для масс)
+    if (sliderLabelElement){
+      sliderLabelElement.style.cursor = 'text';
+      sliderLabelElement.addEventListener('click', function(){
+        if (currentSlider === 'mass') showMassEdit();
+      });
+    }
+    // Enter — применить, Esc — отменить, blur — применить
+    sliderEditInput.addEventListener('keydown', function(e){
+      if (e.key === 'Enter'){ e.preventDefault(); finishMassEdit(true); }
+      else if (e.key === 'Escape'){ e.preventDefault(); finishMassEdit(false); }
+    });
+    sliderEditInput.addEventListener('blur', function(){ finishMassEdit(true); });
+  }
 
   // ---------- УТИЛИТЫ ДЛЯ КНОПОК ----------
   function removeAllTextNodes(node){
@@ -352,6 +430,12 @@ var userInput = (function(){
   }
 
   function resetSlider(){
+    // Если был активен ручной ввод, скрываем его
+    if (typeof sliderEditInput !== 'undefined' && sliderEditInput) {
+      sliderEditInput.style.display = 'none';
+      if (sliderLabelElement) sliderLabelElement.style.display = '';
+    }
+
     cssHelper.removeClass(sliderElement,"ThreeBodyProblem-sliderSun");
     cssHelper.removeClass(sliderElement,"ThreeBodyProblem-sliderEarth");
     cssHelper.removeClass(sliderElement,"ThreeBodyProblem-sliderJupiter");
@@ -436,6 +520,9 @@ var userInput = (function(){
     slider.onSliderChange = didUpdateSlider;
 
     resetSlider();
+
+    // Включаем режим ручного ввода значений масс
+    attachSliderEditEvents();
 
     if (restartButton) restartButton.onclick = didClickRestart;
     if (mass1Button) mass1Button.onclick = didClickMass1;
