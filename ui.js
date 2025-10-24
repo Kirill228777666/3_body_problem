@@ -412,6 +412,10 @@ var userInput = (function(){
     physics.resetStateToInitialConditions();
     graphics.clearScene(physics.largestDistanceMeters());
     graphics.updateObjectSizes(physics.calculateDiameters());
+    // ▼▼▼ ИЗМЕНЕНИЕ: Вызываем функцию сброса графиков ▼▼▼
+    if (window.chartManager && typeof window.chartManager.reset === 'function') {
+      window.chartManager.reset();
+    }
     return false;
   }
 
