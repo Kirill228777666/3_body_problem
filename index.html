@@ -50,31 +50,36 @@
     <canvas class="ThreeBodyProblem-canvas"></canvas>
     <div class="ThreeBodyProblem-hudContainer">
       <div class="ThreeBodyProblem-hudContainerChild">
-        <div class="ThreeBodyProblem-leftBottomButtonCantainer">
-          <a class="ThreeBodyProblem-leftBottomButton ThreeBodyProblem-mass1Button ThreeBodyProblem-doesChangeOpacityOnHover" href="#" title="Масса 1">
-            <img src="https://evgenii.com/image/blog/2018-09-27-three-body-problem-simulator/mass_one_icon.png" alt="Масса 1" class="ThreeBodyProblem-leftBottomImage">
-          </a>
-          <a class="ThreeBodyProblem-leftBottomButton ThreeBodyProblem-mass2Button ThreeBodyProblem-doesChangeOpacityOnHover" href="#" title="Масса 2">
-            <img src="https://evgenii.com/image/blog/2018-09-27-three-body-problem-simulator/mass_two_icon.png" alt="Масса 2" class="ThreeBodyProblem-leftBottomImage">
-          </a>
-          <a class="ThreeBodyProblem-leftBottomButton ThreeBodyProblem-mass3Button ThreeBodyProblem-doesChangeOpacityOnHover" href="#" title="Масса 3">
-            <img src="https://evgenii.com/image/blog/2018-09-27-three-body-problem-simulator/mass_three_icon.png" alt="Масса 3" class="ThreeBodyProblem-leftBottomImage">
-          </a>
-          <a class="ThreeBodyProblem-leftBottomButton ThreeBodyProblem-speedButton ThreeBodyProblem-doesChangeOpacityOnHover" href="#" title="Скорость">
-            <img src="https://evgenii.com/image/blog/2018-09-27-three-body-problem-simulator/clock_icon.png" alt="Скорость" class="ThreeBodyProblem-leftBottomImage">
-          </a>
-          <a class="ThreeBodyProblem-leftBottomButton ThreeBodyProblem-softeningButton ThreeBodyProblem-doesChangeOpacityOnHover" href="#" title="Смягчение">
-            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMjAgNiA5IDExdjhsMy0zIDgtNnoiLz48cGF0aCBkPSJNNCAxNGE4IDggMCAxIDEgMTYgMCIvPjwvc3ZnPg==" alt="Смягчение" class="ThreeBodyProblem-leftBottomImage">
-          </a>
-          <!-- ▼▼▼ НОВАЯ КНОПКА ИНФОРМАЦИИ ▼▼▼ -->
-          <a id="info-button" class="ThreeBodyProblem-leftBottomButton ThreeBodyProblem-doesChangeOpacityOnHover" href="#" title="Информация">
-            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiPjwvY2lyY2xlPjxsaW5lIHgxPSIxMiIgeTE9IjE2IiB4Mj0iMTIiIHkyPSIxMiI+PC9saW5lPjxsaW5lIHgxPSIxMiIgeTE9IjgiIHgyPSIxMi4wMSIgeTI9IjgiPjwvbGluZT48L3N2Zz4=" alt="Информация" class="ThreeBodyProblem-leftBottomImage">
-          </a>
-        </div>
-        <a class="ThreeBodyProblem-reload ThreeBodyProblem-doesChangeOpacityOnHover" href="#" title="Перезапуск">
-          <img src="https://evgenii.com/image/blog/2016-09-17-ridiculous-strawberry-picking/reload_icon.png" alt="Перезапуск" class="ThreeBodyProblem-reloadIcon">
+        <!-- Этот контейнер теперь пуст, но может использоваться для других элементов HUD -->
+      </div>
+      
+      <div class="ThreeBodyProblem-leftBottomButtonCantainer">
+        <a class="ThreeBodyProblem-leftBottomButton ThreeBodyProblem-mass1Button ThreeBodyProblem-doesChangeOpacityOnHover" href="#" title="Масса 1">
+          <img src="https://evgenii.com/image/blog/2018-09-27-three-body-problem-simulator/mass_one_icon.png" alt="Масса 1" class="ThreeBodyProblem-leftBottomImage">
         </a>
-        <button class="ThreeBodyProblem-pause ThreeBodyProblem-button" style="position: absolute; bottom: 10px; right: 65px; width: 90px; height: 40px; z-index: 1002;">Пауза</button>
+        <a class="ThreeBodyProblem-leftBottomButton ThreeBodyProblem-mass2Button ThreeBodyProblem-doesChangeOpacityOnHover" href="#" title="Масса 2">
+          <img src="https://evgenii.com/image/blog/2018-09-27-three-body-problem-simulator/mass_two_icon.png" alt="Масса 2" class="ThreeBodyProblem-leftBottomImage">
+        </a>
+        <a class="ThreeBodyProblem-leftBottomButton ThreeBodyProblem-mass3Button ThreeBodyProblem-doesChangeOpacityOnHover" href="#" title="Масса 3">
+          <img src="https://evgenii.com/image/blog/2018-09-27-three-body-problem-simulator/mass_three_icon.png" alt="Масса 3" class="ThreeBodyProblem-leftBottomImage">
+        </a>
+        <a class="ThreeBodyProblem-leftBottomButton ThreeBodyProblem-speedButton ThreeBodyProblem-doesChangeOpacityOnHover" href="#" title="Скорость">
+          <img src="https://evgenii.com/image/blog/2018-09-27-three-body-problem-simulator/clock_icon.png" alt="Скорость" class="ThreeBodyProblem-leftBottomImage">
+        </a>
+        <!-- ▼▼▼ ИЗМЕНЕННАЯ ИКОНКА СМЯГЧЕНИЯ ▼▼▼ -->
+        <a class="ThreeBodyProblem-leftBottomButton ThreeBodyProblem-softeningButton ThreeBodyProblem-doesChangeOpacityOnHover" href="#" title="Смягчение">
+          <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMTguNSAxOC41YTYuNSA2LjUgMCAxIDAgMC0xMyIvPjxwYXRoIGQ9Ik01LjUgMTJoMTMiLz48L3N2Zz4=" alt="Смягчение" class="ThreeBodyProblem-leftBottomImage">
+        </a>
+        <a id="info-button" class="ThreeBodyProblem-leftBottomButton ThreeBodyProblem-doesChangeOpacityOnHover" href="#" title="Информация">
+          <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiPjwvY2lyY2xlPjxsaW5lIHgxPSIxMiIgeTE9IjE2IiB4Mj0iMTIiIHkyPSIxMiI+PC9saW5lPjxsaW5lIHgxPSIxMiIgeTE9IjgiIHgyPSIxMi4wMSIgeTI9IjgiPjwvbGluZT48L3N2Zz4=" alt="Информация" class="ThreeBodyProblem-leftBottomImage">
+        </a>
+      </div>
+      
+      <div class="ThreeBodyProblem-rightBottomButtonContainer">
+          <button class="ThreeBodyProblem-pause ThreeBodyProblem-button">Пауза</button>
+          <a class="ThreeBodyProblem-reload ThreeBodyProblem-doesChangeOpacityOnHover" href="#" title="Перезапуск">
+            <img src="https://evgenii.com/image/blog/2016-09-17-ridiculous-strawberry-picking/reload_icon.png" alt="Перезапуск" class="ThreeBodyProblem-reloadIcon">
+          </a>
       </div>
     </div>
   </div>
@@ -111,18 +116,15 @@
     </details>
   </div>
 
-  <!-- ▼▼▼ ИНСТРУКЦИЯ ПЕРЕМЕЩЕНА В МОДАЛЬНОЕ ОКНО ▼▼▼ -->
   <div id="info-modal" class="modal-overlay is-hidden">
     <div class="modal-content">
       <button class="modal-close-button" title="Закрыть">&times;</button>
       <div class="instruction-container">
         <h2 style="text-align: center; margin-bottom: 20px; font-family: 'Playfair Display', serif;">Инструкция по использованию симулятора трёх тел</h2>
-
         <div style="margin-bottom: 25px;">
           <h3 style="color: #6780FF;">Общее описание</h3>
           <p>Данный симулятор демонстрирует классическую задачу трёх тел в физике — проблему предсказания движения трёх массивных объектов, взаимодействующих гравитационно. В отличие от задачи двух тел, которая имеет аналитическое решение, задача трёх тел в общем случае не имеет точного решения и демонстрирует хаотическое поведение.</p>
         </div>
-
         <div style="margin-bottom: 25px;">
           <h3 style="color: #6780FF;">Режимы симуляции</h3>
           <ul style="list-style-type: none; padding-left: 10px;">
@@ -133,7 +135,6 @@
             <li style="margin-bottom: 12px;"><strong style="color: #ff8b22;">Хаотический режим</strong> — Демонстрация хаотического движения трёх тел с равными массами, начинающими движение из равностороннего треугольника.</li>
           </ul>
         </div>
-
         <div style="margin-bottom: 25px;">
           <h3 style="color: #6780FF;">Управление симуляцией</h3>
           <p>В нижней части экрана симуляции расположены кнопки управления:</p>
@@ -142,21 +143,19 @@
             <li style="margin-bottom: 12px;"><img src="https://evgenii.com/image/blog/2018-09-27-three-body-problem-simulator/mass_two_icon.png" alt="Масса 2" style="width: 20px; vertical-align: middle;"> — Настройка массы второго тела (синего в режиме «Восьмёрка»/«Хаос» или Земли в других режимах).</li>
             <li style="margin-bottom: 12px;"><img src="https://evgenii.com/image/blog/2018-09-27-three-body-problem-simulator/mass_three_icon.png" alt="Масса 3" style="width: 20px; vertical-align: middle;"> — Настройка массы третьего тела (зелёного в режиме «Восьмёрка»/«Хаос» или Юпитера в других режимах).</li>
             <li style="margin-bottom: 12px;"><img src="https://evgenii.com/image/blog/2018-09-27-three-body-problem-simulator/clock_icon.png" alt="Скорость" style="width: 20px; vertical-align: middle;"> — Регулировка скорости симуляции.</li>
-            <li style="margin-bottom: 12px;"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" style="vertical-align: middle;"><path d="M20 6 9 11v8l3-3 8-6z" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 14a8 8 0 1 1 16 0" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> — Настройка параметра смягчения гравитации (epsilon), помогает избежать сингулярностей при близком прохождении тел.</li>
+            <!-- ▼▼▼ ИЗМЕНЕННАЯ ИКОНКА СМЯГЧЕНИЯ В ИНСТРУКЦИИ ▼▼▼ -->
+            <li style="margin-bottom: 12px;"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" style="vertical-align: middle;" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.5 18.5a6.5 6.5 0 1 0 0-13"/><path d="M5.5 12h13"/></svg> — Настройка параметра смягчения гравитации (epsilon), помогает избежать сингулярностей при близком прохождении тел.</li>
             <li style="margin-bottom: 12px;"><img src="https://evgenii.com/image/blog/2016-09-17-ridiculous-strawberry-picking/reload_icon.png" alt="Перезапуск" style="width: 20px; vertical-align: middle;"> — Перезапуск симуляции с текущими параметрами.</li>
           </ul>
         </div>
-
         <div style="margin-bottom: 25px;">
           <h3 style="color: #6780FF;">Как пользоваться слайдером</h3>
           <p>После нажатия на любую из кнопок управления активируется слайдер, расположенный в центре панели управления. Перемещая ползунок слайдера, вы изменяете выбранный параметр:</p>
           <p>Над слайдером отображается текущее значение выбранного параметра.</p>
         </div>
-
         <div style="margin-bottom: 25px;">
           <h3 style="color: #6780FF;">Физическая основа симуляции</h3>
           <p>Задача трёх тел — одна из фундаментальных проблем в классической механике и небесной механике. Она формулируется следующим образом: предсказать движение трёх тел, взаимодействующих только через гравитационные силы, зная их начальные положения, массы и скорости.</p>
-
           <p style="margin-top: 10px;">Основные физические принципы, используемые в симуляции:</p>
           <ul style="list-style-type: none; padding-left: 10px;">
             <li style="margin-bottom: 12px;">• <strong>Уравнение гравитационного взаимодействия:</strong> <span class='formula'>\(F = G \dfrac{m_1 m_2}{r^2}\)</span>, где F — сила притяжения, G — гравитационная постоянная, m₁ и m₂ — массы тел, r — расстояние между ними.</li>
@@ -165,7 +164,6 @@
             <li style="margin-bottom: 12px;">• <strong>Метод Рунге—Кутты:</strong> Численный метод для решения обыкновенных дифференциальных уравнений. Метод 4-го порядка обеспечивает хороший баланс между точностью и эффективностью.</li>
           </ul>
         </div>
-
         <div style="margin-bottom: 25px;">
           <h3 style="color: #6780FF;">Теоретические аспекты</h3>
           <ul style="list-style-type: none; padding-left: 10px;">
@@ -175,7 +173,6 @@
             <li style="margin-bottom: 12px;">• <strong>Точки Лагранжа:</strong> Особые точки в системе трёх тел, где малое тело может оставаться относительно неподвижным по отношению к двум более массивным телам. L5 — одна из этих точек, где силы гравитации уравновешиваются.</li>
           </ul>
         </div>
-
         <div style="margin-bottom: 25px;">
           <h3 style="color: #6780FF;">Астрофизические примеры</h3>
           <ul style="list-style-type: none; padding-left: 10px;">
@@ -185,7 +182,6 @@
             <li style="margin-bottom: 12px;">• <strong>Тройные звезды:</strong> Такие системы, как Альфа Центавра (состоящая из трёх звёзд), представляют собой естественные примеры задачи трёх тел.</li>
           </ul>
         </div>
-
         <div style="margin-bottom: 25px;">
           <h3 style="color: #6780FF;">Исторический контекст</h3>
           <ul style="list-style-type: none; padding-left: 10px;">
@@ -195,7 +191,6 @@
             <li style="margin-bottom: 12px;">• <strong>Современные исследования:</strong> С развитием компьютерного моделирования были открыты новые типы орбит и решений, включая конфигурацию «восьмёрка», показанную в этой симуляции.</li>
           </ul>
         </div>
-
         <div style="margin-bottom: 25px;">
           <h3 style="color: #6780FF;">Отладочная консоль</h3>
           <p>Для более глубокого анализа работы симуляции вы можете использовать консоль разработчика браузера (DevTools):</p>
@@ -214,7 +209,6 @@
             <li style="margin-bottom: 12px;">• <strong>Взаимодействие с симуляцией:</strong> Продвинутые пользователи могут использовать консоль для программного изменения параметров симуляции с помощью JavaScript, обращаясь к глобальным объектам <code>physics</code> и <code>simulation</code>.</li>
           </ul>
         </div>
-
         <p style="font-style: italic; text-align: center; margin-top: 20px;">Задача трёх тел остаётся одной из классических нерешённых проблем физики и демонстрирует, как даже простые системы могут порождать сложное и непредсказуемое поведение.</p>
       </div>
     </div>
@@ -232,13 +226,11 @@
   <script>
     (function() {
       window.chartManager = {};
-
       const MAX_POINTS = 2000;
       let chartsInited = false;
       let velocityChart = null;
       let energyChart = null;
       let frameIndex = 0;
-
       function trimData(chart) {
         const d = chart.data;
         while (d.labels.length > MAX_POINTS) {
@@ -246,7 +238,6 @@
           chart.data.datasets.forEach(ds => ds.data.shift());
         }
       }
-
       function resetCharts() {
         if (!chartsInited) return;
         frameIndex = 0;
@@ -257,18 +248,14 @@
         energyChart.data.datasets.forEach(dataset => { dataset.data = []; });
         energyChart.update('none');
       }
-      
       window.chartManager.reset = resetCharts;
-
       function initCharts() {
         if (chartsInited) return;
         const velCanvas = document.getElementById('velocityChart');
         const engCanvas = document.getElementById('energyChart');
         if (!velCanvas || !engCanvas || !window.Chart) return;
-
         const velCtx = velCanvas.getContext('2d');
         const engCtx = engCanvas.getContext('2d');
-
         velocityChart = new Chart(velCtx, {
           type: 'line',
           data: {
@@ -289,7 +276,6 @@
             }
           }
         });
-
         energyChart = new Chart(engCtx, {
           type: 'line',
           data: {
@@ -308,7 +294,6 @@
             }
           }
         });
-
         chartsInited = true;
         document.getElementById('vel-details')?.addEventListener('toggle', () => setTimeout(() => velocityChart?.resize(), 0));
         document.getElementById('eng-details')?.addEventListener('toggle', () => setTimeout(() => energyChart?.resize(), 0));
@@ -317,13 +302,11 @@
           energyChart?.resize();
         });
       }
-
       function updateCharts() {
         if (window.simulation && typeof simulation.isPaused === 'function' && simulation.isPaused()) {
           requestAnimationFrame(updateCharts);
           return;
         }
-
         if (window.physics && typeof physics.getSpeeds === 'function' && typeof physics.getTotalEnergy === 'function') {
           if (!chartsInited) initCharts();
           if (chartsInited) {
@@ -345,7 +328,6 @@
         }
         requestAnimationFrame(updateCharts);
       }
-
       window.addEventListener('load', () => {
         initCharts();
         requestAnimationFrame(updateCharts);
