@@ -32,7 +32,7 @@ h1 {
 .ThreeBodyProblem-container {
   background-color: #000000;
   position: relative;
-  height: 700px;
+  height: 560px; /* <--- ИЗМЕНЕНИЕ ЗДЕСЬ (было 700px) */
   background-image: url("https://i.ytimg.com/vi/1qiuIpSqkfo/maxresdefault.jpg");
   background-position: center bottom;
   background-repeat: repeat;
