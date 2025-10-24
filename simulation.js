@@ -2,7 +2,7 @@
 var simulation = (function() {
   var calculationsPerFrame = 500;
   var framesPerSecond = 120;
-  var drawTimesPerFrame = 10;
+  var drawTimesPerFrame = 20;
   var drawIndex = Math.ceil(calculationsPerFrame / drawTimesPerFrame);
   const restitution = 1;
   let lastTimestamp = 0;
