@@ -119,6 +119,7 @@ var physics = (function() {
   function calculateNewPosition() {
     for (var iBody = 0; iBody < initialConditions.bodies; iBody++) {
       var bodyStart = iBody * 4;
+      // позиция вычисляется в updatePosition; здесь — заглушка для совместимости
     }
   }
   
@@ -144,7 +145,51 @@ var physics = (function() {
     initialConditions.currentPresetName = conditions.name;
     initialConditions.softeningParameterSquared = conditions.softeningParameterSquared;
   }
-  
+
+  // -------- ДОБАВЛЕНО: скорости и полная энергия --------
+  function getSpeeds() {
+    var speeds = [];
+    for (var i = 0; i < initialConditions.bodies; i++) {
+      var vx = state.u[i*4 + 2], vy = state.u[i*4 + 3];
+      speeds.push(Math.sqrt(vx*vx + vy*vy));
+    }
+    return speeds;
+  }
+
+  function getTotalEnergy() {
+    var G = (initialConditions.dimensionless !== true) ? constants.gravitationalConstant : 1;
+    var softeningSq;
+    if (initialConditions.softeningParameterSquared !== undefined) {
+      softeningSq = initialConditions.softeningParameterSquared;
+    } else if (initialConditions.dimensionless === true) {
+      softeningSq = 0.01;
+    } else {
+      softeningSq = 4.06e13;
+    }
+    var epsilon = Math.sqrt(softeningSq);
+
+    var K = 0, U = 0;
+    // Кинетическая энергия
+    for (var i = 0; i < initialConditions.bodies; i++) {
+      var vx = state.u[i*4 + 2], vy = state.u[i*4 + 3];
+      var v2 = vx*vx + vy*vy;
+      K += 0.5 * initialConditions.masses[i] * v2;
+    }
+    // Потенциальная энергия с таким же смягчением, как в силах: -G m_i m_j / sqrt(r^2 + eps^2)
+    for (var i1 = 0; i1 < initialConditions.bodies; i1++) {
+      for (var j1 = i1 + 1; j1 < initialConditions.bodies; j1++) {
+        var dx = state.u[j1*4]   - state.u[i1*4];
+        var dy = state.u[j1*4+1] - state.u[i1*4+1];
+        var rSoft = Math.sqrt(dx*dx + dy*dy + softeningSq);
+        if (rSoft > 0) {
+          U += - G * initialConditions.masses[i1] * initialConditions.masses[j1] / rSoft;
+        }
+      }
+    }
+    return K + U;
+  }
+  // ------------------------------------------------------
+
   return {
     resetStateToInitialConditions: resetStateToInitialConditions,
     updatePosition: updatePosition,
@@ -157,6 +202,9 @@ var physics = (function() {
     calculateCenterOfMassVelocity: calculateCenterOfMassVelocity,
     largestDistanceMeters: largestDistanceMeters,
     changeInitialConditions: changeInitialConditions,
-    constants: constants
+    constants: constants,
+    // новые публичные методы:
+    getSpeeds: getSpeeds,
+    getTotalEnergy: getTotalEnergy
   };
 })();
