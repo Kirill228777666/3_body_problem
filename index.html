@@ -92,6 +92,23 @@
     </div>
   </div>
 
+  <!-- ▼▼▼ БЛОК С ГРАФИКАМИ (между симуляцией и инструкцией) ▼▼▼ -->
+  <div id="charts-container" style="max-width: 1100px; margin: 20px auto;">
+    <details id="vel-details" style="margin-bottom: 10px;">
+      <summary style="cursor:pointer; font-weight:600;">График скоростей (раскрыть/свернуть)</summary>
+      <div style="width: 100%; height: 360px; margin-top: 10px;">
+        <canvas id="velocityChart" style="width:100%; height:100%;"></canvas>
+      </div>
+    </details>
+    <details id="eng-details">
+      <summary style="cursor:pointer; font-weight:600;">График полной энергии (раскрыть/свернуть)</summary>
+      <div style="width: 100%; height: 360px; margin-top: 10px;">
+        <canvas id="energyChart" style="width:100%; height:100%;"></canvas>
+      </div>
+    </details>
+  </div>
+  <!-- ▲▲▲ КОНЕЦ БЛОКА С ГРАФИКАМИ ▲▲▲ -->
+
   <div class="instruction-container" style="max-width: 900px; margin: 30px auto; padding: 20px; background-color: rgba(28, 37, 65, 0.7); border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); color: #f0f0f0; font-family: sans-serif;">
     <h2 style="text-align: center; margin-bottom: 20px; font-family: 'Playfair Display', serif;">Инструкция по использованию симулятора трёх тел</h2>
 
@@ -105,7 +122,7 @@
       <ul style="list-style-type: none; padding-left: 10px;">
         <li style="margin-bottom: 12px;"><strong style="color: #ff8b22;">Восьмёрка</strong> — Особое периодическое решение задачи трёх тел, когда три объекта равной массы движутся по траектории в форме восьмёрки.</li>
         <li style="margin-bottom: 12px;"><strong style="color: #ff8b22;">Солнце, Земля и Юпитер</strong> — Упрощённая модель движения Солнца, Земли и Юпитера с сохранением приблизительных соотношений масс.</li>
-        <li style="margin-bottom: 12px;"><strong style="color: #ff8b22;">Точка Лагранжа L5</strong> — Демонстрация точки равновесия L5 в системе из трёх тел.</li>
+        <li style="margin-bottom: 12px;"><strong style="color: #ff8б22;">Точка Лагранжа L5</strong> — Демонстрация точки равновесия L5 в системе из трёх тел.</li>
         <li style="margin-bottom: 12px;"><strong style="color: #ff8b22;">Кеплер-16</strong> — Симуляция, основанная на реальной звёздной системе Kepler-16, где планета вращается вокруг двух звёзд.</li>
         <li style="margin-bottom: 12px;"><strong style="color: #ff8b22;">Хаотический режим</strong> — Демонстрация хаотического движения трёх тел с равными массами, начинающими движение из равностороннего треугольника.</li>
       </ul>
@@ -197,12 +214,142 @@
 
   <p class="ThreeBodyProblem-debugOutput"></p>
 
-  <!-- Подключение JavaScript файлов -->
+  <!-- Подключение библиотек и JavaScript файлов -->
   <script src="script.js"></script>
   <script src="physics.js"></script>
   <script src="graphics.js"></script>
+
+  <!-- Chart.js для графиков -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Остальные скрипты проекта -->
   <script src="simulation.js"></script>
   <script src="ui.js"></script>
+
+  <!-- Инициализация и обновление графиков -->
+  <script>
+    (function() {
+      const MAX_POINTS = 2000; // ограничение длины историй для производительности
+      let chartsInited = false;
+      let velocityChart = null;
+      let energyChart = null;
+      let frameIndex = 0; // ось X: номер шага (не «секунды», но растёт синхронно с обновлениями)
+
+      function trimData(chart) {
+        const d = chart.data;
+        while (d.labels.length > MAX_POINTS) {
+          d.labels.shift();
+          chart.data.datasets.forEach(ds => ds.data.shift());
+        }
+      }
+
+      function initCharts() {
+        if (chartsInited) return;
+        const velCanvas = document.getElementById('velocityChart');
+        const engCanvas = document.getElementById('energyChart');
+        if (!velCanvas || !engCanvas || !window.Chart) return;
+
+        const velCtx = velCanvas.getContext('2d');
+        const engCtx = engCanvas.getContext('2d');
+
+        velocityChart = new Chart(velCtx, {
+          type: 'line',
+          data: {
+            labels: [],
+            datasets: [
+              { label: 'Скорость тела 1', data: [], borderColor: '#ff8b22', pointRadius: 0, tension: 0.1 },
+              { label: 'Скорость тела 2', data: [], borderColor: '#6c81ff', pointRadius: 0, tension: 0.1 },
+              { label: 'Скорость тела 3', data: [], borderColor: '#4ccd7a', pointRadius: 0, tension: 0.1 }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: false,
+            interaction: { mode: 'nearest', intersect: false },
+            plugins: {
+              legend: { display: true },
+              tooltip: { enabled: true }
+            },
+            scales: {
+              x: { title: { display: true, text: 'Шаг симуляции' }, ticks: { maxTicksLimit: 8 } },
+              y: { title: { display: true, text: 'Скорость (|v|)' }, ticks: { maxTicksLimit: 8 } }
+            }
+          }
+        });
+
+        energyChart = new Chart(engCtx, {
+          type: 'line',
+          data: {
+            labels: [],
+            datasets: [
+              { label: 'Полная энергия', data: [], borderColor: '#ff4c4c', pointRadius: 0, tension: 0.1 }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: false,
+            interaction: { mode: 'nearest', intersect: false },
+            plugins: {
+              legend: { display: true },
+              tooltip: { enabled: true }
+            },
+            scales: {
+              x: { title: { display: true, text: 'Шаг симуляции' }, ticks: { maxTicksLimit: 8 } },
+              y: { title: { display: true, text: 'Энергия (K+U)' }, ticks: { maxTicksLimit: 8 } }
+            }
+          }
+        });
+
+        chartsInited = true;
+
+        // при раскрытии details делаем resize, чтобы канвасы корректно заполнили ширину
+        document.getElementById('vel-details')?.addEventListener('toggle', () => setTimeout(() => velocityChart?.resize(), 0));
+        document.getElementById('eng-details')?.addEventListener('toggle', () => setTimeout(() => energyChart?.resize(), 0));
+        window.addEventListener('resize', () => {
+          velocityChart?.resize();
+          energyChart?.resize();
+        });
+      }
+
+      function updateCharts() {
+        // Дожидаемся, когда physics и методы готовы
+        if (window.physics && typeof physics.getSpeeds === 'function' && typeof physics.getTotalEnergy === 'function') {
+          if (!chartsInited) initCharts();
+
+          if (chartsInited) {
+            const speeds = physics.getSpeeds();        // [v1,v2,v3]
+            const energy = physics.getTotalEnergy();   // число
+
+            frameIndex += 1;
+            const label = String(frameIndex);
+
+            // Скорости
+            velocityChart.data.labels.push(label);
+            for (let i = 0; i < 3; i++) {
+              velocityChart.data.datasets[i].data.push(speeds[i] ?? null);
+            }
+            trimData(velocityChart);
+            velocityChart.update('none');
+
+            // Энергия
+            energyChart.data.labels.push(label);
+            energyChart.data.datasets[0].data.push(energy);
+            trimData(energyChart);
+            energyChart.update('none');
+          }
+        }
+        requestAnimationFrame(updateCharts);
+      }
+
+      // Стартуем цикл после загрузки
+      window.addEventListener('load', () => {
+        initCharts();
+        requestAnimationFrame(updateCharts);
+      });
+    })();
+  </script>
 
 </body>
 </html>
