@@ -107,9 +107,9 @@
       </div>
     </details>
     <details id="eng-details">
-      <summary style="cursor:pointer; font-weight:600;">График полной энергии (раскрыть/свернуть)</summary>
+      <summary style="cursor:pointer; font-weight:600;">График ускорений (раскрыть/свернуть)</summary>
       <div style="width: 100%; height: 360px; margin-top: 10px;">
-        <canvas id="energyChart" style="width:100%; height:100%;"></canvas>
+        <canvas id="accelerationChart" style="width:100%; height:100%;"></canvas>
       </div>
     </details>
   </div>
@@ -226,7 +226,7 @@
       const MAX_POINTS = 2000;
       let chartsInited = false;
       let velocityChart = null;
-      let energyChart = null;
+      let accelerationChart = null;
       let frameIndex = 0;
       function trimData(chart) {
         const d = chart.data;
@@ -241,18 +241,18 @@
         velocityChart.data.labels = [];
         velocityChart.data.datasets.forEach(dataset => { dataset.data = []; });
         velocityChart.update('none');
-        energyChart.data.labels = [];
-        energyChart.data.datasets.forEach(dataset => { dataset.data = []; });
-        energyChart.update('none');
+        accelerationChart.data.labels = [];
+        accelerationChart.data.datasets.forEach(dataset => { dataset.data = []; });
+        accelerationChart.update('none');
       }
       window.chartManager.reset = resetCharts;
       function initCharts() {
         if (chartsInited) return;
         const velCanvas = document.getElementById('velocityChart');
-        const engCanvas = document.getElementById('energyChart');
-        if (!velCanvas || !engCanvas || !window.Chart) return;
+        const accCanvas = document.getElementById('accelerationChart');
+        if (!velCanvas || !accCanvas || !window.Chart) return;
         const velCtx = velCanvas.getContext('2d');
-        const engCtx = engCanvas.getContext('2d');
+        const accCtx = accCanvas.getContext('2d');
         velocityChart = new Chart(velCtx, {
           type: 'line',
           data: {
@@ -273,12 +273,14 @@
             }
           }
         });
-        energyChart = new Chart(engCtx, {
+        accelerationChart = new Chart(accCtx, {
           type: 'line',
           data: {
             labels: [],
             datasets: [
-              { label: 'Полная энергия', data: [], borderColor: '#ff4c4c', pointRadius: 0, tension: 0.1 }
+              { label: 'Ускорение тела 1', data: [], borderColor: '#ff8b22', pointRadius: 0, tension: 0.1 },
+              { label: 'Ускорение тела 2', data: [], borderColor: '#6c81ff', pointRadius: 0, tension: 0.1 },
+              { label: 'Ускорение тела 3', data: [], borderColor: '#4ccd7a', pointRadius: 0, tension: 0.1 }
             ]
           },
           options: {
@@ -287,16 +289,16 @@
             plugins: { legend: { display: true }, tooltip: { enabled: true } },
             scales: {
               x: { title: { display: true, text: 'Шаг симуляции' }, ticks: { maxTicksLimit: 8 } },
-              y: { title: { display: true, text: 'Энергия (K+U)' }, ticks: { maxTicksLimit: 8 } }
+              y: { title: { display: true, text: 'Ускорение (|a|)' }, ticks: { maxTicksLimit: 8 } }
             }
           }
         });
         chartsInited = true;
         document.getElementById('vel-details')?.addEventListener('toggle', () => setTimeout(() => velocityChart?.resize(), 0));
-        document.getElementById('eng-details')?.addEventListener('toggle', () => setTimeout(() => energyChart?.resize(), 0));
+        document.getElementById('eng-details')?.addEventListener('toggle', () => setTimeout(() => accelerationChart?.resize(), 0));
         window.addEventListener('resize', () => {
           velocityChart?.resize();
-          energyChart?.resize();
+          accelerationChart?.resize();
         });
       }
       function updateCharts() {
@@ -304,26 +306,30 @@
           requestAnimationFrame(updateCharts);
           return;
         }
-        if (window.physics && typeof physics.getSpeeds === 'function' && typeof physics.getTotalEnergy === 'function') {
+        if (window.physics && typeof physics.getSpeeds === 'function' && typeof physics.getAccelerations === 'function') {
           if (!chartsInited) initCharts();
           if (chartsInited) {
             const speeds = physics.getSpeeds();
             const totalSpeed = speeds.reduce((sum, speed) => sum + (speed || 0), 0);
             
             if (totalSpeed > 0) {
-              const energy = physics.getTotalEnergy();
+              const accelerations = physics.getAccelerations();
               frameIndex += 1;
               const label = String(frameIndex);
+
               velocityChart.data.labels.push(label);
               for (let i = 0; i < 3; i++) {
                 velocityChart.data.datasets[i].data.push(speeds[i] ?? null);
               }
               trimData(velocityChart);
               velocityChart.update('none');
-              energyChart.data.labels.push(label);
-              energyChart.data.datasets[0].data.push(energy);
-              trimData(energyChart);
-              energyChart.update('none');
+
+              accelerationChart.data.labels.push(label);
+              for (let i = 0; i < 3; i++) {
+                accelerationChart.data.datasets[i].data.push(accelerations[i] ?? null);
+              }
+              trimData(accelerationChart);
+              accelerationChart.update('none');
             }
           }
         }
