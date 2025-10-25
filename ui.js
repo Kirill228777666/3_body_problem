@@ -1,4 +1,3 @@
-// CSS Helper функции
 var cssHelper = (function(){
   function hasClass(element, className) {
     return (' ' + element.className + ' ').indexOf(' ' + className + ' ') > -1;
@@ -13,7 +12,6 @@ var cssHelper = (function(){
   return { hasClass: hasClass, removeClass: removeClass, addClass: addClass };
 })();
 
-// Симуляции и пресеты
 var simulations = (function(){
   var content = { didChangeModel: null };
   var vigure8Position = {x: 0.97000436, y: -0.24308753};
@@ -114,7 +112,6 @@ var simulations = (function(){
   return { init:init, content:content };
 })();
 
-// Кривая нечетной степени
 var oddPowerCurve = (function(){
   function calcualteL(d,p){ if(p===0)return 1; return -Math.pow(d,1/p); }
   function calcualteA(d,p){ if(p===0)return 1; return Math.pow(1-d,1/p)-calcualteL(d,p); }
@@ -135,7 +132,6 @@ var oddPowerCurve = (function(){
   return { sliderInputValue:sliderInputValue, sliderOutputValue:sliderOutputValue };
 })();
 
-// Пользовательский ввод
 var userInput = (function(){
   var sliderLabelElement = document.querySelector(".ThreeBodyProblem-sliderLabel");
   var restartButton = document.querySelector(".ThreeBodyProblem-reload");
@@ -512,31 +508,26 @@ var userInput = (function(){
     var useCircles = (currentModel.name==="FigureEight" || currentModel.name==="Chaotic");
     updateMassButtonsAppearance(useCircles);
 
-    // ▼▼▼ ЛОГИКА ДЛЯ МОДАЛЬНОГО ОКНА ▼▼▼
     var infoButton = document.getElementById('info-button');
     var infoModal = document.getElementById('info-modal');
     var closeModalButton = infoModal.querySelector('.modal-close-button');
 
     if (infoButton && infoModal && closeModalButton) {
-      // Открыть модальное окно
       infoButton.addEventListener('click', function(e) {
         e.preventDefault();
         cssHelper.removeClass(infoModal, 'is-hidden');
       });
 
-      // Закрыть по кнопке "X"
       closeModalButton.addEventListener('click', function() {
         cssHelper.addClass(infoModal, 'is-hidden');
       });
 
-      // Закрыть по клику на фон
       infoModal.addEventListener('click', function(e) {
         if (e.target === infoModal) {
           cssHelper.addClass(infoModal, 'is-hidden');
         }
       });
 
-      // Закрыть по клавише Escape
       window.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && !cssHelper.hasClass(infoModal, 'is-hidden')) {
           cssHelper.addClass(infoModal, 'is-hidden');
@@ -548,7 +539,6 @@ var userInput = (function(){
   return { init:init };
 })();
 
-// Инициализация пользовательского интерфейса
 userInput.init();
 
 (function(){
