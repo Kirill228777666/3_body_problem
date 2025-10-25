@@ -119,7 +119,6 @@ var physics = (function() {
   function calculateNewPosition() {
     for (var iBody = 0; iBody < initialConditions.bodies; iBody++) {
       var bodyStart = iBody * 4;
-      // позиция вычисляется в updatePosition; здесь — заглушка для совместимости
     }
   }
   
@@ -146,7 +145,6 @@ var physics = (function() {
     initialConditions.softeningParameterSquared = conditions.softeningParameterSquared;
   }
 
-  // -------- ДОБАВЛЕНО: скорости и полная энергия --------
   function getSpeeds() {
     var speeds = [];
     for (var i = 0; i < initialConditions.bodies; i++) {
@@ -169,13 +167,11 @@ var physics = (function() {
     var epsilon = Math.sqrt(softeningSq);
 
     var K = 0, U = 0;
-    // Кинетическая энергия
     for (var i = 0; i < initialConditions.bodies; i++) {
       var vx = state.u[i*4 + 2], vy = state.u[i*4 + 3];
       var v2 = vx*vx + vy*vy;
       K += 0.5 * initialConditions.masses[i] * v2;
     }
-    // Потенциальная энергия с таким же смягчением, как в силах: -G m_i m_j / sqrt(r^2 + eps^2)
     for (var i1 = 0; i1 < initialConditions.bodies; i1++) {
       for (var j1 = i1 + 1; j1 < initialConditions.bodies; j1++) {
         var dx = state.u[j1*4]   - state.u[i1*4];
@@ -188,7 +184,6 @@ var physics = (function() {
     }
     return K + U;
   }
-  // ------------------------------------------------------
 
   return {
     resetStateToInitialConditions: resetStateToInitialConditions,
@@ -203,7 +198,6 @@ var physics = (function() {
     largestDistanceMeters: largestDistanceMeters,
     changeInitialConditions: changeInitialConditions,
     constants: constants,
-    // новые публичные методы:
     getSpeeds: getSpeeds,
     getTotalEnergy: getTotalEnergy
   };
