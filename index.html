@@ -308,19 +308,23 @@
           if (!chartsInited) initCharts();
           if (chartsInited) {
             const speeds = physics.getSpeeds();
-            const energy = physics.getTotalEnergy();
-            frameIndex += 1;
-            const label = String(frameIndex);
-            velocityChart.data.labels.push(label);
-            for (let i = 0; i < 3; i++) {
-              velocityChart.data.datasets[i].data.push(speeds[i] ?? null);
+            const totalSpeed = speeds.reduce((sum, speed) => sum + (speed || 0), 0);
+            
+            if (totalSpeed > 0) {
+              const energy = physics.getTotalEnergy();
+              frameIndex += 1;
+              const label = String(frameIndex);
+              velocityChart.data.labels.push(label);
+              for (let i = 0; i < 3; i++) {
+                velocityChart.data.datasets[i].data.push(speeds[i] ?? null);
+              }
+              trimData(velocityChart);
+              velocityChart.update('none');
+              energyChart.data.labels.push(label);
+              energyChart.data.datasets[0].data.push(energy);
+              trimData(energyChart);
+              energyChart.update('none');
             }
-            trimData(velocityChart);
-            velocityChart.update('none');
-            energyChart.data.labels.push(label);
-            energyChart.data.datasets[0].data.push(energy);
-            trimData(energyChart);
-            energyChart.update('none');
           }
         }
         requestAnimationFrame(updateCharts);
