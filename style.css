@@ -97,12 +97,10 @@ h1 {
   z-index: 1001;
   left: 0;
   top: 0;
-  /* Добавляем, чтобы дочерние абсолютные элементы не могли выйти за его пределы */
   pointer-events: none;
 }
 
 .ThreeBodyProblem-hudContainer > * {
-  /* Возвращаем кликабельность дочерним элементам */
   pointer-events: auto;
 }
 
