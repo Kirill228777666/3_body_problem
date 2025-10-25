@@ -143,6 +143,10 @@ var userInput = (function(){
   var sliderElement = document.querySelector(".ThreeBodyProblem-slider");
   var slider, currentSlider="mass", currentMassSliderIndex=0, currentModel;
 
+  var downloadSceneButton = document.getElementById('download-scene-button');
+  var uploadSceneButton = document.getElementById('upload-scene-button');
+  var sceneUploader = document.getElementById('scene-uploader');
+
   var sliderEditInput = null;
   function ensureSliderEdit() {
     if (sliderEditInput) return;
@@ -449,6 +453,13 @@ var userInput = (function(){
     currentModel = model;
     physics.changeInitialConditions(currentModel);
 
+    var presetEls = document.querySelectorAll(".ThreeBodyProblem-preset");
+    if (model.name === "Custom") {
+      for (var i=0; i<presetEls.length; i++) {
+        cssHelper.removeClass(presetEls[i],'ThreeBodyProblem-button--isSelected');
+      }
+    }
+
     var sunEl = document.querySelector(".ThreeBodyProblem-sun");
     var earthEl = document.querySelector(".ThreeBodyProblem-earth");
     var jupEl = document.querySelector(".ThreeBodyProblem-jupiter");
@@ -478,6 +489,83 @@ var userInput = (function(){
   function didClickSpeed(){ currentSlider="speed"; currentMassSliderIndex=0; resetSlider(); return false; }
   function didClickSoftening(){ currentSlider="softening"; currentMassSliderIndex=0; resetSlider(); return false; }
 
+  function didClickDownloadScene() {
+    var sceneData = {
+      name: "Custom Scene",
+      dimensionless: physics.initialConditions.dimensionless,
+      masses: physics.initialConditions.masses,
+      positions: physics.initialConditions.positions,
+      velocities: physics.initialConditions.velocities,
+      timeScaleFactor: physics.initialConditions.timeScaleFactor,
+      softeningParameterSquared: physics.initialConditions.softeningParameterSquared
+    };
+    
+    var jsonString = JSON.stringify(sceneData, null, 2);
+    var blob = new Blob([jsonString], { type: "application/json" });
+    var url = URL.createObjectURL(blob);
+    
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'three-body-scene.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    return false;
+  }
+  
+  function didClickUploadScene() {
+    sceneUploader.click();
+    return false;
+  }
+
+  function handleFileUpload(event) {
+    var file = event.target.files[0];
+    if (!file) return;
+
+    if (file.type !== 'application/json' && !file.name.endsWith('.json')) {
+      alert("Пожалуйста, выберите корректный JSON файл.");
+      return;
+    }
+
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var content = e.target.result;
+      try {
+        var data = JSON.parse(content);
+        
+        var customPreset = {
+          name: "Custom",
+          dimensionless: data.dimensionless,
+          masses: data.masses,
+          positions: data.positions,
+          velocities: data.velocities,
+          timeScaleFactor: data.timeScaleFactor,
+          softeningParameterSquared: data.softeningParameterSquared,
+          massSlider: data.dimensionless ? { min: 0.1, max: 10, power: 3 } : { min: 3e10, max: 3e31, power: 5 },
+          timeScaleFactorSlider: data.dimensionless ? { min: 0.00, max: 20, power: 1 } : { min: 0, max: 3600*24*365*1000, power: 5 },
+          densities: null,
+          paleOrbitalPaths: false
+        };
+        
+        didChangeModel(customPreset);
+        
+        simulation.pause();
+        var pauseButton = document.querySelector('.ThreeBodyProblem-pause');
+        if (pauseButton) {
+          pauseButton.textContent = 'Продолжить';
+        }
+
+      } catch (error) {
+        alert("Ошибка при загрузке или обработке файла: " + error.message);
+      }
+    };
+    reader.readAsText(file);
+    
+    event.target.value = '';
+  }
+
   function init(){
     currentModel = simulations.init();
     physics.changeInitialConditions(currentModel);
@@ -495,6 +583,10 @@ var userInput = (function(){
     if (mass3Button) mass3Button.onclick = didClickMass3;
     if (speedButton) speedButton.onclick = didClickSpeed;
     if (softeningButton) softeningButton.onclick = didClickSoftening;
+
+    if (downloadSceneButton) downloadSceneButton.onclick = didClickDownloadScene;
+    if (uploadSceneButton) uploadSceneButton.onclick = didClickUploadScene;
+    if (sceneUploader) sceneUploader.onchange = handleFileUpload;
 
     var pauseButton = document.querySelector('.ThreeBodyProblem-pause');
     if (pauseButton){
