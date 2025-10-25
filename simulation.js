@@ -1,4 +1,3 @@
-// Основной движок симуляции
 var simulation = (function() {
   var calculationsPerFrame = 500;
   var framesPerSecond = 120;
