@@ -190,7 +190,7 @@ var physics = (function() {
     for (var i = 0; i < initialConditions.bodies; i++) {
         var ax = acceleration(i, 0);
         var ay = acceleration(i, 1);
-        accelerations.push(Math.sqrt(ax*ax + ay*ay));
+        accelerations.push({ ax: ax, ay: ay });
     }
     return accelerations;
   }
