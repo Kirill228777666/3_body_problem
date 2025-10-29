@@ -20,7 +20,16 @@ var graphics = (function() {
         {x: null, y: null}
       ],
       bodyElemenets = [],
-      currentBodySizes = [10, 10, 10];
+      currentBodySizes = [10, 10, 10],
+      approximationCoeffs = [];
+
+  function setApproximation(coeffs) {
+    approximationCoeffs = coeffs;
+  }
+
+  function drawApproximationCurve() {
+    return;
+  }
 
   function drawBody(position, size, bodyElement) {
     var newLeft = position.x - (size / 2);
@@ -145,6 +154,8 @@ var graphics = (function() {
     clearScene: clearScene,
     calculateNewPositions: calculateNewPositions,
     init: init,
-    getBoundaries: getBoundaries
+    getBoundaries: getBoundaries,
+    setApproximation: setApproximation,
+    drawApproximationCurve: drawApproximationCurve
   };
 })();
