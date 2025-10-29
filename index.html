@@ -16,6 +16,38 @@
     };
   </script>
   <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+  
+  <style>
+    .approximation-display-style {
+      background-color: rgba(28, 37, 65, 0.7);
+      padding: 15px 20px;
+      margin: 10px auto 0 auto;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      max-width: 700px;
+      color: #f0f0f0;
+    }
+    .approximation-display-style h4 {
+      margin-top: 0;
+      margin-bottom: 15px;
+      text-align: center;
+      font-weight: 600;
+    }
+    .approximation-display-style pre {
+      font-family: monospace;
+      font-size: 1.1em;
+      text-align: left;
+      margin: 10px auto;
+      padding: 10px;
+      background: rgba(0,0,0,0.2);
+      border-radius: 4px;
+      white-space: pre-wrap;
+    }
+    #formula-text-0 { color: #ff8b22; }
+    #formula-text-1 { color: #6c81ff; }
+    #formula-text-2 { color: #4ccd7a; }
+  </style>
+
 </head>
 <body>
 
@@ -109,10 +141,22 @@
         <canvas id="velocityChart" style="width:100%; height:100%;"></canvas>
       </div>
     </details>
-    <details id="eng-details">
+    <details id="eng-details" style="margin-bottom: 10px;">
       <summary style="cursor:pointer; font-weight:600;">График ускорений (раскрыть/свернуть)</summary>
       <div style="width: 100%; height: 360px; margin-top: 10px;">
         <canvas id="accelerationChart" style="width:100%; height:100%;"></canvas>
+      </div>
+    </details>
+    <details id="approx-details">
+      <summary style="cursor:pointer; font-weight:600;">Мгновенные аппроксимации траекторий (раскрыть/свернуть)</summary>
+      <div id="approximation-display" class="approximation-display-style">
+        <h4>Мгновенные аппроксимации траекторий</h4>
+        <div style="text-align: center; margin-bottom: 15px;">
+           <button class="ThreeBodyProblem-button" id="download-log-button">Скачать лог формул</button>
+        </div>
+        <pre id="formula-text-0"></pre>
+        <pre id="formula-text-1"></pre>
+        <pre id="formula-text-2"></pre>
       </div>
     </details>
   </div>
@@ -121,95 +165,6 @@
     <div class="modal-content">
       <button class="modal-close-button" title="Закрыть">&times;</button>
       <div class="instruction-container">
-        <h2 style="text-align: center; margin-bottom: 20px; font-family: 'Playfair Display', serif;">Инструкция по использованию симулятора трёх тел</h2>
-        <div style="margin-bottom: 25px;">
-          <h3 style="color: #6780FF;">Общее описание</h3>
-          <p>Данный симулятор демонстрирует классическую задачу трёх тел в физике — проблему предсказания движения трёх массивных объектов, взаимодействующих гравитационно. В отличие от задачи двух тел, которая имеет аналитическое решение, задача трёх тел в общем случае не имеет точного решения и демонстрирует хаотическое поведение.</p>
-        </div>
-        <div style="margin-bottom: 25px;">
-          <h3 style="color: #6780FF;">Режимы симуляции</h3>
-          <ul style="list-style-type: none; padding-left: 10px;">
-            <li style="margin-bottom: 12px;"><strong style="color: #ff8b22;">Восьмёрка</strong> — Особое периодическое решение задачи трёх тел, когда три объекта равной массы движутся по траектории в форме восьмёрки.</li>
-            <li style="margin-bottom: 12px;"><strong style="color: #ff8b22;">Солнце, Земля и Юпитер</strong> — Упрощённая модель движения Солнца, Земли и Юпитера с сохранением приблизительных соотношений масс.</li>
-            <li style="margin-bottom: 12px;"><strong style="color: #ff8б22;">Точка Лагранжа L5</strong> — Демонстрация точки равновесия L5 в системе из трёх тел.</li>
-            <li style="margin-bottom: 12px;"><strong style="color: #ff8b22;">Кеплер-16</strong> — Симуляция, основанная на реальной звёздной системе Kepler-16, где планета вращается вокруг двух звёзд.</li>
-            <li style="margin-bottom: 12px;"><strong style="color: #ff8b22;">Хаотический режим</strong> — Демонстрация хаотического движения трёх тел с равными массами, начинающими движение из равностороннего треугольника.</li>
-          </ul>
-        </div>
-        <div style="margin-bottom: 25px;">
-          <h3 style="color: #6780FF;">Управление симуляцией</h3>
-          <p>В нижней части экрана симуляции расположены кнопки управления:</p>
-          <ul style="list-style-type: none; padding-left: 10px;">
-            <li style="margin-bottom: 12px;"><img src="https://evgenii.com/image/blog/2018-09-27-three-body-problem-simulator/mass_one_icon.png" alt="Масса 1" style="width: 20px; vertical-align: middle;"> — Настройка массы первого тела (красного в режиме «Восьмёрка»/«Хаос» или Солнца в других режимах).</li>
-            <li style="margin-bottom: 12px;"><img src="https://evgenii.com/image/blog/2018-09-27-three-body-problem-simulator/mass_two_icon.png" alt="Масса 2" style="width: 20px; vertical-align: middle;"> — Настройка массы второго тела (синего в режиме «Восьмёрка»/«Хаос» или Земли в других режимах).</li>
-            <li style="margin-bottom: 12px;"><img src="https://evgenii.com/image/blog/2018-09-27-three-body-problem-simulator/mass_three_icon.png" alt="Масса 3" style="width: 20px; vertical-align: middle;"> — Настройка массы третьего тела (зелёного в режиме «Восьмёрка»/«Хаос» или Юпитера в других режимах).</li>
-            <li style="margin-bottom: 12px;"><img src="https://evgenii.com/image/blog/2018-09-27-three-body-problem-simulator/clock_icon.png" alt="Скорость" style="width: 20px; vertical-align: middle;"> — Регулировка скорости симуляции.</li>
-            <li style="margin-bottom: 12px;"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" style="vertical-align: middle;" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.5 18.5a6.5 6.5 0 1 0 0-13"/><path d="M5.5 12h13"/></svg> — Настройка параметра смягчения гравитации (epsilon), помогает избежать сингулярностей при близком прохождении тел.</li>
-            <li style="margin-bottom: 12px;"><img src="https://evgenii.com/image/blog/2016-09-17-ridiculous-strawberry-picking/reload_icon.png" alt="Перезапуск" style="width: 20px; vertical-align: middle;"> — Перезапуск симуляции с текущими параметрами.</li>
-          </ul>
-        </div>
-        <div style="margin-bottom: 25px;">
-          <h3 style="color: #6780FF;">Как пользоваться слайдером</h3>
-          <p>После нажатия на любую из кнопок управления активируется слайдер, расположенный в центре панели управления. Перемещая ползунок слайдера, вы изменяете выбранный параметр:</p>
-          <p>Над слайдером отображается текущее значение выбранного параметра.</p>
-        </div>
-        <div style="margin-bottom: 25px;">
-          <h3 style="color: #6780FF;">Физическая основа симуляции</h3>
-          <p>Задача трёх тел — одна из фундаментальных проблем в классической механике и небесной механике. Она формулируется следующим образом: предсказать движение трёх тел, взаимодействующих только через гравитационные силы, зная их начальные положения, массы и скорости.</p>
-          <p style="margin-top: 10px;">Основные физические принципы, используемые в симуляции:</p>
-          <ul style="list-style-type: none; padding-left: 10px;">
-            <li style="margin-bottom: 12px;">• <strong>Уравнение гравитационного взаимодействия:</strong> <span class='formula'>\(F = G \dfrac{m_1 m_2}{r^2}\)</span>, где F — сила притяжения, G — гравитационная постоянная, m₁ и m₂ — массы тел, r — расстояние между ними.</li>
-            <li style="margin-bottom: 12px;">• <strong>Параметр смягчения гравитации (ε):</strong> Модифицирует закон Ньютона для избежания сингулярностей при очень сильных сближениях тел. Использованная формула: <span class='formula'>\(F = G \dfrac{m_1 m_2}{\left(r^2 + \varepsilon^2\right)^{3/2}}\)</span>.</li>
-            <li style="margin-bottom: 12px;">• <strong>Второй закон Ньютона:</strong> <span class='formula'>\(F = m a\)</span>, где F — сила, m — масса, a — ускорение. В сочетании с законом гравитации это даёт систему дифференциальных уравнений.</li>
-            <li style="margin-bottom: 12px;">• <strong>Метод Рунге—Кутты:</strong> Численный метод для решения обыкновенных дифференциальных уравнений. Метод 4-го порядка обеспечивает хороший баланс между точностью и эффективностью.</li>
-          </ul>
-        </div>
-        <div style="margin-bottom: 25px;">
-          <h3 style="color: #6780FF;">Теоретические аспекты</h3>
-          <ul style="list-style-type: none; padding-left: 10px;">
-            <li style="margin-bottom: 12px;">• <strong>Отсутствие аналитического решения:</strong> В отличие от задачи двух тел, которая имеет точное решение через эллиптические орбиты (законы Кеплера), задача трёх тел в общем случае не имеет аналитического решения.</li>
-            <li style="margin-bottom: 12px;">• <strong>Хаотичность:</strong> Система трёх тел демонстрирует хаотическое поведение — небольшие изменения начальных условий могут привести к радикально различающимся траекториям со временем (эффект «бабочки»).</li>
-            <li style="margin-bottom: 12px;">• <strong>Особые решения:</strong> Существуют некоторые особые случаи, когда движение трёх тел является периодическим или квази-периодическим. «Восьмёрка» — один из таких случаев, открытый относительно недавно (в 1993 году Муром, а в 2000 году Шенсине и Монтгомери дали строгое доказательство).</li>
-            <li style="margin-bottom: 12px;">• <strong>Точки Лагранжа:</strong> Особые точки в системе трёх тел, где малое тело может оставаться относительно неподвижным по отношению к двум более массивным телам. L5 — одна из этих точек, где силы гравитации уравновешиваются.</li>
-          </ul>
-        </div>
-        <div style="margin-bottom: 25px;">
-          <h3 style="color: #6780FF;">Астрофизические примеры</h3>
-          <ul style="list-style-type: none; padding-left: 10px;">
-            <li style="margin-bottom: 12px;">• <strong>Солнце — Земля — Луна:</strong> Классический пример системы трёх тел в нашей Солнечной системе.</li>
-            <li style="margin-bottom: 12px;">• <strong>Солнце — Юпитер — астероиды:</strong> Астероиды в точках Лагранжа L4 и L5 Юпитера («троянцы» и «греки») демонстрируют стабильность в трёхтельной системе.</li>
-            <li style="margin-bottom: 12px;">• <strong>Системы с экзопланетами:</strong> Kepler-16 — реальная двойная звёздная система с планетой, вращающейся вокруг обеих звёзд.</li>
-            <li style="margin-bottom: 12px;">• <strong>Тройные звезды:</strong> Такие системы, как Альфа Центавра (состоящая из трёх звёзд), представляют собой естественные примеры задачи трёх тел.</li>
-          </ul>
-        </div>
-        <div style="margin-bottom: 25px;">
-          <h3 style="color: #6780FF;">Исторический контекст</h3>
-          <ul style="list-style-type: none; padding-left: 10px;">
-            <li style="margin-bottom: 12px;">• <strong>Работы Ньютона:</strong> Сам Исаак Ньютон занимался задачей трёх тел, но не смог найти общее решение.</li>
-            <li style="margin-bottom: 12px;">• <strong>Теорема Брунса—Пуанкаре:</strong> В 1887 году было доказано, что не существует общего аналитического решения задачи трёх тел в терминах алгебраических формул и интегралов.</li>
-            <li style="margin-bottom: 12px;">• <strong>Ограниченная задача трёх тел:</strong> Эйлер и Лагранж нашли некоторые частные решения для случая, когда масса третьего тела пренебрежимо мала.</li>
-            <li style="margin-bottom: 12px;">• <strong>Современные исследования:</strong> С развитием компьютерного моделирования были открыты новые типы орбит и решений, включая конфигурацию «восьмёрка», показанную в этой симуляции.</li>
-          </ul>
-        </div>
-        <div style="margin-bottom: 25px;">
-          <h3 style="color: #6780FF;">Отладочная консоль</h3>
-          <p>Для более глубокого анализа работы симуляции вы можете использовать консоль разработчика браузера (DevTools):</p>
-          <ul style="list-style-type: none; padding-left: 10px;">
-            <li style="margin-bottom: 12px;">• <strong>Открытие консоли:</strong> Нажмите F12 или Ctrl+Shift+I (Cmd+Option+I на Mac), чтобы открыть инструменты разработчика, затем перейдите на вкладку «Консоль».</li>
-            <li style="margin-bottom: 12px;">• <strong>Отладочная информация:</strong> Каждые 500 мс симулятор выводит подробные данные о текущем состоянии системы, включая:
-              <ul style="padding-left: 20px; margin-top: 5px;">
-                <li>Текущее время</li>
-                <li>Название активного пресета</li>
-                <li>Временной масштаб</li>
-                <li>Координаты и скорости каждого тела</li>
-                <li>Массы тел</li>
-              </ul>
-            </li>
-            <li style="margin-bottom: 12px;">• <strong>Расширенный анализ:</strong> Вы можете использовать консоль для наблюдения за параметрами симуляции в реальном времени и отслеживания изменений в системе при модификации параметров.</li>
-            <li style="margin-bottom: 12px;">• <strong>Взаимодействие с симуляцией:</strong> Продвинутые пользователи могут использовать консоль для программного изменения параметров симуляции с помощью JavaScript, обращаясь к глобальным объектам <code>physics</code> и <code>simulation</code>.</li>
-          </ul>
-        </div>
-        <p style="font-style: italic; text-align: center; margin-top: 20px;">Задача трёх тел остаётся одной из классических нерешённых проблем физики и демонстрирует, как даже простые системы могут порождать сложное и непредсказуемое поведение.</p>
       </div>
     </div>
   </div>
@@ -329,7 +284,8 @@
 
               accelerationChart.data.labels.push(label);
               for (let i = 0; i < 3; i++) {
-                accelerationChart.data.datasets[i].data.push(accelerations[i] ?? null);
+                const accMagnitude = accelerations[i] ? Math.sqrt(accelerations[i].ax**2 + accelerations[i].ay**2) : null;
+                accelerationChart.data.datasets[i].data.push(accMagnitude);
               }
               trimData(accelerationChart);
               accelerationChart.update('none');
