@@ -132,6 +132,87 @@ var oddPowerCurve = (function(){
   return { sliderInputValue:sliderInputValue, sliderOutputValue:sliderOutputValue };
 })();
 
+var logManager = (function() {
+    var approximationLog = [];
+    var simulationTime = 0;
+    var lastLogTimestamp = 0;
+    var logInterval = 100;
+
+    function clear() {
+        approximationLog = [];
+        simulationTime = 0;
+        lastLogTimestamp = 0;
+        for (let i = 0; i < 3; i++) {
+            const formulaEl = document.getElementById('formula-text-' + i);
+            if (formulaEl) formulaEl.innerHTML = '';
+        }
+    }
+    
+    function update(currentTime) {
+        if (currentTime - lastLogTimestamp < logInterval) {
+            return;
+        }
+        lastLogTimestamp = currentTime;
+
+        const allAccs = physics.getAccelerations();
+        if (!allAccs || allAccs.length === 0) return;
+
+        var currentLogBlock = `Moment of Time: ${(simulationTime / 1000).toFixed(3)}s\n`;
+
+        for (let bodyIndex = 0; bodyIndex < 3; bodyIndex++) {
+            const formulaEl = document.getElementById('formula-text-' + bodyIndex);
+            const i = bodyIndex * 4;
+
+            const currentPos = { x: physics.state.u[i], y: physics.state.u[i + 1] };
+            const currentVel = { x: physics.state.u[i + 2], y: physics.state.u[i + 3] };
+            const currentAcc = allAccs[bodyIndex];
+
+            const formatForUI = (num) => {
+                if (num === 0) return "0.00e+0";
+                return num.toExponential(2);
+            };
+
+            if (formulaEl) {
+                formulaEl.innerHTML =
+                    `${userInput.bodyNameFromIndex(bodyIndex)}:\n` +
+                    `x(Δt) ≈ ${formatForUI(currentPos.x)} + ${formatForUI(currentVel.x)}*Δt + 0.5*(${formatForUI(currentAcc.ax)})*Δt²\n` +
+                    `y(Δt) ≈ ${formatForUI(currentPos.y)} + ${formatForUI(currentVel.y)}*Δt + 0.5*(${formatForUI(currentAcc.ay)})*Δt²`;
+            }
+
+            currentLogBlock += `\n${userInput.bodyNameFromIndex(bodyIndex)}:\n`;
+            currentLogBlock += `  x(Δt) ≈ ${currentPos.x} + ${currentVel.x}*Δt + 0.5*(${currentAcc.ax})*Δt²\n`;
+            currentLogBlock += `  y(Δt) ≈ ${currentPos.y} + ${currentVel.y}*Δt + 0.5*(${currentAcc.ay})*Δt²`;
+        }
+
+        approximationLog.push(currentLogBlock);
+        simulationTime += logInterval;
+    }
+
+    function download() {
+        if (approximationLog.length === 0) {
+            alert("Лог пуст. Запустите симуляцию, чтобы собрать данные.");
+            return false;
+        }
+        const fileContent = approximationLog.join('\n' + '-'.repeat(70) + '\n\n');
+        const blob = new Blob([fileContent], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'approximation_log.txt';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    return {
+        clear: clear,
+        update: update,
+        download: download
+    };
+})();
+
 var userInput = (function(){
   var sliderLabelElement = document.querySelector(".ThreeBodyProblem-sliderLabel");
   var restartButton = document.querySelector(".ThreeBodyProblem-reload");
@@ -146,7 +227,8 @@ var userInput = (function(){
   var downloadSceneButton = document.getElementById('download-scene-button');
   var uploadSceneButton = document.getElementById('upload-scene-button');
   var sceneUploader = document.getElementById('scene-uploader');
-
+  var downloadLogButton = document.getElementById('download-log-button');
+  
   var sliderEditInput = null;
   function ensureSliderEdit() {
     if (sliderEditInput) return;
@@ -348,7 +430,7 @@ var userInput = (function(){
   function bodyNameFromIndex(i){
     var name = physics.initialConditions.currentPresetName;
     var circles = (name==="FigureEight" || name==="Chaotic");
-    if (circles) return ["Красного тела","Синего тела","Зелёного тела"][i] || "Тела";
+    if (circles) return ["Тело 1 (красное)","Тело 2 (синее)","Тело 3 (зелёное)"][i] || "Тело";
     return ["Солнце","Земля","Юпитер"][i] || "Тело";
   }
 
@@ -380,6 +462,8 @@ var userInput = (function(){
   }
 
   function didClickRestart(){
+    logManager.clear();
+    
     physics.resetStateToInitialConditions();
     graphics.clearScene(physics.largestDistanceMeters());
     graphics.updateObjectSizes(physics.calculateDiameters());
@@ -421,7 +505,7 @@ var userInput = (function(){
       txt = formatMassForSlider(val);
       if (currentMassSliderIndex===0) cssHelper.addClass(sliderElement,"ThreeBodyProblem-sliderSun");
       else if (currentMassSliderIndex===1) cssHelper.addClass(sliderElement,"ThreeBodyProblem-sliderEarth");
-      else cssHelper.addClass(sliderElement,"ThreeBodyProblem-sliderJupiter");
+      else if (currentMassSliderIndex===2) cssHelper.addClass(sliderElement,"ThreeBodyProblem-sliderJupiter");
     } else if (currentSlider==="speed"){
       txt = formatTimescaleForSlider(val);
     } else if (currentSlider==="softening"){
@@ -587,6 +671,7 @@ var userInput = (function(){
     if (downloadSceneButton) downloadSceneButton.onclick = didClickDownloadScene;
     if (uploadSceneButton) uploadSceneButton.onclick = didClickUploadScene;
     if (sceneUploader) sceneUploader.onchange = handleFileUpload;
+    if (downloadLogButton) downloadLogButton.onclick = function() { logManager.download(); return false; };
 
     var pauseButton = document.querySelector('.ThreeBodyProblem-pause');
     if (pauseButton){
@@ -628,7 +713,10 @@ var userInput = (function(){
     }
   }
 
-  return { init:init };
+  return { 
+    init:init,
+    bodyNameFromIndex: bodyNameFromIndex
+  };
 })();
 
 userInput.init();
@@ -660,23 +748,21 @@ userInput.init();
   if (m1 && m2 && m3) { }
 })();
 
-setTimeout(function(){
-  var loaderWrapper = document.getElementById('loader-wrapper');
-  if(loaderWrapper){
-    loaderWrapper.classList.add('hidden');
-    setTimeout(function(){
-      if(loaderWrapper.parentNode){
-        loaderWrapper.parentNode.removeChild(loaderWrapper);
-      }
-    }, 500);
-  }
-}, 3000);
-
-setTimeout(function(){
-  var container = document.querySelector('.ThreeBodyProblem-container');
-  container.classList.add('visible');
-  simulation.start();
-}, 5000);
+window.addEventListener('load', function() {
+    var loaderWrapper = document.getElementById('loader-wrapper');
+    if(loaderWrapper){
+        loaderWrapper.classList.add('hidden');
+        setTimeout(function(){
+            if(loaderWrapper.parentNode){
+                loaderWrapper.parentNode.removeChild(loaderWrapper);
+            }
+        }, 500);
+    }
+    
+    var container = document.querySelector('.ThreeBodyProblem-container');
+    container.classList.add('visible');
+    simulation.start();
+});
 
 (function(){
   var original = window.SickSlider;
