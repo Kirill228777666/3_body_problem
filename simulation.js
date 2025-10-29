@@ -1,5 +1,5 @@
 var simulation = (function() {
-  var calculationsPerFrame = 500;
+  var calculationsPerFrame = 200;
   var framesPerSecond = 120;
   var drawTimesPerFrame = 20;
   var drawIndex = Math.ceil(calculationsPerFrame / drawTimesPerFrame);
@@ -19,6 +19,11 @@ var simulation = (function() {
       lastTimestamp = currentTime;
     }
     lastTimestamp = currentTime;
+    
+    if (window.logManager) {
+      logManager.update(currentTime);
+    }
+    
     var timestep = physics.initialConditions.timeScaleFactor / framesPerSecond / calculationsPerFrame;
     
     for (var i = 0; i < calculationsPerFrame; i++) {
@@ -57,6 +62,7 @@ var simulation = (function() {
       }
     }
     graphics.drawBodies();
+    graphics.drawApproximationCurve();
     
     if (currentTime - lastLogTime >= logInterval) {
       const logData = {
