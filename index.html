@@ -19,7 +19,6 @@
   
   <style>
     /* ИСПРАВЛЕНО: Добавлены стили для корректного переключения иконок */
-    /* Добавлено !important для принудительного применения правил display */
     .mass-icon-circle { display: none !important; }
     .is-circles-mode .mass-icon-image { display: none !important; }
     .is-circles-mode .mass-icon-circle { display: inline-block !important; }
@@ -104,7 +103,6 @@
       </div>
       
       <div class="ThreeBodyProblem-leftBottomButtonCantainer">
-        <!-- ИСПРАВЛЕНО: Обновлена структура кнопок -->
         <a class="ThreeBodyProblem-leftBottomButton ThreeBodyProblem-mass1Button ThreeBodyProblem-doesChangeOpacityOnHover" href="#" title="Масса 1">
           <img src="https://evgenii.com/image/blog/2018-09-27-three-body-problem-simulator/mass_one_icon.png" alt="Масса 1" class="ThreeBodyProblem-leftBottomImage mass-icon-image">
           <span class="mass-circle mass-icon-circle" style="background:#ff8b22"></span>
@@ -145,15 +143,21 @@
       <div class="SickSlider-stripe"></div>
       <div class="SickSlider-head"></div>
     </div>
-    <div class="ThreeBodyProblem-isTextCentered">
+    
+    <!-- КНОПКИ УПРАВЛЕНИЯ -->
+    <div class="ThreeBodyProblem-isTextCentered" style="margin-top: 20px;">
       <button class="ThreeBodyProblem-preset ThreeBodyProblem-button ThreeBodyProblem-button--isSelected" data-name="FigureEight">Восьмёрка</button>
       <button class="ThreeBodyProblem-preset ThreeBodyProblem-button" data-name="SunEarthJupiter">Солнце, Земля и Юпитер</button>
       <button class="ThreeBodyProblem-preset ThreeBodyProblem-button" data-name="LagrangePoint5">Точка Лагранжа L5</button>
       <button class="ThreeBodyProblem-preset ThreeBodyProblem-button" data-name="Kepler16">Кеплер-16</button>
       <button class="ThreeBodyProblem-preset ThreeBodyProblem-button" data-name="Chaotic">Хаотический</button>
+      
       <button class="ThreeBodyProblem-button" id="download-scene-button">Скачать сцену</button>
       <button class="ThreeBodyProblem-button" id="upload-scene-button">Загрузить сцену</button>
       <input type="file" id="scene-uploader" accept="application/json, .json" style="display: none;" />
+
+      <!-- КНОПКА ЛАБ. РАБОТ ПЕРЕМЕЩЕНА В КОНЕЦ -->
+      <button class="ThreeBodyProblem-button" id="labs-menu-button" style="border-color: #ff8b22; color: #ffcd9c;">Лабораторные работы</button>
     </div>
   </div>
 
@@ -184,23 +188,21 @@
     </details>
   </div>
 
+  <!-- ПОЛНАЯ ИНСТРУКЦИЯ -->
   <div id="info-modal" class="modal-overlay is-hidden">
     <div class="modal-content">
       <button class="modal-close-button" title="Закрыть">&times;</button>
       <div class="instruction-container">
-        <!-- ИЗМЕНЕНИЕ НАЧАЛО -->
         <h2>Инструкция по использованию симулятора</h2>
         <p>
           Добро пожаловать в интерактивный симулятор задачи трёх тел! Эта программа позволяет моделировать движение трёх объектов в пространстве под действием их взаимного гравитационного притяжения.
         </p>
-
         <h3>Как пользоваться</h3>
         <ol>
           <li><strong>Выберите пресет:</strong> Начните с выбора одного из готовых сценариев в нижней части экрана (например, "Восьмёрка" или "Солнце, Земля и Юпитер"). Это установит начальные массы, положения и скорости тел.</li>
           <li><strong>Наблюдайте:</strong> Симуляция начнётся автоматически. Вы увидите, как тела движутся и оставляют за собой цветные траектории.</li>
           <li><strong>Экспериментируйте:</strong> Используйте элементы управления для изменения параметров симуляции в реальном времени.</li>
         </ol>
-
         <h3>Элементы управления</h3>
         <ul>
           <li><strong>Кнопки пресетов:</strong> ("Восьмёрка", "Солнце, Земля и Юпитер" и т.д.) — загружают предопределённые начальные условия.</li>
@@ -213,20 +215,71 @@
               <li><strong>Смягчение (иконка с полукругом):</strong> Регулирует параметр смягчения (ε), который предотвращает "гравитационный коллапс", когда тела подходят слишком близко друг к другу.</li>
             </ul>
           </li>
-          <li><strong>Слайдер:</strong> Основной инструмент для изменения выбранного параметра. Просто перетаскивайте ползунок. Вы также можете <strong>нажать на текстовое значение над слайдером</strong>, чтобы ввести точное число с клавиатуры.</li>
-          <li><strong>Скачать / Загрузить сцену:</strong> Эти кнопки позволяют сохранить текущее состояние симуляции (массы, положения, скорости) в файл на вашем компьютере и позже загрузить его для продолжения экспериментов.</li>
-          <li><strong>Графики и аппроксимации:</strong> Ниже симуляции находятся раскрывающиеся секции, которые показывают графики скоростей и ускорений тел, а также выводят мгновенные формулы, аппроксимирующие их траектории. Лог этих формул можно скачать.</li>
+          <li><strong>Слайдер:</strong> Основной инструмент для изменения выбранного параметра. Просто перетаскивайте ползунок. Вы также можете <strong>нажать на текстовое значение над слайдером</strong> (когда выбран режим редактирования Массы), чтобы ввести точное число.</li>
+          <li><strong>Скачать / Загрузить сцену:</strong> Эти кнопки позволяют сохранить текущее состояние симуляции в файл и загрузить его позже.</li>
+          <li><strong>Графики и аппроксимации:</strong> Ниже симуляции находятся раскрывающиеся секции с графиками и формулами.</li>
         </ul>
-
         <h3>Описание пресетов</h3>
         <ul>
-          <li><strong>Восьмёрка:</strong> Классическое устойчивое решение задачи трёх тел, где три тела с равными массами движутся по одной и той же траектории в форме восьмёрки.</li>
-          <li><strong>Солнце, Земля и Юпитер:</strong> Упрощённая модель нашей Солнечной системы. Показывает, как массивный Юпитер влияет на орбиту Земли и на центр масс системы.</li>
-          <li><strong>Точка Лагранжа L5:</strong> Демонстрирует одну из пяти точек стабильности в системе двух массивных тел (Солнце и Юпитер). Третье, менее массивное тело (астероид) может находиться в этой точке, двигаясь вместе с Юпитером.</li>
-          <li><strong>Кеплер-16:</strong> Модель реальной экзопланетной системы Kepler-16, состоящей из двух звёзд, вращающихся друг вокруг друга, и планеты, которая вращается вокруг обеих звёзд.</li>
-          <li><strong>Хаотический:</strong> Сценарий, который наглядно показывает "хаотичную" природу задачи. Небольшие изменения в начальных условиях могут привести к совершенно непредсказуемым и разным результатам.</li>
+          <li><strong>Восьмёрка:</strong> Классическое устойчивое решение задачи трёх тел.</li>
+          <li><strong>Солнце, Земля и Юпитер:</strong> Упрощённая модель Солнечной системы.</li>
+          <li><strong>Точка Лагранжа L5:</strong> Демонстрация точек стабильности.</li>
+          <li><strong>Кеплер-16:</strong> Модель экзопланетной системы с двумя звёздами.</li>
+          <li><strong>Хаотический:</strong> Демонстрация непредсказуемости системы.</li>
         </ul>
-        <!-- ИЗМЕНЕНИЕ КОНЕЦ -->
+      </div>
+    </div>
+  </div>
+
+  <div id="error-modal" class="modal-overlay is-hidden">
+    <div class="modal-content error-modal-content">
+      <div class="error-icon">⚠️</div>
+      <div class="error-title">Ошибка</div>
+      <div class="error-message">Произошла ошибка.</div>
+      <button class="error-ok-button">OK</button>
+    </div>
+  </div>
+
+  <!-- МОДАЛЬНОЕ ОКНО ВЫБОРА ЛАБОРАТОРНОЙ -->
+  <div id="lab-selection-modal" class="modal-overlay is-hidden">
+    <div class="modal-content instruction-container" style="max-width: 500px !important; text-align:center;">
+      <button class="modal-close-button" title="Закрыть">&times;</button>
+      <h2 style="color: #ff8b22 !important; margin-bottom: 30px !important;">Выберите работу</h2>
+      
+      <div style="display: flex; flex-direction: column; gap: 15px;">
+        <button class="ThreeBodyProblem-button select-lab-btn" data-lab-id="lab1" style="height: 60px; font-size: 16px; border-color: rgba(255, 139, 34, 0.4);">
+          Лаб. №1: Гравитационный манёвр
+        </button>
+        <button class="ThreeBodyProblem-button select-lab-btn" data-lab-id="lab2" style="height: 60px; font-size: 16px; border-color: rgba(255, 139, 34, 0.4);">
+          Лаб. №2: Двойная звезда
+        </button>
+        <button class="ThreeBodyProblem-button select-lab-btn" data-lab-id="lab3" style="height: 60px; font-size: 16px; border-color: rgba(255, 139, 34, 0.4);">
+          Лаб. №3: Побег с орбиты
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- МОДАЛЬНОЕ ОКНО ЗАДАНИЯ (БРИФИНГ) -->
+  <div id="lab-modal" class="modal-overlay is-hidden">
+    <div class="modal-content instruction-container" style="border-color: #ff8b22 !important; max-width: 600px !important;">
+      <h3 style="color: #ff8b22 !important; margin-top:0 !important; text-transform: uppercase; font-size: 14px;">Лабораторная работа</h3>
+      <h2 id="lab-title" style="margin-bottom: 20px !important; margin-top: 5px !important;">Название работы</h2>
+      
+      <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+        <h4 style="margin: 0 0 10px 0; color: #fff;">Цель работы:</h4>
+        <p id="lab-description" style="margin: 0;">Описание задания...</p>
+      </div>
+
+      <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;">
+        <h4 style="margin: 0 0 10px 0; color: #fff;">Инструкция:</h4>
+        <ul id="lab-steps" style="margin: 0; padding-left: 20px; color: #eaf0ff;">
+          <li>Шаг 1</li>
+        </ul>
+      </div>
+
+      <div style="text-align: center; margin-top: 25px;">
+        <button id="start-lab-button" class="ThreeBodyProblem-button ThreeBodyProblem-button--isSelected" style="background: linear-gradient(135deg, #ff8b22 0%, #d85c00 100%); border:none; padding: 0 40px; height: 48px; font-size: 16px;">Начать выполнение</button>
       </div>
     </div>
   </div>

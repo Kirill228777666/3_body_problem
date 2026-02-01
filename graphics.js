@@ -20,15 +20,16 @@ var graphics = (function() {
         {x: null, y: null}
       ],
       currentBodySizes = [],
-      bodyElemenets = [],
+      bodyElements = [],
       approx = null,
       circlesMode = false;
 
   function drawBody(position, size, bodyElement) {
-    var newLeft = position.x - (size / 2);
-    var newTop = position.y - (size / 2);
-    // ИСПРАВЛЕНО: Возвращён метод позиционирования через transform
-    bodyElement.style.transform = `translate(${newLeft}px, ${newTop}px)`;
+    // ВАЖНОЕ ИЗМЕНЕНИЕ:
+    // 1. Убрали Math.round (для плавности).
+    // 2. Добавили translate(-50%, -50%). Это заставляет браузер выравнивать тело
+    //    строго по центру координат, даже если размер тела изменился.
+    bodyElement.style.transform = `translate3d(${position.x}px, ${position.y}px, 0) translate(-50%, -50%)`;
   }
 
   function updateObjectSizes(sizes) {
@@ -36,8 +37,8 @@ var graphics = (function() {
       currentBodySizes[iBody] = sizes[iBody] / metersPerPixel;
       if (currentBodySizes[iBody] < minimumSizePixels) { currentBodySizes[iBody] = minimumSizePixels; }
       if (currentBodySizes[iBody] > maximumSizePixels) { currentBodySizes[iBody] = maximumSizePixels; }
-      bodyElemenets[iBody].style.width = currentBodySizes[iBody] + "px";
-      bodyElemenets[iBody].style.height = currentBodySizes[iBody] + "px";
+      bodyElements[iBody].style.width = currentBodySizes[iBody] + "px";
+      bodyElements[iBody].style.height = currentBodySizes[iBody] + "px";
     }
   }
 
@@ -49,6 +50,9 @@ var graphics = (function() {
     }
     context.beginPath();
     context.strokeStyle = color;
+    context.lineCap = 'round';
+    context.lineJoin = 'round';
+    // Убрали Math.round для гладкости линий
     context.moveTo(previousPosition.x, previousPosition.y);
     context.lineTo(newPosition.x, newPosition.y);
     context.stroke();
@@ -57,8 +61,8 @@ var graphics = (function() {
   }
 
   function calculateNewPositions(stateU) {
-    const middleX = Math.floor(canvas.width / 2);
-    const middleY = Math.floor(canvas.height / 2);
+    const middleX = canvas.width / 2;
+    const middleY = canvas.height / 2;
     for (var iBody = 0; iBody < stateU.length / 4; iBody++) {
       var bodyStart = iBody * 4;
       var x = stateU[bodyStart + 0];
@@ -71,8 +75,8 @@ var graphics = (function() {
   function drawBodies() {
     for (var iBody = 0; iBody < bodyPositions.length; iBody++) {
       var bodyPosition = bodyPositions[iBody];
-      if (bodyElemenets[iBody] && currentBodySizes[iBody] !== undefined) {
-        drawBody(bodyPosition, currentBodySizes[iBody], bodyElemenets[iBody]);
+      if (bodyElements[iBody] && currentBodySizes[iBody] !== undefined) {
+        drawBody(bodyPosition, currentBodySizes[iBody], bodyElements[iBody]);
       }
     }
   }
@@ -100,8 +104,8 @@ var graphics = (function() {
   function drawApproximationCurve(){
     if (!approx) return;
     const { a, v, p } = approx;
-    const midX = Math.floor(canvas.width / 2);
-    const midY = Math.floor(canvas.height / 2);
+    const midX = canvas.width / 2;
+    const midY = canvas.height / 2;
     const color = "#AAAAAA";
     const tMax = 1.0;
     const steps = 40;
@@ -112,9 +116,12 @@ var graphics = (function() {
       const y = p.y + v.y * t + 0.5 * a.ay * t * t;
       const sx = x / metersPerPixel + midX;
       const sy = -y / metersPerPixel + midY;
-      if (i===0) context.moveTo(sx, sy); else context.lineTo(sx, sy);
+      // Убрали округление
+      if (i===0) context.moveTo(sx, sy); 
+      else context.lineTo(sx, sy);
     }
     context.strokeStyle = color;
+    context.lineCap = 'round';
     context.stroke();
   }
 
@@ -139,28 +146,26 @@ var graphics = (function() {
     return false;
   }
   
-  // ДОБАВЛЕНО: Логика для смены вида самих тел
   function applyCircleModeStyles() {
     var container = document.querySelector(".ThreeBodyProblem-container");
     if (circlesMode) {
       container.classList.add("is-circles-mode");
       var colorsDot = colors.orbitalPaths;
-      for (var i=0; i<bodyElemenets.length; i++) {
-        var el = bodyElemenets[i];
+      for (var i=0; i<bodyElements.length; i++) {
+        var el = bodyElements[i];
         el.classList.add("as-circle");
         el.style.backgroundColor = colorsDot[i % colorsDot.length];
       }
     } else {
       container.classList.remove("is-circles-mode");
-      for (var i=0; i<bodyElemenets.length; i++) {
-        var el = bodyElemenets[i];
+      for (var i=0; i<bodyElements.length; i++) {
+        var el = bodyElements[i];
         el.classList.remove("as-circle");
         el.style.backgroundColor = "transparent";
       }
     }
   }
   
-  // ДОБАВЛЕНО: Функция для управления режимом отображения тел
   function setCircleMode(flag) {
     circlesMode = !!flag;
     applyCircleModeStyles();
@@ -172,7 +177,7 @@ var graphics = (function() {
     var earthElement = document.querySelector(".ThreeBodyProblem-earth");
     var sunElement = document.querySelector(".ThreeBodyProblem-sun");
     var jupiterElement = document.querySelector(".ThreeBodyProblem-jupiter");
-    bodyElemenets = [sunElement, earthElement, jupiterElement];
+    bodyElements = [sunElement, earthElement, jupiterElement];
     applyCircleModeStyles();
     success();
   }
@@ -180,8 +185,8 @@ var graphics = (function() {
   function getBoundaries() {
     const paddingPixels = 10;
     var effectiveWidth = canvas.width - (paddingPixels * 2);
-    var middleX = Math.floor(effectiveWidth / 2);
-    var middleY = Math.floor(canvas.height / 2);
+    var middleX = effectiveWidth / 2;
+    var middleY = canvas.height / 2;
     return {
       x_min: -middleX * metersPerPixel,
       x_max: middleX * metersPerPixel,
@@ -201,6 +206,6 @@ var graphics = (function() {
     getBoundaries: getBoundaries,
     setApproximation: setApproximation,
     drawApproximationCurve: drawApproximationCurve,
-    setCircleMode: setCircleMode // ДОБАВЛЕНО: Экспорт функции
+    setCircleMode: setCircleMode
   };
 })();
