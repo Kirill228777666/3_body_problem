@@ -1,8 +1,5 @@
-/* --- ГЛОБАЛЬНЫЕ СТИЛИ --- */
 body {
-  /* Единый глубокий космический фон для всего сайта */
   background-color: #0b132b;
-  /* Легкий градиент сверху вниз */
   background: radial-gradient(circle at center top, #1c2541 0%, #0b132b 100%);
   color: #f0f0f0;
   margin: 0;
@@ -12,7 +9,6 @@ body {
   min-height: 100vh;
 }
 
-/* --- ЗАГОЛОВОК (H1) --- */
 h1 {
   text-align: center;
   font-family: 'Inter', sans-serif;
@@ -23,13 +19,11 @@ h1 {
   margin-top: 30px;
   margin-bottom: 40px;
   
-  /* Градиентный текст */
   background: linear-gradient(135deg, #ffffff 0%, #7bf0ff 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   
-  /* Свечение */
   filter: drop-shadow(0 0 15px rgba(123, 240, 255, 0.3));
   
   cursor: default;
@@ -42,26 +36,20 @@ h1:hover {
   transform: scale(1.02);
 }
 
-/* --- ОСНОВНОЙ КОНТЕЙНЕР --- */
 .ThreeBodyProblem-container {
-  /* ВАЖНО: Фон совпадает с низом body (#0b132b), чтобы не было "шва" */
   background-color: #0b132b; 
   position: relative;
   height: 560px;
   
-  /* Звездный фон */
   background-image: url("https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Hidden_Valley_Campground_-_Starry_sky_-_07.JPG/640px-Hidden_Valley_Campground_-_Starry_sky_-_07.JPG");
   background-position: center bottom;
   background-repeat: repeat;
   background-size: 874px 780px;
   
-  /* Убираем жесткие рамки, делаем мягкие переходы */
   border-top: 1px solid rgba(255,255,255,0.05);
   border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 
-/* ВИНЬЕТКА + ГРАДИЕНТНЫЙ ПЕРЕХОД */
-/* Это создает плавное растворение краев контейнера в цвет фона сайта */
 .ThreeBodyProblem-container::after {
   content: '';
   position: absolute;
@@ -69,10 +57,6 @@ h1:hover {
   pointer-events: none;
   z-index: 999;
   
-  /* Магия здесь: 
-     1. Inset shadow затемняет углы.
-     2. Linear-gradient сверху и снизу плавно перекрывает картинку цветом фона (#0b132b).
-  */
   background: 
     linear-gradient(to bottom, #0b132b 0%, transparent 15%, transparent 85%, #0b132b 100%),
     radial-gradient(circle at center, transparent 30%, rgba(11, 19, 43, 0.6) 100%);
@@ -110,7 +94,6 @@ h1:hover {
 .ThreeBodyProblem-canvas { display: block; }
 .isUnselectable { user-select: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); }
 
-/* HUD */
 .ThreeBodyProblem-hudContainer {
   position: absolute;
   height: 100%;
@@ -123,7 +106,6 @@ h1:hover {
 .ThreeBodyProblem-hudContainer > * { pointer-events: auto; }
 .ThreeBodyProblem-hudContainerChild { position: relative; width: 100%; height: 100%; max-width: 700px; margin: 0 auto; }
 
-/* --- BUTTONS STYLING --- */
 :root{
   --ui-bg: rgba(255,255,255,.06);
   --ui-border: rgba(255,255,255,.14);
@@ -151,7 +133,6 @@ h1:hover {
   z-index: 1001;
 }
 
-/* Кнопки слева внизу */
 .ThreeBodyProblem-leftBottomButton {
   height: 56px !important; 
   width: 56px !important; 
@@ -182,16 +163,14 @@ h1:hover {
 }
 .ThreeBodyProblem-leftBottomButton:active { transform: translateY(0); }
 
-/* --- НОВЫЙ СТИЛЬ ДЛЯ ОТКЛЮЧЕННЫХ КНОПОК --- */
 .ThreeBodyProblem-leftBottomButton.is-disabled {
   opacity: 0.3;
-  pointer-events: none; /* Запрещает клики */
+  pointer-events: none; /* Некликабельные */
   filter: grayscale(100%);
   border-color: transparent;
   box-shadow: none;
 }
 
-/* Активные состояния кнопок */
 .ThreeBodyProblem-leftBottomButton.is-active {
   border-color: #fff;
   background: rgba(255, 255, 255, 0.1);
@@ -213,7 +192,6 @@ h1:hover {
   filter: drop-shadow(0 2px 6px rgba(0,0,0,.35)); object-fit: contain;
 }
 
-/* Кнопка перезагрузки */
 .ThreeBodyProblem-reload {
   width: 56px; height: 56px;
   border-radius: 14px; background: var(--ui-bg); border: 1px solid var(--ui-border);
@@ -225,7 +203,6 @@ h1:hover {
 .ThreeBodyProblem-reload:hover { transform: translateY(-2px); border-color: var(--ui-accent); box-shadow: 0 10px 30px rgba(0,0,0,.4); }
 .ThreeBodyProblem-reloadIcon { width: 26px; height: 26px; border: 0; }
 
-/* Пауза */
 .ThreeBodyProblem-pause {
   height: 56px !important; box-sizing: border-box; border-radius: 14px;
   background: rgba(255, 59, 59, 0.15); border: 1px solid rgba(255, 59, 59, 0.3);
@@ -240,7 +217,6 @@ h1:hover {
 }
 .ThreeBodyProblem-pause:active { transform: translateY(0); }
 
-/* Кнопки пресетов */
 .ThreeBodyProblem-button {
   background: linear-gradient(145deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%);
   border: 1px solid rgba(255, 255, 255, 0.15); color: #e2e8f0; font-family: 'Inter', sans-serif;
@@ -249,7 +225,7 @@ h1:hover {
   display: inline-flex; align-items: center; justify-content: center; margin: 0 6px 10px 6px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
-button.ThreeBodyProblem-pause { /* Исключение */ }
+button.ThreeBodyProblem-pause { /* Искл */ }
 .ThreeBodyProblem-button:hover {
   background: rgba(255, 255, 255, 0.15); border-color: rgba(255, 255, 255, 0.4);
   color: #fff; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.3);
@@ -263,7 +239,6 @@ button.ThreeBodyProblem-pause { /* Исключение */ }
   background: linear-gradient(135deg, #7dd3fc 0%, #0ea5e9 100%); box-shadow: 0 6px 20px rgba(56, 189, 248, 0.6);
 }
 
-/* --- СЛАЙДЕР --- */
 .SickSlider {
   position: relative; height: 40px; cursor: pointer; margin: 15px auto 25px auto;
   width: 85%; max-width: 900px; user-select: none;
@@ -274,7 +249,6 @@ button.ThreeBodyProblem-pause { /* Исключение */ }
 }
 .SickSlider:hover .SickSlider-stripe { background-color: rgba(255,255,255,0.3); }
 
-/* Круглая светящаяся головка слайдера */
 .SickSlider-head {
   position: absolute; top: 6px; left: 0; width: 28px; height: 28px;
   border-radius: 50%; background: #f0f0f0; border: none;
@@ -286,7 +260,6 @@ button.ThreeBodyProblem-pause { /* Исключение */ }
 .ThreeBodyProblem-sliderEarth .SickSlider-head { background: #8899ff; box-shadow: 0 0 15px #6c81ff, 0 0 30px rgba(108, 129, 255, 0.4); }
 .ThreeBodyProblem-sliderJupiter .SickSlider-head { background: #66eebb; box-shadow: 0 0 15px #4ccd7a, 0 0 30px rgba(76, 205, 122, 0.4); }
 
-/* --- CONTROLS AREA --- */
 .ThreeBodyProblem-controlsArea {
   background-color: rgba(28, 37, 65, 0.7);
   padding: 20px;
@@ -302,7 +275,6 @@ button.ThreeBodyProblem-pause { /* Исключение */ }
 .ThreeBodyProblem-sliderLabel.is-editable { cursor: pointer; border-bottom: 1px dashed rgba(255, 255, 255, 0.4); }
 .ThreeBodyProblem-sliderLabel.is-editable:hover { border-color: currentColor; text-shadow: 0 0 10px rgba(255,255,255,0.3); }
 
-/* --- ГРАФИКИ (DETAILS / SUMMARY) --- */
 #charts-container details {
   background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px; margin-bottom: 15px; overflow: hidden;
@@ -329,7 +301,6 @@ button.ThreeBodyProblem-pause { /* Исключение */ }
 }
 #velocityChart, #accelerationChart { background: rgba(0, 0, 0, 0.2); border-radius: 8px; padding: 10px; }
 
-/* --- APPROXIMATION DISPLAY --- */
 .approximation-display-style {
   background-color: transparent !important; box-shadow: none !important;
   padding: 10px 0 !important; margin: 0 !important; border-radius: 0 !important;
@@ -342,7 +313,6 @@ button.ThreeBodyProblem-pause { /* Исключение */ }
 }
 #download-log-button:hover { background: rgba(255, 255, 255, 0.15); }
 
-/* --- ICONS & CIRCLES --- */
 .mass-icon-circle { display: none !important; }
 .is-circles-mode .mass-icon-image { display: none !important; }
 .is-circles-mode .mass-icon-circle { display: inline-block !important; }
@@ -353,7 +323,6 @@ button.ThreeBodyProblem-pause { /* Исключение */ }
 .as-circle { border-radius: 50%; box-shadow: 0 0 6px rgba(0,0,0,0.35); }
 .is-circles-mode .ThreeBodyProblem-bodyImage { display: none !important; }
 
-/* --- MODALS --- */
 .modal-overlay {
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
   background-color: rgba(11, 19, 43, 0.85);
@@ -404,10 +373,8 @@ button.ThreeBodyProblem-pause { /* Исключение */ }
 }
 .error-ok-button:hover { transform: translateY(-2px); filter: brightness(1.1); box-shadow: 0 6px 16px rgba(255, 107, 107, 0.6); }
 
-/* --- LOADER --- */
 #loader-wrapper {
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  /* Цвет фона лоадера СОВПАДАЕТ с фоном body (#1c2541...#0b132b), чтобы не было скачка */
   background: radial-gradient(circle farthest-corner at center, #1c2541 0%, #0b132b 100%);
   display: flex; justify-content: center; align-items: center; z-index: 9999;
   transition: opacity 0.5s ease;

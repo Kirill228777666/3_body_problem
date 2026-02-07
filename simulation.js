@@ -19,7 +19,7 @@ var simulation = (function() {
       animationFrameId = window.requestAnimationFrame(animate);
       return;
     }
-    
+
     if (deltaTime > 0.1) deltaTime = 0.1;
 
     try {
@@ -103,6 +103,10 @@ var simulation = (function() {
       }
 
       lastLogTime = currentTime;
+    }
+
+    if (window.labEngine && typeof labEngine.update === "function") {
+      try { labEngine.update(deltaTime); } catch(e) {}
     }
 
     animationFrameId = window.requestAnimationFrame(animate);

@@ -25,10 +25,6 @@ var graphics = (function() {
       circlesMode = false;
 
   function drawBody(position, size, bodyElement) {
-    // ВАЖНОЕ ИЗМЕНЕНИЕ:
-    // 1. Убрали Math.round (для плавности).
-    // 2. Добавили translate(-50%, -50%). Это заставляет браузер выравнивать тело
-    //    строго по центру координат, даже если размер тела изменился.
     bodyElement.style.transform = `translate3d(${position.x}px, ${position.y}px, 0) translate(-50%, -50%)`;
   }
 
@@ -52,7 +48,6 @@ var graphics = (function() {
     context.strokeStyle = color;
     context.lineCap = 'round';
     context.lineJoin = 'round';
-    // Убрали Math.round для гладкости линий
     context.moveTo(previousPosition.x, previousPosition.y);
     context.lineTo(newPosition.x, newPosition.y);
     context.stroke();
@@ -116,7 +111,6 @@ var graphics = (function() {
       const y = p.y + v.y * t + 0.5 * a.ay * t * t;
       const sx = x / metersPerPixel + midX;
       const sy = -y / metersPerPixel + midY;
-      // Убрали округление
       if (i===0) context.moveTo(sx, sy); 
       else context.lineTo(sx, sy);
     }

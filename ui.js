@@ -80,44 +80,41 @@ var simulations = (function(){
       dimensionless: true,
       masses: [1,1,1],
       massSlider: { min: 0.1, max: 10, power: 3 },
-      timeScaleFactor: 4.0, /* ИСПРАВЛЕНО: Ровная скорость */
+      timeScaleFactor: 4.0,
       timeScaleFactorSlider: { min: 0.00, max: 20, power: 1 },
       positions: [{r:1,theta:0},{r:1,theta:2*Math.PI/3},{r:1,theta:4*Math.PI/3}],
       velocities: [{r:0.55,theta:Math.PI/2},{r:0.55,theta:2*Math.PI/3+Math.PI/2},{r:0.55,theta:4*Math.PI/3+Math.PI/2}]
     }
   };
 
-  // ДАННЫЕ ЛАБОРАТОРНЫХ РАБОТ
   var labs = {
     "lab1": {
       title: "Гравитационный манёвр",
       description: "Изучите, как меняется траектория легкого тела при пролете рядом с тяжелой планетой (эффект рогатки).",
       steps: [
-        "Запустите симуляцию и наблюдайте за 'Телом 2' (синее).",
-        "Обратите внимание: начальная скорость снижена до 0.5 для удобства.",
-        "Дождитесь момента сближения с 'Телом 1' (оранжевое).",
-        "Попробуйте изменить скорость симуляции, чтобы рассмотреть момент манёвра в деталях."
+        "Нажмите «Перейти к настройке».",
+        "Настройте параметры (пока симуляция на паузе).",
+        "Когда готовы — нажмите «Продолжить» (кнопка Пауза)."
       ],
       physics: {
         name: "Lab1",
         dimensionless: true,
-        masses: [5, 0.01, 0.0001], 
+        masses: [5, 0.01, 0.0001],
         massSlider: { min: 0.1, max: 10, power: 3 },
         timeScaleFactor: 0.5,
         timeScaleFactorSlider: { min: 0, max: 10, power: 1 },
         positions: [{r:0,theta:0}, {r:4, theta:Math.PI}, {r:10, theta:0}],
         velocities: [{r:0,theta:0}, {r:1.2, theta:0.2}, {r:0, theta:0}],
-        // Блокируем тело 3
-        lockedMasses: [false, false, true] 
+        lockedMasses: [false, false, true]
       }
     },
     "lab2": {
       title: "Двойная звезда",
       description: "Система из двух звезд равной массы. Найдите условия стабильности для далекой планеты.",
       steps: [
-        "Наблюдайте за вращением двух массивных звезд (Тело 1 и 2) вокруг общего центра масс.",
-        "Третье тело (планета) находится на дальней стабильной орбите. Его массу менять нельзя.",
-        "Эксперимент: Попробуйте увеличить массу одной из звезд с помощью слайдера и посмотрите, как это повлияет на орбиту планеты."
+        "Нажмите «Перейти к настройке».",
+        "Настройте параметры (пока симуляция на паузе).",
+        "Когда готовы — нажмите «Продолжить» (кнопка Пауза)."
       ],
       physics: {
         name: "Lab2",
@@ -126,30 +123,253 @@ var simulations = (function(){
         massSlider: { min: 0.1, max: 5, power: 2 },
         timeScaleFactor: 1,
         timeScaleFactorSlider: { min: 0, max: 5, power: 1 },
-        positions: [
-            {r:1,theta:0}, 
-            {r:1, theta:Math.PI}, 
-            {r:5, theta:Math.PI/2}
-        ],
-        velocities: [
-            {r:0.707,theta:Math.PI/2},
-            {r:0.707, theta:-Math.PI/2}, 
-            {r:0.9, theta:Math.PI}
-        ],
-        // Блокируем изменение массы 3-го тела (планеты)
-        lockedMasses: [false, false, true] 
+        positions: [{r:1,theta:0},{r:1, theta:Math.PI},{r:5, theta:Math.PI/2}],
+        velocities: [{r:0.707,theta:Math.PI/2},{r:0.707, theta:-Math.PI/2},{r:0.9, theta:Math.PI}],
+        lockedMasses: [false, false, true]
       }
     },
     "lab3": {
       title: "Побег с орбиты (Вторая космическая)",
       description: "Задача: Понять условия, при которых тело покидает систему.",
       steps: [
-        "Сейчас 'Тело 2' (Земля) вращается по круговой орбите.",
-        "Поставьте симуляцию на паузу.",
-        "Попробуйте уменьшить массу Солнца (Тело 1) с помощью слайдера.",
-        "При какой массе Солнца Земля улетит в открытый космос?"
+        "Нажмите «Перейти к настройке».",
+        "Настройте параметры (пока симуляция на паузе).",
+        "Когда готовы — нажмите «Продолжить» (кнопка Пауза)."
       ],
       physics: allPresets.SunEarthJupiter
+    }
+  };
+
+  var tasks = {
+    "task1": {
+      id: "task1",
+      title: "Задание №1: Побег с орбиты",
+      description: "Сделайте так, чтобы тело 2 совершило побег.",
+      steps: [
+        "Нажмите «Перейти к настройке».",
+        "Уменьшайте массу Тела 1 (красное) на паузе.",
+        "Нажмите «Продолжить».",
+        "Дождитесь результата автопроверки."
+      ],
+      physics: {
+        name: "Task1",
+        dimensionless: true,
+        masses: [1.0, 0.001, 1e-9],
+        densities: [1410, 1410, 1410],
+        massSlider: { min: 0.05, max: 2.0, power: 2 },
+        timeScaleFactor: 1.0,
+        timeScaleFactorSlider: { min: 0.1, max: 5, power: 1 },
+        positions: [{ r: 0, theta: 0 }, { r: 1, theta: 0 }, { r: 10, theta: 0 }],
+        velocities: [{ r: 0, theta: 0 }, { r: 1, theta: Math.PI/2 }, { r: 0, theta: 0 }],
+        lockedMasses: [false, true, true],
+        lockedControls: { speed: true, softening: true }
+      },
+      goal: { type: "escape", centralBody: 0, targetBody: 1, escapeRadius: 3.0, escapeHoldTime: 0.6, timeLimit: 20.0 },
+      fail: { collision: true }
+    },
+    "task2": {
+      id: "task2",
+      title: "Задание №2: Удержать орбиту",
+      description: "Подберите массу Тела 1, чтобы удержать орбиту тела 2.",
+      steps: [
+        "Нажмите «Перейти к настройке».",
+        "Подберите массу Тела 1 на паузе.",
+        "Нажмите «Продолжить».",
+        "Дождитесь результата автопроверки."
+      ],
+      physics: {
+        name: "Task2",
+        dimensionless: true,
+        masses: [0.30, 0.001, 1e-9],
+        densities: [1410, 1410, 1410],
+        massSlider: { min: 0.05, max: 2.5, power: 2 },
+        timeScaleFactor: 1.0,
+        timeScaleFactorSlider: { min: 0.1, max: 5, power: 1 },
+        positions: [{ r: 0, theta: 0 }, { r: 1, theta: 0 }, { r: 10, theta: 0 }],
+        velocities: [{ r: 0, theta: 0 }, { r: 1, theta: Math.PI/2 }, { r: 0, theta: 0 }],
+        lockedMasses: [false, true, true],
+        lockedControls: { speed: true, softening: true }
+      },
+      goal: { type: "boundOrbitHold", centralBody: 0, targetBody: 1, rMin: 0.70, rMax: 1.60, holdTime: 8.0, timeLimit: 25.0, requireEnergyNegative: true },
+      fail: { collision: true }
+    },
+    "task3": {
+      id: "task3",
+      title: "Задание №3: Точка Лагранжа L4",
+      description: "Уменьшите массу тела 3, чтобы удержать конфигурацию L4.",
+      steps: [
+        "Нажмите «Перейти к настройке».",
+        "Уменьшайте массу Тела 3 (зелёное) на паузе.",
+        "Нажмите «Продолжить».",
+        "Дождитесь результата автопроверки."
+      ],
+      physics: (function(){
+        var G = 1;
+        var m1 = 1, m2 = 1;
+        var a = 1;
+        var mu = m2/(m1+m2);
+        var x1 = -mu, x2 = 1 - mu;
+        var w = Math.sqrt(G*(m1+m2)/(a*a*a));
+        var vy1 = w * x1;
+        var vy2 = w * x2;
+
+        var x3 = 0.5 - mu;
+        var y3 = Math.sqrt(3)/2;
+        var vx3 = -w * y3;
+        var vy3 =  w * x3;
+
+        return {
+          name: "Task3",
+          dimensionless: true,
+          masses: [m1, m2, 0.20],
+          densities: [1410, 1410, 1410],
+          massSlider: { min: 0.001, max: 0.20, power: 2 },
+          timeScaleFactor: 1.0,
+          timeScaleFactorSlider: { min: 0.1, max: 5, power: 1 },
+          positions: [
+            { r: Math.abs(x1), theta: (x1 >= 0 ? 0 : Math.PI) },
+            { r: Math.abs(x2), theta: (x2 >= 0 ? 0 : Math.PI) },
+            { r: Math.sqrt(x3*x3 + y3*y3), theta: Math.atan2(y3, x3) }
+          ],
+          velocities: [
+            { r: Math.abs(vy1), theta: (vy1 >= 0 ? Math.PI/2 : -Math.PI/2) },
+            { r: Math.abs(vy2), theta: (vy2 >= 0 ? Math.PI/2 : -Math.PI/2) },
+            { r: Math.sqrt(vx3*vx3 + vy3*vy3), theta: Math.atan2(vy3, vx3) }
+          ],
+          lockedMasses: [true, true, false],
+          lockedControls: { speed: true, softening: true }
+        };
+      })(),
+      goal: { type: "lagrangeHold", primaryA: 0, primaryB: 1, testBody: 2, sideRelTol: 0.10, angleTolDeg: 12, holdTime: 10.0, timeLimit: 35.0 },
+      fail: { collision: true }
+    },
+    "task4": {
+      id: "task4",
+      title: "Задание №4: Побег (сложнее)",
+      description: "Побег в более тяжёлой конфигурации.",
+      steps: [
+        "Нажмите «Перейти к настройке».",
+        "Уменьшайте массу Тела 1 на паузе.",
+        "Нажмите «Продолжить».",
+        "Дождитесь результата автопроверки."
+      ],
+      physics: {
+        name: "Task4",
+        dimensionless: true,
+        masses: [0.85, 0.001, 1e-9],
+        densities: [1410, 1410, 1410],
+        massSlider: { min: 0.05, max: 2.2, power: 2 },
+        timeScaleFactor: 1.0,
+        timeScaleFactorSlider: { min: 0.1, max: 5, power: 1 },
+        positions: [{ r: 0, theta: 0 }, { r: 1, theta: 0 }, { r: 10, theta: 0 }],
+        velocities: [{ r: 0, theta: 0 }, { r: 1, theta: Math.PI/2 }, { r: 0, theta: 0 }],
+        lockedMasses: [false, true, true],
+        lockedControls: { speed: true, softening: true }
+      },
+      goal: { type: "escape", centralBody: 0, targetBody: 1, escapeRadius: 4.0, escapeHoldTime: 0.6, timeLimit: 28.0 },
+      fail: { collision: true }
+    },
+    "task5": {
+      id: "task5",
+      title: "Задание №5: Спасти от падения",
+      description: "Уменьшите массу центра и стабилизируйте орбиту.",
+      steps: [
+        "Нажмите «Перейти к настройке».",
+        "Уменьшайте массу Тела 1 на паузе.",
+        "Нажмите «Продолжить».",
+        "Дождитесь результата автопроверки."
+      ],
+      physics: {
+        name: "Task5",
+        dimensionless: true,
+        masses: [2.20, 0.001, 1e-9],
+        densities: [1410, 1410, 1410],
+        massSlider: { min: 0.20, max: 2.50, power: 2 },
+        timeScaleFactor: 1.0,
+        timeScaleFactorSlider: { min: 0.1, max: 5, power: 1 },
+        positions: [{ r: 0, theta: 0 }, { r: 1, theta: 0 }, { r: 10, theta: 0 }],
+        velocities: [{ r: 0, theta: 0 }, { r: 1, theta: Math.PI/2 }, { r: 0, theta: 0 }],
+        lockedMasses: [false, true, true],
+        lockedControls: { speed: true, softening: true }
+      },
+      goal: { type: "boundOrbitHold", centralBody: 0, targetBody: 1, rMin: 0.75, rMax: 1.45, holdTime: 10.0, timeLimit: 30.0, requireEnergyNegative: true },
+      fail: { collision: true }
+    },
+    "task6": {
+      id: "task6",
+      title: "Задание №6: Дальняя орбита",
+      description: "Удержите тело 2 на дальнем радиусе.",
+      steps: [
+        "Нажмите «Перейти к настройке».",
+        "Подберите массу Тела 1 на паузе.",
+        "Нажмите «Продолжить».",
+        "Дождитесь результата автопроверки."
+      ],
+      physics: {
+        name: "Task6",
+        dimensionless: true,
+        masses: [0.40, 0.001, 1e-9],
+        densities: [1410, 1410, 1410],
+        massSlider: { min: 0.20, max: 2.80, power: 2 },
+        timeScaleFactor: 1.0,
+        timeScaleFactorSlider: { min: 0.1, max: 5, power: 1 },
+        positions: [{ r: 0, theta: 0 }, { r: 2.0, theta: 0 }, { r: 10, theta: 0 }],
+        velocities: [{ r: 0, theta: 0 }, { r: 0.90, theta: Math.PI/2 }, { r: 0, theta: 0 }],
+        lockedMasses: [false, true, true],
+        lockedControls: { speed: true, softening: true }
+      },
+      goal: { type: "boundOrbitHold", centralBody: 0, targetBody: 1, rMin: 1.60, rMax: 2.60, holdTime: 12.0, timeLimit: 40.0, requireEnergyNegative: true },
+      fail: { collision: true }
+    },
+    "task7": {
+      id: "task7",
+      title: "Задание №7: Точка Лагранжа L5",
+      description: "Как L4, но L5 (ниже оси).",
+      steps: [
+        "Нажмите «Перейти к настройке».",
+        "Уменьшайте массу Тела 3 на паузе.",
+        "Нажмите «Продолжить».",
+        "Дождитесь результата автопроверки."
+      ],
+      physics: (function(){
+        var G = 1;
+        var m1 = 1, m2 = 1;
+        var a = 1;
+        var mu = m2/(m1+m2);
+        var x1 = -mu, x2 = 1 - mu;
+        var w = Math.sqrt(G*(m1+m2)/(a*a*a));
+        var vy1 = w * x1;
+        var vy2 = w * x2;
+
+        var x3 = 0.5 - mu;
+        var y3 = -Math.sqrt(3)/2;
+        var vx3 = -w * y3;
+        var vy3 =  w * x3;
+
+        return {
+          name: "Task7",
+          dimensionless: true,
+          masses: [m1, m2, 0.20],
+          densities: [1410, 1410, 1410],
+          massSlider: { min: 0.001, max: 0.20, power: 2 },
+          timeScaleFactor: 1.0,
+          timeScaleFactorSlider: { min: 0.1, max: 5, power: 1 },
+          positions: [
+            { r: Math.abs(x1), theta: (x1 >= 0 ? 0 : Math.PI) },
+            { r: Math.abs(x2), theta: (x2 >= 0 ? 0 : Math.PI) },
+            { r: Math.sqrt(x3*x3 + y3*y3), theta: Math.atan2(y3, x3) }
+          ],
+          velocities: [
+            { r: Math.abs(vy1), theta: (vy1 >= 0 ? Math.PI/2 : -Math.PI/2) },
+            { r: Math.abs(vy2), theta: (vy2 >= 0 ? Math.PI/2 : -Math.PI/2) },
+            { r: Math.sqrt(vx3*vx3 + vy3*vy3), theta: Math.atan2(vy3, vx3) }
+          ],
+          lockedMasses: [true, true, false],
+          lockedControls: { speed: true, softening: true }
+        };
+      })(),
+      goal: { type: "lagrangeHold", primaryA: 0, primaryB: 1, testBody: 2, sideRelTol: 0.10, angleTolDeg: 12, holdTime: 10.0, timeLimit: 35.0 },
+      fail: { collision: true }
     }
   };
 
@@ -162,18 +382,22 @@ var simulations = (function(){
     var name = el.getAttribute("data-name");
     var preset = allPresets[name];
     if (content.didChangeModel && preset) { content.didChangeModel(preset); }
+
     var presetEls = document.querySelectorAll(".ThreeBodyProblem-preset");
     for (var i=0;i<presetEls.length;i++) cssHelper.removeClass(presetEls[i],'ThreeBodyProblem-button--isSelected');
     cssHelper.addClass(el,"ThreeBodyProblem-button--isSelected");
-    
-    // Сбрасываем выделение с кнопки меню лаб
-    var labMenuBtn = document.getElementById('labs-menu-button');
-    if (labMenuBtn) cssHelper.removeClass(labMenuBtn, 'ThreeBodyProblem-button--isSelected');
+
+    var trainerBtn = document.getElementById('labs-menu-button');
+    if (trainerBtn) cssHelper.removeClass(trainerBtn, 'ThreeBodyProblem-button--isSelected');
   }
 
-  function didClick(e){ e = e || window.event; if (e.target) didClickElement(e.target); }
+  function didClick(e){
+    e = e || window.event;
+    if (e.target) didClickElement(e.target);
+  }
 
   function getLab(id) { return labs[id]; }
+  function getTask(id) { return tasks[id]; }
 
   function init(){
     var presetEls = document.querySelectorAll(".ThreeBodyProblem-preset");
@@ -181,7 +405,7 @@ var simulations = (function(){
     return allPresets.FigureEight;
   }
 
-  return { init:init, content:content, getLab: getLab };
+  return { init:init, content:content, getLab:getLab, getTask:getTask };
 })();
 
 var oddPowerCurve = (function(){
@@ -205,136 +429,108 @@ var oddPowerCurve = (function(){
 })();
 
 var logManager = (function() {
-    var approximationLog = [];
-    var simulationTime = 0;
-    var lastLogTimestamp = 0;
-    var logInterval = 100; // ms
+  var approximationLog = [];
+  var simulationTime = 0;
+  var lastLogTimestamp = 0;
+  var logInterval = 100;
+  var colors = ['#ff8b22', '#6c81ff', '#4ccd7a'];
 
-    // Цвета для заголовков (оранжевый, синий, зеленый)
-    var colors = ['#ff8b22', '#6c81ff', '#4ccd7a'];
-
-    function clear() {
-        approximationLog = [];
-        simulationTime = 0;
-        lastLogTimestamp = 0;
-        for (let i = 0; i < 3; i++) {
-            const formulaEl = document.getElementById('formula-text-' + i);
-            if (formulaEl) formulaEl.innerHTML = '';
-        }
+  function clear() {
+    approximationLog = [];
+    simulationTime = 0;
+    lastLogTimestamp = 0;
+    for (let i = 0; i < 3; i++) {
+      const formulaEl = document.getElementById('formula-text-' + i);
+      if (formulaEl) formulaEl.innerHTML = '';
     }
-    
-    // Простое форматирование числа
-    function fmt(n) {
-        if (!Number.isFinite(n)) return "0";
-        if (Math.abs(n) < 1e-9) return "0"; // Очень маленькие числа считаем нулем
-        
-        // Если число в нормальном диапазоне (0.01 - 10000), показываем как обычное число
-        if (Math.abs(n) >= 0.01 && Math.abs(n) < 10000) {
-            return parseFloat(n.toFixed(4)).toString();
-        }
-        // Иначе научная нотация (1.23e+5)
-        return n.toExponential(2);
+  }
+
+  function fmt(n) {
+    if (!Number.isFinite(n)) return "0";
+    if (Math.abs(n) < 1e-9) return "0";
+    if (Math.abs(n) >= 0.01 && Math.abs(n) < 10000) return parseFloat(n.toFixed(4)).toString();
+    return n.toExponential(2);
+  }
+
+  function buildPolynomial(p, v, aHalf) {
+    let s = fmt(p);
+    let vStr = fmt(v);
+    if (vStr !== "0") {
+      let sign = vStr.startsWith("-") ? " - " : " + ";
+      let val = vStr.replace("-", "");
+      s += `${sign}${val}t`;
     }
-
-    // Собираем строку вида: "0.5 + 1.2t - 0.3t²"
-    function buildPolynomial(p, v, aHalf) {
-        let s = fmt(p); // Начальная позиция
-
-        // Скорость * t
-        let vStr = fmt(v);
-        if (vStr !== "0") {
-            // Если минус, пишем " - ", если плюс — " + "
-            let sign = vStr.startsWith("-") ? " - " : " + ";
-            let val = vStr.replace("-", ""); // Убираем минус из самого числа
-            s += `${sign}${val}t`;
-        }
-
-        // Ускорение * t²
-        let aStr = fmt(aHalf);
-        if (aStr !== "0") {
-            let sign = aStr.startsWith("-") ? " - " : " + ";
-            let val = aStr.replace("-", "");
-            s += `${sign}${val}t<sup>2</sup>`;
-        }
-
-        return s;
+    let aStr = fmt(aHalf);
+    if (aStr !== "0") {
+      let sign = aStr.startsWith("-") ? " - " : " + ";
+      let val = aStr.replace("-", "");
+      s += `${sign}${val}t<sup>2</sup>`;
     }
+    return s;
+  }
 
-        function update(currentTime) {
-        if (currentTime - lastLogTimestamp < logInterval) {
-            return;
-        }
-        lastLogTimestamp = currentTime;
+  function update(currentTime) {
+    if (currentTime - lastLogTimestamp < logInterval) return;
+    lastLogTimestamp = currentTime;
 
-        const allAccs = physics.getAccelerations();
-        if (!allAccs || allAccs.length === 0) return;
+    const allAccs = physics.getAccelerations();
+    if (!allAccs || allAccs.length === 0) return;
 
-        var currentLogBlock = `Time: ${(simulationTime / 1000).toFixed(3)}s\n`;
+    var currentLogBlock = `Time: ${(simulationTime / 1000).toFixed(3)}s\n`;
 
-        for (let i = 0; i < 3; i++) {
-            const formulaEl = document.getElementById('formula-text-' + i);
-            const idx = i * 4;
+    for (let i = 0; i < 3; i++) {
+      const formulaEl = document.getElementById('formula-text-' + i);
+      const idx = i * 4;
 
-            const px = physics.state.u[idx];
-            const py = physics.state.u[idx + 1];
-            const vx = physics.state.u[idx + 2];
-            const vy = physics.state.u[idx + 3];
-            const axHalf = 0.5 * allAccs[i].ax;
-            const ayHalf = 0.5 * allAccs[i].ay;
+      const px = physics.state.u[idx];
+      const py = physics.state.u[idx + 1];
+      const vx = physics.state.u[idx + 2];
+      const vy = physics.state.u[idx + 3];
+      const axHalf = 0.5 * allAccs[i].ax;
+      const ayHalf = 0.5 * allAccs[i].ay;
 
-            const strX = buildPolynomial(px, vx, axHalf);
-            const strY = buildPolynomial(py, vy, ayHalf);
-            const bodyName = userInput.bodyNameFromIndex(i);
+      const strX = buildPolynomial(px, vx, axHalf);
+      const strY = buildPolynomial(py, vy, ayHalf);
+      const bodyName = userInput.bodyNameFromIndex(i);
 
-            // Текстовый лог
-            const txtX = strX.replace(/<sup>2<\/sup>/g, "^2");
-            const txtY = strY.replace(/<sup>2<\/sup>/g, "^2");
-            currentLogBlock += `${bodyName}:\n  x ≈ ${txtX}\n  y ≈ ${txtY}\n`;
+      const txtX = strX.replace(/<sup>2<\/sup>/g, "^2");
+      const txtY = strY.replace(/<sup>2<\/sup>/g, "^2");
+      currentLogBlock += `${bodyName}:\n  x ≈ ${txtX}\n  y ≈ ${txtY}\n`;
 
-            if (formulaEl) {
-                // Настраиваем сам контейнер
-                formulaEl.style.fontFamily = "Consolas, monospace";
-                formulaEl.style.fontSize = "13px";
-                formulaEl.style.lineHeight = "1.3";
-                formulaEl.style.padding = "5px 10px";
-                formulaEl.style.margin = "5px auto";
-                formulaEl.style.whiteSpace = "normal";
-                
-                // ДОБАВЛЕНО: Выравнивание по центру
-                formulaEl.style.textAlign = "center"; 
-                
-                formulaEl.innerHTML = 
-                    '<div style="font-weight:bold; margin:0 0 4px 0; color:' + colors[i] + '">' + bodyName + '</div>' +
-                    '<div style="margin:0;">x(Δt) ≈ ' + strX + '</div>' +
-                    '<div style="margin:0;">y(Δt) ≈ ' + strY + '</div>';
-            }
-        }
+      if (formulaEl) {
+        formulaEl.style.fontFamily = "Consolas, monospace";
+        formulaEl.style.fontSize = "13px";
+        formulaEl.style.lineHeight = "1.3";
+        formulaEl.style.padding = "5px 10px";
+        formulaEl.style.margin = "5px auto";
+        formulaEl.style.whiteSpace = "normal";
+        formulaEl.style.textAlign = "center";
 
-        approximationLog.push(currentLogBlock);
-        simulationTime += logInterval;
+        formulaEl.innerHTML =
+          '<div style="font-weight:bold; margin:0 0 4px 0; color:' + colors[i] + '">' + bodyName + '</div>' +
+          '<div style="margin:0;">x(Δt) ≈ ' + strX + '</div>' +
+          '<div style="margin:0;">y(Δt) ≈ ' + strY + '</div>';
+      }
     }
 
-    function download() {
-        if (approximationLog.length === 0) {
-            alert("Лог пуст.");
-            return;
-        }
-        const fileContent = approximationLog.join('\n' + '-'.repeat(40) + '\n\n');
-        const blob = new Blob([fileContent], { type: 'text/plain;charset=utf-8' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'approximation_log.txt';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-    }
+    approximationLog.push(currentLogBlock);
+    simulationTime += logInterval;
+  }
 
-    return {
-        clear: clear,
-        update: update,
-        download: download
-    };
+  function download() {
+    if (approximationLog.length === 0) { alert("Лог пуст."); return; }
+    const fileContent = approximationLog.join('\n' + '-'.repeat(40) + '\n\n');
+    const blob = new Blob([fileContent], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'approximation_log.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
+
+  return { clear: clear, update: update, download: download };
 })();
 
 var userInput = (function(){
@@ -347,48 +543,69 @@ var userInput = (function(){
   var softeningButton = document.querySelector(".ThreeBodyProblem-softeningButton");
   var sliderElement = document.querySelector(".ThreeBodyProblem-slider");
   var sceneContainer = document.querySelector(".ThreeBodyProblem-container");
+
   var slider, currentSlider="mass", currentMassSliderIndex=0, currentModel;
 
   var downloadSceneButton = document.getElementById('download-scene-button');
   var uploadSceneButton = document.getElementById('upload-scene-button');
   var sceneUploader = document.getElementById('scene-uploader');
   var downloadLogButton = document.getElementById('download-log-button');
-  
-  // Элементы для лабораторных работ
+
   var labSelectionModal = document.getElementById('lab-selection-modal');
   var labModal = document.getElementById('lab-modal');
   var labTitle = document.getElementById('lab-title');
   var labDesc = document.getElementById('lab-description');
   var labSteps = document.getElementById('lab-steps');
   var startLabBtn = document.getElementById('start-lab-button');
-  var labsMenuBtn = document.getElementById('labs-menu-button');
+  var trainerBtn = document.getElementById('labs-menu-button');
+
+  var infoButton = document.getElementById('info-button');
+  var infoModal = document.getElementById('info-modal');
+
+  var errorModal = document.getElementById('error-modal');
 
   var sliderEditInput = null;
-  // ИЗМЕНЕНИЕ: Цвета тел для текста слайдера
   var bodyColors = ['#ff8b22', '#6c81ff', '#4ccd7a'];
 
+  var currentTrainerActivity = null;
+
   function showErrorModal(title, message) {
-    var errorModal = document.getElementById('error-modal');
-    if (!errorModal) {
-      alert(title + ": " + message);
-      return;
-    }
+    if (!errorModal) { alert(title + ": " + message); return; }
     var titleEl = errorModal.querySelector('.error-title');
     var msgEl = errorModal.querySelector('.error-message');
     if (titleEl) titleEl.textContent = title;
     if (msgEl) msgEl.textContent = message;
-    
     cssHelper.removeClass(errorModal, 'is-hidden');
+  }
+
+  function forcePause() {
+    try { simulation.pause(); } catch(e) {}
+    var pauseButton = document.querySelector('.ThreeBodyProblem-pause');
+    if (pauseButton) pauseButton.textContent = 'Продолжить';
+  }
+
+  function showBriefing(activity){
+    if (!activity) return;
+    forcePause();
+
+    if (startLabBtn) startLabBtn.textContent = "Перейти к настройке";
+    if (labTitle) labTitle.textContent = activity.title || "Активность";
+    if (labDesc) labDesc.textContent = activity.description || "";
+    if (labSteps) {
+      labSteps.innerHTML = '';
+      (activity.steps || []).forEach(function(step){
+        var li = document.createElement('li');
+        li.textContent = step;
+        labSteps.appendChild(li);
+      });
+    }
+    if (labModal) cssHelper.removeClass(labModal, 'is-hidden');
   }
 
   function setActiveModeButton(activeBtn) {
     var buttons = [mass1Button, mass2Button, mass3Button, speedButton, softeningButton];
-    buttons.forEach(function(btn) {
-      if (btn) cssHelper.removeClass(btn, "is-active");
-    });
-    if (activeBtn) {
-      cssHelper.addClass(activeBtn, "is-active");
-    }
+    buttons.forEach(function(btn) { if (btn) cssHelper.removeClass(btn, "is-active"); });
+    if (activeBtn) cssHelper.addClass(activeBtn, "is-active");
   }
 
   function ensureSliderEdit() {
@@ -397,12 +614,9 @@ var userInput = (function(){
     sliderEditInput.type = 'text';
     sliderEditInput.className = 'ThreeBodyProblem-sliderEditInput';
     var labelContainer = sliderLabelElement && sliderLabelElement.parentElement ? sliderLabelElement.parentElement : null;
-    if (labelContainer) {
-        labelContainer.appendChild(sliderEditInput);
-    } else {
-        document.body.appendChild(sliderEditInput);
-    }
-    
+    if (labelContainer) labelContainer.appendChild(sliderEditInput);
+    else document.body.appendChild(sliderEditInput);
+
     sliderEditInput.style.display = 'none';
     sliderEditInput.style.margin = '6px auto 0 auto';
     sliderEditInput.style.padding = '6px 10px';
@@ -451,9 +665,7 @@ var userInput = (function(){
     ensureSliderEdit();
     if (sliderLabelElement){
       sliderLabelElement.addEventListener('click', function(){
-        if (currentSlider === 'mass') {
-            showMassEdit();
-        }
+        if (currentSlider === 'mass') showMassEdit();
       });
     }
     sliderEditInput.addEventListener('keydown', function(e){
@@ -464,34 +676,46 @@ var userInput = (function(){
   }
 
   function updateMassButtonsAppearance(useCircles) {
-    if (useCircles) {
-      cssHelper.addClass(sceneContainer, 'is-circles-mode');
-    } else {
-      cssHelper.removeClass(sceneContainer, 'is-circles-mode');
-    }
+    if (useCircles) cssHelper.addClass(sceneContainer, 'is-circles-mode');
+    else cssHelper.removeClass(sceneContainer, 'is-circles-mode');
+
     if (window.graphics && typeof graphics.setCircleMode === 'function') {
       graphics.setCircleMode(!!useCircles);
     }
   }
 
-  // НОВАЯ ФУНКЦИЯ: Обновление состояния кнопок (блокировка)
-  function updateLockedButtons(lockedMasses) {
-      // Сначала включаем все кнопки
-      var buttons = [mass1Button, mass2Button, mass3Button];
-      buttons.forEach(function(btn){ if(btn) cssHelper.removeClass(btn, 'is-disabled'); });
+  function switchToFirstUnlockedMass(){
+    if (mass1Button && !cssHelper.hasClass(mass1Button, 'is-disabled')) { didClickMass1(); return; }
+    if (mass2Button && !cssHelper.hasClass(mass2Button, 'is-disabled')) { didClickMass2(); return; }
+    if (mass3Button && !cssHelper.hasClass(mass3Button, 'is-disabled')) { didClickMass3(); return; }
+  }
 
-      // Если есть список заблокированных, выключаем их
-      if (lockedMasses && Array.isArray(lockedMasses)) {
-          lockedMasses.forEach(function(isLocked, index){
-              if (isLocked && buttons[index]) {
-                  cssHelper.addClass(buttons[index], 'is-disabled');
-                  // Если текущий слайдер выбран на заблокированной массе, переключаем на скорость
-                  if (currentSlider === 'mass' && currentMassSliderIndex === index) {
-                      didClickSpeed();
-                  }
-              }
-          });
+  function updateLockedButtons(lockedMasses, lockedControls) {
+    var massButtons = [mass1Button, mass2Button, mass3Button];
+    var otherButtons = [speedButton, softeningButton];
+    var all = massButtons.concat(otherButtons);
+
+    all.forEach(function(btn){ if(btn) cssHelper.removeClass(btn, 'is-disabled'); });
+
+    if (lockedMasses && Array.isArray(lockedMasses)) {
+      lockedMasses.forEach(function(isLocked, index){
+        if (isLocked && massButtons[index]) {
+          cssHelper.addClass(massButtons[index], 'is-disabled');
+          if (currentSlider === 'mass' && currentMassSliderIndex === index) switchToFirstUnlockedMass();
+        }
+      });
+    }
+
+    if (lockedControls) {
+      if (lockedControls.speed && speedButton) {
+        cssHelper.addClass(speedButton, 'is-disabled');
+        if (currentSlider === 'speed') switchToFirstUnlockedMass();
       }
+      if (lockedControls.softening && softeningButton) {
+        cssHelper.addClass(softeningButton, 'is-disabled');
+        if (currentSlider === 'softening') switchToFirstUnlockedMass();
+      }
+    }
   }
 
   function getSofteningSliderSettings(isDimensionless){
@@ -501,7 +725,7 @@ var userInput = (function(){
   }
 
   function calculateDefaultSliderOutput(sliderSettings){
-    var def = getCurrentSimulationValue(currentModel);
+    var def = getCurrentSimulationValue();
     var min = sliderSettings.min, max = sliderSettings.max;
     if (min===undefined || max===undefined || min===max) return 0.5;
     var out = (def - min) / (max - min);
@@ -540,7 +764,7 @@ var userInput = (function(){
     } else {
       sliderText = "Неизвестный ползунок";
     }
-    sliderLabelElement.innerText = sliderText;
+    if (sliderLabelElement) sliderLabelElement.innerText = sliderText;
   }
 
   function getCurrentSliderSettings(){
@@ -562,9 +786,9 @@ var userInput = (function(){
   }
 
   function bodyNameFromIndex(i){
-    var name = physics.initialConditions.currentPresetName;
-    var circles = (name==="FigureEight" || name==="Chaotic" || name==="Lab1" || name==="Lab2");
-    if (circles) return ["Тело 1 (красное)","Тело 2 (синее)","Тело 3 (зелёное)"][i] || "Тело";
+    if (physics.initialConditions.dimensionless === true) {
+      return ["Тело 1 (красное)","Тело 2 (синее)","Тело 3 (зелёное)"][i] || "Тело";
+    }
     return ["Солнце","Земля","Юпитер"][i] || "Тело";
   }
 
@@ -586,7 +810,7 @@ var userInput = (function(){
     res.value/=100; res.unit='век';   if (res.value<10) return res;
     res.value = Math.floor(res.value*10)/10;
     return res;
-    }
+  }
 
   function formatTimescaleForSlider(v){
     var h = timeHumanReadable(v);
@@ -597,13 +821,25 @@ var userInput = (function(){
 
   function didClickRestart(){
     logManager.clear();
-    
+
     physics.resetStateToInitialConditions();
     graphics.clearScene(physics.largestDistanceMeters());
     graphics.updateObjectSizes(physics.calculateDiameters());
-    if (window.chartManager && typeof window.chartManager.reset === 'function') {
-      window.chartManager.reset();
+
+    graphics.calculateNewPositions(physics.state.u);
+    graphics.drawBodies();
+    graphics.drawOrbitalLines(false);
+
+    if (window.chartManager && typeof window.chartManager.reset === 'function') window.chartManager.reset();
+
+    if (currentTrainerActivity) {
+      showBriefing(currentTrainerActivity);
     }
+
+    if (window.labEngine && typeof labEngine.onRestart === 'function') {
+      try { labEngine.onRestart(); } catch(e) {}
+    }
+
     return false;
   }
 
@@ -614,15 +850,18 @@ var userInput = (function(){
       var s = getSofteningSliderSettings(physics.initialConditions.dimensionless);
       var epsSq = physics.initialConditions.softeningParameterSquared;
       var eps;
-      if (epsSq && epsSq>0){ eps = Math.sqrt(epsSq); }
-      else { eps = Math.pow(10, s.defaultLogEpsilon); physics.initialConditions.softeningParameterSquared = eps*eps; }
+      if (epsSq && epsSq>0) eps = Math.sqrt(epsSq);
+      else {
+        eps = Math.pow(10, s.defaultLogEpsilon);
+        physics.initialConditions.softeningParameterSquared = eps*eps;
+      }
       return Math.log10(eps);
     }
     return 0;
   }
 
   function resetSlider(){
-    if (typeof sliderEditInput !== 'undefined' && sliderEditInput) {
+    if (sliderEditInput) {
       sliderEditInput.style.display = 'none';
       if (sliderLabelElement) sliderLabelElement.style.display = '';
     }
@@ -640,27 +879,21 @@ var userInput = (function(){
       if (currentMassSliderIndex===0) cssHelper.addClass(sliderElement,"ThreeBodyProblem-sliderSun");
       else if (currentMassSliderIndex===1) cssHelper.addClass(sliderElement,"ThreeBodyProblem-sliderEarth");
       else if (currentMassSliderIndex===2) cssHelper.addClass(sliderElement,"ThreeBodyProblem-sliderJupiter");
-      
+
       cssHelper.addClass(sliderLabelElement, "is-editable");
       sliderLabelElement.title = "Нажмите, чтобы ввести значение вручную";
-      // ИЗМЕНЕНИЕ: Установка цвета текста в зависимости от тела
       sliderLabelElement.style.color = bodyColors[currentMassSliderIndex];
-      
     } else if (currentSlider==="speed"){
       txt = formatTimescaleForSlider(val);
       cssHelper.removeClass(sliderLabelElement, "is-editable");
       sliderLabelElement.removeAttribute("title");
-      // ИЗМЕНЕНИЕ: Сброс цвета
       sliderLabelElement.style.color = '';
-      
     } else if (currentSlider==="softening"){
       var eps = Math.pow(10,val);
       txt = formatSofteningForSlider(eps);
       cssHelper.removeClass(sliderLabelElement, "is-editable");
       sliderLabelElement.removeAttribute("title");
-      // ИЗМЕНЕНИЕ: Сброс цвета
       sliderLabelElement.style.color = '';
-      
     } else {
       txt = "Неизвестный ползунок";
       cssHelper.removeClass(sliderLabelElement, "is-editable");
@@ -669,7 +902,9 @@ var userInput = (function(){
     }
     sliderLabelElement.innerText = txt;
 
-    var pos = (set.min!==undefined && set.max!==undefined && set.min!==set.max) ? (val - set.min)/(set.max - set.min) : 0.5;
+    var pos = (set.min!==undefined && set.max!==undefined && set.min!==set.max)
+      ? (val - set.min)/(set.max - set.min)
+      : 0.5;
     pos = Math.max(0,Math.min(1,pos));
 
     if (set.power!==undefined && set.power!==1){
@@ -682,91 +917,101 @@ var userInput = (function(){
       pos = Math.max(0,Math.min(1,pos));
     }
 
-    if (slider && typeof slider.setNormalizedValue === 'function'){
-      slider.setNormalizedValue(pos, true); 
-    }
+    if (slider && typeof slider.setNormalizedValue === 'function') slider.setNormalizedValue(pos, true);
   }
 
   function didChangeModel(model){
+    currentTrainerActivity = null;
+
+    if (window.labEngine && typeof labEngine.stop === 'function') {
+      try { labEngine.stop(); } catch(e) {}
+    }
+
     currentModel = model;
     physics.changeInitialConditions(currentModel);
 
-    var presetEls = document.querySelectorAll(".ThreeBodyProblem-preset");
-    if (model.name === "Custom") {
-      for (var i=0; i<presetEls.length; i++) {
-        cssHelper.removeClass(presetEls[i],'ThreeBodyProblem-button--isSelected');
-      }
-    }
+    graphics.calculateNewPositions(physics.state.u);
+    graphics.drawBodies();
+    graphics.drawOrbitalLines(false);
 
-    // Обновляем вид в зависимости от того, абстрактная это модель или планетная
-    var isAbstract = model.name==="FigureEight" || model.name==="Chaotic" || model.name==="Lab1" || model.name==="Lab2";
-    updateMassButtonsAppearance(isAbstract);
-
-    // Блокировка кнопок, если требуется
-    updateLockedButtons(model.lockedMasses);
+    updateMassButtonsAppearance(model.dimensionless === true);
+    updateLockedButtons(model.lockedMasses, model.lockedControls);
 
     didClickRestart();
     resetSlider();
   }
 
-  // Функция запуска лабораторной работы
   function startLab(labId) {
+    forcePause();
     var labData = simulations.getLab(labId);
     if (!labData) return;
 
-    // 1. Применяем физику лабы
-    // Если у лабы есть свой конфиг physics, берем его, иначе берем сам объект (если ссылались на пресет)
-    var physicsConfig = labData.physics || labData; 
-    
-    // Важно: помечаем имя, чтобы слайдеры работали корректно
+    var physicsConfig = labData.physics || labData;
     if (!physicsConfig.name) physicsConfig.name = "Lab";
-    physicsConfig.currentPresetName = "Lab"; 
-    
-    didChangeModel(physicsConfig);
+    physicsConfig.currentPresetName = physicsConfig.name;
 
-    // 2. Показываем модальное окно с заданием
-    if (labTitle) labTitle.textContent = labData.title;
-    if (labDesc) labDesc.textContent = labData.description;
-    
-    // Генерируем список шагов
-    if (labSteps) {
-      labSteps.innerHTML = '';
-      labData.steps.forEach(function(step){
-        var li = document.createElement('li');
-        li.textContent = step;
-        labSteps.appendChild(li);
+    didChangeModel(physicsConfig);
+    forcePause();
+
+    currentTrainerActivity = {
+      kind: "lab",
+      id: labId,
+      title: labData.title,
+      description: labData.description,
+      steps: labData.steps
+    };
+
+    var presetEls = document.querySelectorAll(".ThreeBodyProblem-preset");
+    for (var i=0; i<presetEls.length; i++) cssHelper.removeClass(presetEls[i],'ThreeBodyProblem-button--isSelected');
+    if (trainerBtn) cssHelper.addClass(trainerBtn, 'ThreeBodyProblem-button--isSelected');
+
+    showBriefing(currentTrainerActivity);
+  }
+
+  function startTask(taskId) {
+    forcePause();
+    var taskData = simulations.getTask(taskId);
+    if (!taskData) {
+      showErrorModal("Задание не найдено", "taskId=" + taskId);
+      return;
+    }
+
+    var physicsConfig = taskData.physics || taskData;
+    if (!physicsConfig.name) physicsConfig.name = "Task";
+    physicsConfig.currentPresetName = physicsConfig.name;
+
+    didChangeModel(physicsConfig);
+    forcePause();
+
+    if (window.labEngine && typeof labEngine.startTask === "function") {
+      labEngine.startTask({
+        id: taskData.id,
+        title: taskData.title,
+        goal: taskData.goal,
+        fail: taskData.fail
       });
     }
 
-    // Показываем окно
-    if(labModal) cssHelper.removeClass(labModal, 'is-hidden');
-    
-    // Подсвечиваем кнопку "Лабораторные работы" как активную
+    currentTrainerActivity = {
+      kind: "task",
+      id: taskId,
+      title: taskData.title,
+      description: taskData.description,
+      steps: taskData.steps
+    };
+
     var presetEls = document.querySelectorAll(".ThreeBodyProblem-preset");
-    for (var j=0; j<presetEls.length; j++) cssHelper.removeClass(presetEls[j],'ThreeBodyProblem-button--isSelected');
-    if (labsMenuBtn) cssHelper.addClass(labsMenuBtn, 'ThreeBodyProblem-button--isSelected');
+    for (var i=0; i<presetEls.length; i++) cssHelper.removeClass(presetEls[i],'ThreeBodyProblem-button--isSelected');
+    if (trainerBtn) cssHelper.addClass(trainerBtn, 'ThreeBodyProblem-button--isSelected');
 
-    // Ставим на паузу, пока студент читает
-    if (!simulation.isPaused()) {
-      var pauseButton = document.querySelector('.ThreeBodyProblem-pause');
-      if (pauseButton) pauseButton.click();
-    }
+    showBriefing(currentTrainerActivity);
   }
 
-  function didClickMass1(){ 
-      if (mass1Button && cssHelper.hasClass(mass1Button, 'is-disabled')) return false;
-      currentSlider="mass"; currentMassSliderIndex=0; setActiveModeButton(mass1Button); resetSlider(); return false; 
-  }
-  function didClickMass2(){ 
-      if (mass2Button && cssHelper.hasClass(mass2Button, 'is-disabled')) return false;
-      currentSlider="mass"; currentMassSliderIndex=1; setActiveModeButton(mass2Button); resetSlider(); return false; 
-  }
-  function didClickMass3(){ 
-      if (mass3Button && cssHelper.hasClass(mass3Button, 'is-disabled')) return false;
-      currentSlider="mass"; currentMassSliderIndex=2; setActiveModeButton(mass3Button); resetSlider(); return false; 
-  }
-  function didClickSpeed(){ currentSlider="speed"; currentMassSliderIndex=0; setActiveModeButton(speedButton); resetSlider(); return false; }
-  function didClickSoftening(){ currentSlider="softening"; currentMassSliderIndex=0; setActiveModeButton(softeningButton); resetSlider(); return false; }
+  function didClickMass1(){ if (mass1Button && cssHelper.hasClass(mass1Button, 'is-disabled')) return false; currentSlider="mass"; currentMassSliderIndex=0; setActiveModeButton(mass1Button); resetSlider(); return false; }
+  function didClickMass2(){ if (mass2Button && cssHelper.hasClass(mass2Button, 'is-disabled')) return false; currentSlider="mass"; currentMassSliderIndex=1; setActiveModeButton(mass2Button); resetSlider(); return false; }
+  function didClickMass3(){ if (mass3Button && cssHelper.hasClass(mass3Button, 'is-disabled')) return false; currentSlider="mass"; currentMassSliderIndex=2; setActiveModeButton(mass3Button); resetSlider(); return false; }
+  function didClickSpeed(){ if (speedButton && cssHelper.hasClass(speedButton, 'is-disabled')) return false; currentSlider="speed"; setActiveModeButton(speedButton); resetSlider(); return false; }
+  function didClickSoftening(){ if (softeningButton && cssHelper.hasClass(softeningButton, 'is-disabled')) return false; currentSlider="softening"; setActiveModeButton(softeningButton); resetSlider(); return false; }
 
   function didClickDownloadScene() {
     var sceneData = {
@@ -778,11 +1023,11 @@ var userInput = (function(){
       timeScaleFactor: physics.initialConditions.timeScaleFactor,
       softeningParameterSquared: physics.initialConditions.softeningParameterSquared
     };
-    
+
     var jsonString = JSON.stringify(sceneData, null, 2);
     var blob = new Blob([jsonString], { type: "application/json" });
     var url = URL.createObjectURL(blob);
-    
+
     var a = document.createElement('a');
     a.href = url;
     a.download = 'three-body-scene.json';
@@ -790,14 +1035,11 @@ var userInput = (function(){
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    
+
     return false;
   }
-  
-  function didClickUploadScene() {
-    sceneUploader.click();
-    return false;
-  }
+
+  function didClickUploadScene() { sceneUploader.click(); return false; }
 
   function handleFileUpload(event) {
     var file = event.target.files[0];
@@ -810,10 +1052,8 @@ var userInput = (function(){
 
     var reader = new FileReader();
     reader.onload = function(e) {
-      var content = e.target.result;
       try {
-        var data = JSON.parse(content);
-        
+        var data = JSON.parse(e.target.result);
         var customPreset = {
           name: "Custom",
           dimensionless: data.dimensionless,
@@ -827,21 +1067,13 @@ var userInput = (function(){
           densities: null,
           paleOrbitalPaths: false
         };
-        
         didChangeModel(customPreset);
-        
-        simulation.pause();
-        var pauseButton = document.querySelector('.ThreeBodyProblem-pause');
-        if (pauseButton) {
-          pauseButton.textContent = 'Продолжить';
-        }
-
+        forcePause();
       } catch (error) {
         showErrorModal("Ошибка данных", "Ошибка при обработке файла: " + error.message);
       }
     };
     reader.readAsText(file);
-    
     event.target.value = '';
   }
 
@@ -866,7 +1098,7 @@ var userInput = (function(){
     if (downloadSceneButton) downloadSceneButton.onclick = didClickDownloadScene;
     if (uploadSceneButton) uploadSceneButton.onclick = didClickUploadScene;
     if (sceneUploader) sceneUploader.onchange = handleFileUpload;
-    if (downloadLogButton) downloadLogButton.onclick = function() { logManager.download(); return false; };
+    if (downloadLogButton) downloadLogButton.onclick = function(){ logManager.download(); return false; };
 
     var pauseButton = document.querySelector('.ThreeBodyProblem-pause');
     if (pauseButton){
@@ -877,117 +1109,111 @@ var userInput = (function(){
       };
     }
 
-    updateMassButtonsAppearance(currentModel.name==="FigureEight" || currentModel.name==="Chaotic");
+    updateMassButtonsAppearance(currentModel.dimensionless === true);
 
-    // Инициализация окна инструкции
-    var infoButton = document.getElementById('info-button');
-    var infoModal = document.getElementById('info-modal');
-    var closeInfoModalButton = infoModal ? infoModal.querySelector('.modal-close-button') : null;
+    if (infoButton && infoModal) {
+      var closeInfoModalButton = infoModal.querySelector('.modal-close-button');
 
-    if (infoButton && infoModal && closeInfoModalButton) {
       infoButton.addEventListener('click', function(e) {
         e.preventDefault();
         cssHelper.removeClass(infoModal, 'is-hidden');
       });
 
-      closeInfoModalButton.addEventListener('click', function() {
-        cssHelper.addClass(infoModal, 'is-hidden');
-      });
+      if (closeInfoModalButton) {
+        closeInfoModalButton.addEventListener('click', function() {
+          cssHelper.addClass(infoModal, 'is-hidden');
+        });
+      }
 
       infoModal.addEventListener('click', function(e) {
-        if (e.target === infoModal) {
-          cssHelper.addClass(infoModal, 'is-hidden');
-        }
+        if (e.target === infoModal) cssHelper.addClass(infoModal, 'is-hidden');
       });
     }
 
-    // Инициализация окна ошибки
-    var errorModal = document.getElementById('error-modal');
     if (errorModal) {
       var okButton = errorModal.querySelector('.error-ok-button');
-      var closeFunc = function() { cssHelper.addClass(errorModal, 'is-hidden'); };
+      var closeFunc = function(){ cssHelper.addClass(errorModal, 'is-hidden'); };
       if (okButton) okButton.onclick = closeFunc;
-      errorModal.addEventListener('click', function(e) {
-        if (e.target === errorModal) closeFunc();
-      });
+      errorModal.addEventListener('click', function(e){ if (e.target === errorModal) closeFunc(); });
     }
 
-    // ЛОГИКА ДЛЯ ЛАБОРАТОРНЫХ РАБОТ
-    // 1. Открытие меню выбора лабы
-    if (labsMenuBtn && labSelectionModal) {
+    if (trainerBtn && labSelectionModal) {
       var closeSelBtn = labSelectionModal.querySelector('.modal-close-button');
-      
-      labsMenuBtn.addEventListener('click', function(){
+
+      trainerBtn.addEventListener('click', function(){
+        forcePause();
         cssHelper.removeClass(labSelectionModal, 'is-hidden');
       });
 
-      if (closeSelBtn) {
-        closeSelBtn.addEventListener('click', function(){
-          cssHelper.addClass(labSelectionModal, 'is-hidden');
-        });
-      }
-      
+      if (closeSelBtn) closeSelBtn.addEventListener('click', function(){ cssHelper.addClass(labSelectionModal, 'is-hidden'); });
+
       labSelectionModal.addEventListener('click', function(e) {
-        if (e.target === labSelectionModal) {
-          cssHelper.addClass(labSelectionModal, 'is-hidden');
-        }
+        if (e.target === labSelectionModal) cssHelper.addClass(labSelectionModal, 'is-hidden');
       });
     }
 
-    // 2. Выбор конкретной лабы в меню
     var selectLabBtns = document.querySelectorAll('.select-lab-btn');
-    for(var i=0; i<selectLabBtns.length; i++) {
+    for (var i=0; i<selectLabBtns.length; i++) {
       selectLabBtns[i].addEventListener('click', function(){
         var labId = this.getAttribute('data-lab-id');
-        // Закрываем меню выбора
         cssHelper.addClass(labSelectionModal, 'is-hidden');
-        // Запускаем лабу (откроется брифинг)
         startLab(labId);
       });
     }
 
-    // 3. Обработчик кнопки "Начать выполнение" в модалке задания
+    var selectTaskBtns = document.querySelectorAll('.select-task-btn');
+    for (var t=0; t<selectTaskBtns.length; t++) {
+      selectTaskBtns[t].addEventListener('click', function(){
+        var taskId = this.getAttribute('data-task-id');
+        cssHelper.addClass(labSelectionModal, 'is-hidden');
+        startTask(taskId);
+      });
+    }
+
     if (startLabBtn) {
-      startLabBtn.onclick = function() {
-        if(labModal) cssHelper.addClass(labModal, 'is-hidden');
-        // Снимаем с паузы
-        if (simulation.isPaused()) {
-          var pauseButton = document.querySelector('.ThreeBodyProblem-pause');
-          if (pauseButton) pauseButton.click();
-        }
+      startLabBtn.onclick = function(){
+        if (labModal) cssHelper.addClass(labModal, 'is-hidden');
+        forcePause();
+        return false;
       };
     }
 
-    window.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') {
-        if (infoModal && !cssHelper.hasClass(infoModal, 'is-hidden')) cssHelper.addClass(infoModal, 'is-hidden');
-        if (errorModal && !cssHelper.hasClass(errorModal, 'is-hidden')) cssHelper.addClass(errorModal, 'is-hidden');
-        if (labModal && !cssHelper.hasClass(labModal, 'is-hidden')) cssHelper.addClass(labModal, 'is-hidden');
-        if (labSelectionModal && !cssHelper.hasClass(labSelectionModal, 'is-hidden')) cssHelper.addClass(labSelectionModal, 'is-hidden');
-      }
+    if (labModal) {
+      var closeLabModalBtn = labModal.querySelector('.modal-close-button');
+      if (closeLabModalBtn) closeLabModalBtn.addEventListener('click', function(){ cssHelper.addClass(labModal, 'is-hidden'); });
+      labModal.addEventListener('click', function(e){ if (e.target === labModal) cssHelper.addClass(labModal, 'is-hidden'); });
+    }
+
+    window.addEventListener('keydown', function(e){
+      if (e.key !== 'Escape') return;
+
+      if (infoModal && !cssHelper.hasClass(infoModal, 'is-hidden')) cssHelper.addClass(infoModal, 'is-hidden');
+      if (errorModal && !cssHelper.hasClass(errorModal, 'is-hidden')) cssHelper.addClass(errorModal, 'is-hidden');
+      if (labModal && !cssHelper.hasClass(labModal, 'is-hidden')) cssHelper.addClass(labModal, 'is-hidden');
+      if (labSelectionModal && !cssHelper.hasClass(labSelectionModal, 'is-hidden')) cssHelper.addClass(labSelectionModal, 'is-hidden');
+
+      var resultModal = document.getElementById('activity-result-modal');
+      if (resultModal && !cssHelper.hasClass(resultModal, 'is-hidden')) cssHelper.addClass(resultModal, 'is-hidden');
     });
   }
 
-  return { 
-    init:init,
-    bodyNameFromIndex: bodyNameFromIndex
-  };
+  return { init:init, bodyNameFromIndex: bodyNameFromIndex };
 })();
 
 userInput.init();
 
 document.addEventListener('DOMContentLoaded', function() {
-    var loaderWrapper = document.getElementById('loader-wrapper');
-    if(loaderWrapper){
-        loaderWrapper.classList.add('hidden');
-        setTimeout(function(){
-            if(loaderWrapper.parentNode){
-                loaderWrapper.parentNode.removeChild(loaderWrapper);
-            }
-        }, 500);
-    }
-    
-    var container = document.querySelector('.ThreeBodyProblem-container');
-    container.classList.add('visible');
-    simulation.start();
+  var loaderWrapper = document.getElementById('loader-wrapper');
+  if(loaderWrapper){
+    loaderWrapper.classList.add('hidden');
+    setTimeout(function(){
+      if(loaderWrapper.parentNode){
+        loaderWrapper.parentNode.removeChild(loaderWrapper);
+      }
+    }, 500);
+  }
+
+  var container = document.querySelector('.ThreeBodyProblem-container');
+  if (container) container.classList.add('visible');
+  simulation.start();
 });
