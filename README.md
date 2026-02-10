@@ -1,6 +1,6 @@
 # Three-Body Problem Simulator
 
-A web simulator of the classic three-body problem with interactive visualization and presets.
+A web simulator of the classic three-body problem with interactive visualization.
 The physics core is implemented in **C++ + WebAssembly (WASM)** for high-performance computation using the RK4 integrator.
 
 ## 🚀 Features
@@ -8,22 +8,23 @@ The physics core is implemented in **C++ + WebAssembly (WASM)** for high-perform
 - **Controls:** Adjust body masses, simulation speed, and the softening parameter (ε) in real-time.
 - **Tools:** Pause/resume, restart, save/load scenes.
 - **Analysis:** Real-time charts of velocities and accelerations, plus a log of local approximation formulas.
+- **Education:** Lab Works and interactive tasks with automatic verification
 
 ---
 
-## 🏃 How to Run (Important!)
+## 🏃 How to Run
 
 **You cannot simply open `index.html` in your browser.**
-Because this project uses WebAssembly (`.wasm`), browsers block loading the binary file from the local file system (`file://` protocol) due to security policies (CORS).
+Because this project uses WebAssembly (`.wasm`), browsers block loading the binary file from the local file system (`file://` protocol) due to security policies.
 
 To run the simulator, you must use a local web server. Choose one of the methods below:
 
-### Method 1: Visual Studio Code (Recommended)
+### Method 1: Visual Studio Code
 1. Install the **Live Server** extension by Ritwick Dey.
 2. Open the project folder in VS Code.
 3. Right-click on `index.html` and select **"Open with Live Server"**.
 
-### Method 2: Python (If you have Python installed)
+### Method 2: Python
 1. Open your terminal or command prompt.
 2. Navigate to the project folder.
 3. Run one of the following commands:
