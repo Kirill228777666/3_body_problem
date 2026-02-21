@@ -15,7 +15,8 @@
       svg: { fontCache: 'global' }
     };
   </script>
-  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+  <!-- Заменили внешнюю ссылку на локальную библиотеку формул -->
+  <script id="MathJax-script" async src="libs/tex-svg.js"></script>
   
   <style>
     .mass-icon-circle { display: none !important; }
@@ -88,15 +89,15 @@
 
   <div class="ThreeBodyProblem-container isFullScreenWide isUnselectable">
     <div class="ThreeBodyProblem-sun">
-      <img src="https://evgenii.com/image/blog/2018-09-27-three-body-problem-simulator/sun.png" class="ThreeBodyProblem-spin ThreeBodyProblem-bodyImage" alt="Солнце" />
+      <img src="images/sun.png" class="ThreeBodyProblem-spin ThreeBodyProblem-bodyImage" alt="Солнце" />
     </div>
     <div class="ThreeBodyProblem-earth">
-      <img src="https://evgenii.com/image/blog/2018-09-27-three-body-problem-simulator/earth.png" alt="Земля" class="ThreeBodyProblem-spin ThreeBodyProblem-bodyImage"/>
+      <img src="images/earth.png" alt="Земля" class="ThreeBodyProblem-spin ThreeBodyProblem-bodyImage"/>
     </div>
     <div class="ThreeBodyProblem-jupiter">
-      <img src="https://evgenii.com/image/blog/2018-09-27-three-body-problem-simulator/jupiter_juno.png" alt="Юпитер" class="ThreeBodyProblem-spin ThreeBodyProblem-bodyImage" />
+      <img src="images/jupiter_juno.png" alt="Юпитер" class="ThreeBodyProblem-spin ThreeBodyProblem-bodyImage" />
     </div>
-    <img src="https://evgenii.com/image/blog/2018-09-27-three-body-problem-simulator/center_of_mass.png" alt="Центр масс" class="ThreeBodyProblem-centerOfMass" />
+    <img src="images/center_of_mass.png" alt="Центр масс" class="ThreeBodyProblem-centerOfMass" />
     <canvas class="ThreeBodyProblem-canvas"></canvas>
 
     <div class="ThreeBodyProblem-hudContainer">
@@ -104,32 +105,32 @@
       
       <div class="ThreeBodyProblem-leftBottomButtonCantainer">
         <a class="ThreeBodyProblem-leftBottomButton ThreeBodyProblem-mass1Button ThreeBodyProblem-doesChangeOpacityOnHover" href="#" title="Масса 1">
-          <img src="https://evgenii.com/image/blog/2018-09-27-three-body-problem-simulator/mass_one_icon.png" alt="Масса 1" class="ThreeBodyProblem-leftBottomImage mass-icon-image">
+          <img src="images/mass_one_icon.png" alt="Масса 1" class="ThreeBodyProblem-leftBottomImage mass-icon-image">
           <span class="mass-circle mass-icon-circle" style="background:#ff8b22"></span>
         </a>
         <a class="ThreeBodyProblem-leftBottomButton ThreeBodyProblem-mass2Button ThreeBodyProblem-doesChangeOpacityOnHover" href="#" title="Масса 2">
-          <img src="https://evgenii.com/image/blog/2018-09-27-three-body-problem-simulator/mass_two_icon.png" alt="Масса 2" class="ThreeBodyProblem-leftBottomImage mass-icon-image">
+          <img src="images/mass_two_icon.png" alt="Масса 2" class="ThreeBodyProblem-leftBottomImage mass-icon-image">
           <span class="mass-circle mass-icon-circle" style="background:#6c81ff"></span>
         </a>
         <a class="ThreeBodyProblem-leftBottomButton ThreeBodyProblem-mass3Button ThreeBodyProblem-doesChangeOpacityOnHover" href="#" title="Масса 3">
-          <img src="https://evgenii.com/image/blog/2018-09-27-three-body-problem-simulator/mass_three_icon.png" alt="Масса 3" class="ThreeBodyProblem-leftBottomImage mass-icon-image">
+          <img src="images/mass_three_icon.png" alt="Масса 3" class="ThreeBodyProblem-leftBottomImage mass-icon-image">
           <span class="mass-circle mass-icon-circle" style="background:#4ccd7a"></span>
         </a>
         <a class="ThreeBodyProblem-leftBottomButton ThreeBodyProblem-speedButton ThreeBodyProblem-doesChangeOpacityOnHover" href="#" title="Скорость">
-          <img src="https://evgenii.com/image/blog/2018-09-27-three-body-problem-simulator/clock_icon.png" alt="Скорость" class="ThreeBodyProblem-leftBottomImage">
+          <img src="images/clock_icon.png" alt="Скорость" class="ThreeBodyProblem-leftBottomImage">
         </a>
         <a class="ThreeBodyProblem-leftBottomButton ThreeBodyProblem-softeningButton ThreeBodyProblem-doesChangeOpacityOnHover" href="#" title="Смягчение">
-          <img src="https://img.icons8.com/?size=1200&id=uPZIaAnibVWL&format=png" alt="Смягчение" class="ThreeBodyProblem-leftBottomImage">
+          <img src="images/softening_icon.png" alt="Смягчение" class="ThreeBodyProblem-leftBottomImage">
         </a>
         <a id="info-button" class="ThreeBodyProblem-leftBottomButton ThreeBodyProblem-doesChangeOpacityOnHover" href="#" title="Инструкция">
-          <img src="https://www.nvdemarie.be/files/modules/products/53/Infobalie.png" alt="Инструкция" class="ThreeBodyProblem-leftBottomImage">
+          <img src="images/info_icon.png" alt="Инструкция" class="ThreeBodyProblem-leftBottomImage">
         </a>
       </div>
       
       <div class="ThreeBodyProblem-rightBottomButtonContainer">
           <button class="ThreeBodyProblem-pause ThreeBodyProblem-button">Пауза</button>
           <a class="ThreeBodyProblem-reload ThreeBodyProblem-doesChangeOpacityOnHover" href="#" title="Перезапуск">
-            <img src="https://evgenii.com/image/blog/2016-09-17-ridiculous-strawberry-picking/reload_icon.png" alt="Перезапуск" class="ThreeBodyProblem-reloadIcon">
+            <img src="images/reload_icon.png" alt="Перезапуск" class="ThreeBodyProblem-reloadIcon">
           </a>
       </div>
     </div>
@@ -384,7 +385,10 @@
   <script src="script.js"></script>
   <script src="physics.js"></script>
   <script src="graphics.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- Заменили внешнюю ссылку на локальную библиотеку графиков -->
+  <script src="libs/chart.js"></script>
+  
   <script src="simulation.js"></script>
 
   <script src="labEngine.js"></script>
