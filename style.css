@@ -41,10 +41,10 @@ h1:hover {
   position: relative;
   height: 560px;
   
-  background-image: url("https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Hidden_Valley_Campground_-_Starry_sky_-_07.JPG/640px-Hidden_Valley_Campground_-_Starry_sky_-_07.JPG");
-  background-position: center bottom;
-  background-repeat: repeat;
-  background-size: 874px 780px;
+  background-image: url("images/background.jpg");
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
   
   border-top: 1px solid rgba(255,255,255,0.05);
   border-bottom: 1px solid rgba(255,255,255,0.05);
