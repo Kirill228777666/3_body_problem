@@ -122,7 +122,7 @@
           <img src="images/softening_icon.png" alt="Смягчение" class="ThreeBodyProblem-leftBottomImage">
         </a>
         <a id="info-button" class="ThreeBodyProblem-leftBottomButton ThreeBodyProblem-doesChangeOpacityOnHover" href="#" title="Инструкция">
-          <img src="images/info_icon.png" alt="Инструкция" class="ThreeBodyProblem-leftBottomImage">
+          Инструкция
         </a>
       </div>
       
@@ -201,8 +201,8 @@
 
         <h3>Как пользоваться</h3>
         <ol>
-          <li><strong>Выберите пресет</strong> внизу (песочница) или откройте <strong>«Тренажёр»</strong> (лабы и задания).</li>
-          <li><strong>Настройте параметры</strong> (удобнее на паузе).</li>
+          <li><strong>Выберите пресет</strong> внизу или откройте <strong>«Тренажёр»</strong>.</li>
+          <li><strong>Настройте параметры.</strong></li>
           <li><strong>Наблюдайте</strong> траектории и анализируйте графики ниже.</li>
         </ol>
 
@@ -215,7 +215,7 @@
             <ul>
               <li><strong>Масса 1, 2, 3:</strong> выберите тело и меняйте его массу слайдером.</li>
               <li><strong>Скорость:</strong> скорость течения времени в симуляции.</li>
-              <li><strong>Смягчение (ε):</strong> параметр для численной устойчивости при близких сближениях.</li>
+              <li><strong>Смягчение (ε):</strong> параметр для численной устойчивости при сильных сближениях.</li>
             </ul>
           </li>
           <li><strong>Слайдер:</strong> основной инструмент изменения выбранного параметра. Также можно нажать на текст над слайдером (в режиме массы), чтобы ввести число вручную.</li>
@@ -421,7 +421,7 @@
         accelerationChart.update('none');
       }
       window.chartManager.reset = resetCharts;
-
+      
       function initCharts() {
         if (chartsInited) return;
         const velCanvas = document.getElementById('velocityChart');
@@ -525,6 +525,5 @@
       });
     })();
   </script>
-
 </body>
 </html>
