@@ -119,6 +119,83 @@ var graphics = (function() {
     context.stroke();
   }
 
+  function drawLabVisuals(activeTask, stateU) {
+    if (!activeTask || !activeTask.goal) return;
+    const midX = canvas.width / 2;
+    const midY = canvas.height / 2;
+    const mpp = metersPerPixel;
+    const goal = activeTask.goal;
+
+    function toScreen(px, py) {
+      return { x: px / mpp + midX, y: -py / mpp + midY };
+    }
+    function toScreenRadius(r) { return r / mpp; }
+
+    context.save();
+    context.lineWidth = 2;
+
+    if (goal.type === "escape") {
+      let cIdx = goal.centralBody * 4;
+      let center = toScreen(stateU[cIdx], stateU[cIdx+1]);
+      context.beginPath();
+      context.arc(center.x, center.y, toScreenRadius(goal.escapeRadius), 0, Math.PI*2);
+      context.strokeStyle = "rgba(255, 107, 107, 0.5)";
+      context.setLineDash([8, 8]);
+      context.stroke();
+    } 
+    else if (goal.type === "boundOrbitHold") {
+      let cIdx = goal.centralBody * 4;
+      let center = toScreen(stateU[cIdx], stateU[cIdx+1]);
+      context.setLineDash([4, 6]);
+      context.strokeStyle = "rgba(76, 205, 122, 0.4)";
+      context.beginPath(); context.arc(center.x, center.y, toScreenRadius(goal.rMin), 0, Math.PI*2); context.stroke();
+      context.beginPath(); context.arc(center.x, center.y, toScreenRadius(goal.rMax), 0, Math.PI*2); context.stroke();
+      
+      context.beginPath();
+      context.arc(center.x, center.y, toScreenRadius(goal.rMax), 0, Math.PI*2);
+      context.arc(center.x, center.y, toScreenRadius(goal.rMin), 0, Math.PI*2, true);
+      context.fillStyle = "rgba(76, 205, 122, 0.05)";
+      context.fill();
+    }
+    else if (goal.type === "lagrangeHold") {
+      let aIdx = goal.primaryA * 4; let bIdx = goal.primaryB * 4;
+      let cA = toScreen(stateU[aIdx], stateU[aIdx+1]);
+      let cB = toScreen(stateU[bIdx], stateU[bIdx+1]);
+      let dx = stateU[bIdx] - stateU[aIdx];
+      let dy = stateU[bIdx+1] - stateU[aIdx+1];
+      let dist = Math.sqrt(dx*dx + dy*dy);
+      
+      context.setLineDash([2, 8]);
+      context.beginPath(); context.arc(cA.x, cA.y, toScreenRadius(dist), 0, Math.PI*2);
+      context.strokeStyle = "rgba(255, 139, 34, 0.2)"; context.stroke();
+      context.beginPath(); context.arc(cB.x, cB.y, toScreenRadius(dist), 0, Math.PI*2);
+      context.strokeStyle = "rgba(108, 129, 255, 0.2)"; context.stroke();
+    }
+    else if (goal.type === "checkpoints" && activeTask._checkpoints) {
+      context.setLineDash([]);
+      activeTask._checkpoints.forEach(function(cp) {
+        let pos = toScreen(cp.x, cp.y);
+        let r = toScreenRadius(cp.r);
+        context.beginPath();
+        context.arc(pos.x, pos.y, r, 0, Math.PI*2);
+        if (cp.collected) {
+          context.fillStyle = "rgba(76, 205, 122, 0.4)";
+          context.strokeStyle = "rgba(76, 205, 122, 0.9)";
+          context.fill();
+        } else {
+          context.fillStyle = "rgba(123, 240, 255, 0.15)";
+          context.strokeStyle = "rgba(123, 240, 255, 0.9)";
+          context.shadowBlur = 15;
+          context.shadowColor = "#7bf0ff";
+          context.fill();
+        }
+        context.stroke();
+        context.shadowBlur = 0;
+      });
+    }
+    context.restore();
+  }
+
   function showCanvasNotSupportedMessage() {
     document.getElementById("ThreeBodyProblem-notSupportedMessage").style.display ='block';
   }
@@ -200,6 +277,7 @@ var graphics = (function() {
     getBoundaries: getBoundaries,
     setApproximation: setApproximation,
     drawApproximationCurve: drawApproximationCurve,
-    setCircleMode: setCircleMode
+    setCircleMode: setCircleMode,
+    drawLabVisuals: drawLabVisuals
   };
 })();

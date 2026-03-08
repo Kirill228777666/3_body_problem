@@ -528,6 +528,68 @@ var labEngine = (function(){
     return { done:false };
   }
 
+  function evaluateCheckpointsTask(dt) {
+    var goal = activeTask.goal;
+    var target = goal.targetBody;
+    var T = getBodyState(target);
+
+    if (!activeTask._checkpoints) {
+      activeTask._checkpoints = JSON.parse(JSON.stringify(goal.checkpoints));
+    }
+
+    if (activeTask.fail && activeTask.fail.collision) {
+      if (collisionDetected(goal.centralBody, target)) {
+        finish({
+          success: false, score: passFailScore(false),
+          title: "Провал: столкновение", text: "Зонд разбился о звезду.",
+          html: "<p>Вы врезались в центральное тело до сбора всех данных.</p>"
+        });
+        return { done:true };
+      }
+    }
+
+    var allCollected = true;
+    var collectedCount = 0;
+
+    activeTask._checkpoints.forEach(function(cp) {
+      if (!cp.collected) {
+        var dx = T.x - cp.x; var dy = T.y - cp.y;
+        if (Math.sqrt(dx*dx + dy*dy) <= cp.r) cp.collected = true;
+        else allCollected = false;
+      }
+      if (cp.collected) collectedCount++;
+    });
+
+    var left = Math.max(0, goal.timeLimit - tReal);
+    var okColor = allCollected ? "#4ccd7a" : "#7bf0ff";
+
+    hud(
+      "<div style='font-weight:700; color:#7bf0ff;'>Тренажёр: " + activeTask.title + "</div>" +
+      "<div style='opacity:.9;'>Время: " + tReal.toFixed(1) + " / " + goal.timeLimit + " c (осталось " + left.toFixed(1) + " c)</div>" +
+      "<div>Собрано данных: <b style='color:" + okColor + ";'>" + collectedCount + " / " + activeTask._checkpoints.length + "</b> зон</div>" +
+      "<div style='opacity:.95; margin-top:6px;'><b>Подсказка:</b> Орбита должна пролегать через светящиеся кольца.</div>"
+    );
+
+    if (allCollected) {
+      finish({
+        success: true, score: passFailScore(true),
+        title: "Успех: Данные собраны!", text: "Зонд пролетел через все исследовательские зоны.",
+        html: "<p>Вы собрали <b>" + activeTask._checkpoints.length + "</b> из " + activeTask._checkpoints.length + " чекпоинтов!</p>" +
+              "<p><b>Оценка:</b> <span style=\"color:#7bf0ff; font-weight:700;\">ЗАЧЁТ</span> (100/100)</p>"
+      });
+      return { done:true };
+    }
+    if (tReal >= goal.timeLimit) {
+      finish({
+        success: false, score: passFailScore(false),
+        title: "Провал: время вышло", text: "Не успели облететь все зоны.",
+        html: "<p>Собрано зон: " + collectedCount + " из " + activeTask._checkpoints.length + ".</p>"
+      });
+      return { done:true };
+    }
+    return { done:false };
+  }
+
   function evaluateActiveTask(dt){
     if (!activeTask || !activeTask.goal) return { done:false };
 
@@ -535,6 +597,7 @@ var labEngine = (function(){
     if (type === "escape") return evaluateEscapeTask(dt);
     if (type === "boundOrbitHold") return evaluateBoundOrbitHoldTask(dt);
     if (type === "lagrangeHold") return evaluateLagrangeHoldTask(dt);
+    if (type === "checkpoints") return evaluateCheckpointsTask(dt);
 
     return { done:false };
   }
@@ -547,6 +610,7 @@ var labEngine = (function(){
     activeTask._window = null;
     activeTask._escapeHold = 0;
     activeTask._hold = 0;
+    if (activeTask.goal && activeTask.goal.type === "checkpoints") activeTask._checkpoints = null;
 
     baseline = {
       goalType: taskDef.goal ? taskDef.goal.type : null,
@@ -571,6 +635,7 @@ var labEngine = (function(){
     activeTask._window = null;
     activeTask._escapeHold = 0;
     activeTask._hold = 0;
+    if (activeTask.goal && activeTask.goal.type === "checkpoints") activeTask._checkpoints = null;
   }
 
   function update(deltaTimeSeconds){
@@ -595,6 +660,7 @@ var labEngine = (function(){
     onRestart: onRestart,
     update: update,
     manualCheck: manualCheck,
-    isActive: isActive
+    isActive: isActive,
+    getActiveTask: function() { return activeTask; }
   };
 })();

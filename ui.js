@@ -370,6 +370,42 @@ var simulations = (function(){
       })(),
       goal: { type: "lagrangeHold", primaryA: 0, primaryB: 1, testBody: 2, sideRelTol: 0.10, angleTolDeg: 12, holdTime: 10.0, timeLimit: 35.0 },
       fail: { collision: true }
+    },
+    "task8": {
+      id: "task8",
+      title: "Задание №8: Сбор данных",
+      description: "Подберите массу Солнца так, чтобы орбита зонда пролегла ровно через 3 светящихся голографических кольца (Чекпоинта).",
+      steps: [
+        "Нажмите «Перейти к настройке».",
+        "Подберите массу красной звезды на паузе.",
+        "Нажмите «Продолжить». Зонд (Тело 2) полетит по траектории.",
+        "Соберите 3 кольца до истечения времени!"
+      ],
+      physics: {
+        name: "Task8",
+        dimensionless: true,
+        masses: [1.0, 0.001, 1e-9],
+        densities: [1410, 1410, 1410],
+        massSlider: { min: 0.1, max: 2.5, power: 2 },
+        timeScaleFactor: 1.0,
+        timeScaleFactorSlider: { min: 0.1, max: 5, power: 1 },
+        positions: [{ r: 0, theta: 0 }, { r: 2, theta: 0 }, { r: 10, theta: 0 }],
+        velocities: [{ r: 0, theta: 0 }, { r: 0.6, theta: Math.PI/2 }, { r: 0, theta: 0 }],
+        lockedMasses: [false, true, true],
+        lockedControls: { speed: true, softening: true }
+      },
+      goal: {
+        type: "checkpoints",
+        centralBody: 0, 
+        targetBody: 1,
+        timeLimit: 45.0,
+        checkpoints: [
+          { x: -0.4, y: 1.95, r: 0.35 },
+          { x: -2.1, y: -0.3, r: 0.35 },
+          { x: 1.1, y: -1.7, r: 0.35 }
+        ]
+      },
+      fail: { collision: true }
     }
   };
 

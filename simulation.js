@@ -72,6 +72,13 @@ var simulation = (function() {
     graphics.drawBodies();
     graphics.drawApproximationCurve();
 
+    if (window.labEngine && typeof labEngine.getActiveTask === 'function') {
+      var currentTask = labEngine.getActiveTask();
+      if (currentTask) {
+        graphics.drawLabVisuals(currentTask, physics.state.u);
+      }
+    }
+
     if (currentTime - lastLogTime >= logInterval) {
       const logData = {
         timestamp: new Date().toISOString(),
