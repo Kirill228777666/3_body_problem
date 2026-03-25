@@ -47,7 +47,102 @@ var physics = (function() {
     return c;
   }
 
+  function isArenstorfPreset() {
+    return initialConditions.presetMode === "arenstorf";
+  }
+
+  function getArenstorfState() {
+    var defaultState = { x: 0.994, y: 0, vx: 0, vy: -2.0015851063790825 };
+    if (!initialConditions.arenstorfState) return defaultState;
+    return {
+      x: (typeof initialConditions.arenstorfState.x === 'number') ? initialConditions.arenstorfState.x : defaultState.x,
+      y: (typeof initialConditions.arenstorfState.y === 'number') ? initialConditions.arenstorfState.y : defaultState.y,
+      vx: (typeof initialConditions.arenstorfState.vx === 'number') ? initialConditions.arenstorfState.vx : defaultState.vx,
+      vy: (typeof initialConditions.arenstorfState.vy === 'number') ? initialConditions.arenstorfState.vy : defaultState.vy
+    };
+  }
+
+  function setArenstorfPrimaryState() {
+    var mu = initialConditions.mu;
+    state.u[0] = -mu;     state.u[1] = 0; state.u[2] = 0; state.u[3] = 0;
+    state.u[4] = 1 - mu;  state.u[5] = 0; state.u[6] = 0; state.u[7] = 0;
+  }
+
+  function arenstorfDerivative(q) {
+    var mu = initialConditions.mu;
+    var x = q[0], y = q[1], vx = q[2], vy = q[3];
+    var dx1 = x + mu;
+    var dx2 = x - 1 + mu;
+    var r1sq = dx1*dx1 + y*y;
+    var r2sq = dx2*dx2 + y*y;
+    var r1 = Math.sqrt(r1sq);
+    var r2 = Math.sqrt(r2sq);
+    var r1cube = r1sq * r1;
+    var r2cube = r2sq * r2;
+
+    var ax = 2*vy + x;
+    var ay = -2*vx + y;
+
+    if (r1cube !== 0) {
+      ax -= (1 - mu) * dx1 / r1cube;
+      ay -= (1 - mu) * y / r1cube;
+    }
+    if (r2cube !== 0) {
+      ax -= mu * dx2 / r2cube;
+      ay -= mu * y / r2cube;
+    }
+
+    return [vx, vy, ax, ay];
+  }
+
+  function getArenstorfAccelerations() {
+    var probe = arenstorfDerivative([state.u[8], state.u[9], state.u[10], state.u[11]]);
+    return [
+      { ax: 0, ay: 0 },
+      { ax: 0, ay: 0 },
+      { ax: probe[2], ay: probe[3] }
+    ];
+  }
+
+  function updateArenstorfPosition(timestep) {
+    var maxInternalStep = 2e-6;
+    var steps = Math.max(1, Math.ceil(Math.abs(timestep) / maxInternalStep));
+    var dt = timestep / steps;
+
+    var q = [state.u[8], state.u[9], state.u[10], state.u[11]];
+
+    for (var step = 0; step < steps; step++) {
+      var k1 = arenstorfDerivative(q);
+      var q2 = q.map(function(v, i) { return v + 0.5 * dt * k1[i]; });
+      var k2 = arenstorfDerivative(q2);
+      var q3 = q.map(function(v, i) { return v + 0.5 * dt * k2[i]; });
+      var k3 = arenstorfDerivative(q3);
+      var q4 = q.map(function(v, i) { return v + dt * k3[i]; });
+      var k4 = arenstorfDerivative(q4);
+
+      for (var i = 0; i < 4; i++) {
+        q[i] += dt * (k1[i] + 2*k2[i] + 2*k3[i] + k4[i]) / 6;
+      }
+    }
+
+    setArenstorfPrimaryState();
+    state.u[8] = q[0];
+    state.u[9] = q[1];
+    state.u[10] = q[2];
+    state.u[11] = q[3];
+  }
+
   function resetStateToInitialConditions() {
+    if (isArenstorfPreset()) {
+      var arenstorf = getArenstorfState();
+      setArenstorfPrimaryState();
+      state.u[8] = arenstorf.x;
+      state.u[9] = arenstorf.y;
+      state.u[10] = arenstorf.vx;
+      state.u[11] = arenstorf.vy;
+      return;
+    }
+
     if (!initialConditions.positions || !initialConditions.velocities) return;
     var iBody, bodyStart;
     for (iBody = 0; iBody < initialConditions.bodies; iBody++) {
@@ -110,6 +205,10 @@ var physics = (function() {
   }
 
   function getAccelerations() {
+    if (isArenstorfPreset()) {
+      return getArenstorfAccelerations();
+    }
+
     var arr = [];
     for (var i = 0; i < initialConditions.bodies; i++) {
       arr.push({
@@ -121,6 +220,11 @@ var physics = (function() {
   }
 
   function updatePosition(timestep) {
+    if (isArenstorfPreset()) {
+      updateArenstorfPosition(timestep);
+      return;
+    }
+
     if (typeof Module !== 'undefined' && Module && typeof Module.ccall === 'function' && Module.HEAPF64) {
       var bodies = initialConditions.bodies;
       var stateLen = bodies * 4;
@@ -156,6 +260,10 @@ var physics = (function() {
   }
 
   function largestDistanceMeters() {
+    if (typeof initialConditions.largestDistanceOverride === 'number' && initialConditions.largestDistanceOverride > 0) {
+      return initialConditions.largestDistanceOverride;
+    }
+
     var result = 0;
     if (!initialConditions.positions) return 0;
     for (var i = 0; i < initialConditions.bodies; i++) {
@@ -177,6 +285,10 @@ var physics = (function() {
     initialConditions.paleOrbitalPaths = conditions.paleOrbitalPaths;
     initialConditions.currentPresetName = conditions.name;
     initialConditions.softeningParameterSquared = conditions.softeningParameterSquared;
+    initialConditions.presetMode = conditions.presetMode || null;
+    initialConditions.mu = (typeof conditions.mu === 'number') ? conditions.mu : 0.012277471;
+    initialConditions.arenstorfState = conditions.arenstorfState || null;
+    initialConditions.largestDistanceOverride = conditions.largestDistanceOverride;
   }
 
   function getSpeeds() {

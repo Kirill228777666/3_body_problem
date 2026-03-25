@@ -1,5 +1,5 @@
 var simulation = (function() {
-  var calculationsPerFrame = 200;
+  var calculationsPerFrame = 400;
   var framesPerSecond = 120;
   var drawTimesPerFrame = 20;
   var drawIndex = Math.ceil(calculationsPerFrame / drawTimesPerFrame);
@@ -70,7 +70,6 @@ var simulation = (function() {
     }
 
     graphics.drawBodies();
-    graphics.drawApproximationCurve();
 
     if (window.labEngine && typeof labEngine.getActiveTask === 'function') {
       var currentTask = labEngine.getActiveTask();

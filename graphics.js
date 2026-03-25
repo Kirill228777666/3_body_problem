@@ -97,26 +97,12 @@ var graphics = (function() {
   function setApproximation(data){ approx = data; }
 
   function drawApproximationCurve(){
-    if (!approx) return;
-    const { a, v, p } = approx;
-    const midX = canvas.width / 2;
-    const midY = canvas.height / 2;
-    const color = "#AAAAAA";
-    const tMax = 1.0;
-    const steps = 40;
-    context.beginPath();
-    for (let i=0; i<=steps; i++) {
-      const t = tMax * i / steps;
-      const x = p.x + v.x * t + 0.5 * a.ax * t * t;
-      const y = p.y + v.y * t + 0.5 * a.ay * t * t;
-      const sx = x / metersPerPixel + midX;
-      const sy = -y / metersPerPixel + midY;
-      if (i===0) context.moveTo(sx, sy); 
-      else context.lineTo(sx, sy);
-    }
-    context.strokeStyle = color;
-    context.lineCap = 'round';
-    context.stroke();
+    // Intentionally disabled on the main canvas.
+    // The simulation canvas keeps orbital trails permanently, so drawing
+    // the quadratic approximation here would accumulate bright tangent-like
+    // white segments and visually overwrite the real trajectory.
+    // Approximation data is still updated and available for formulas/logging.
+    return;
   }
 
   function drawLabVisuals(activeTask, stateU) {

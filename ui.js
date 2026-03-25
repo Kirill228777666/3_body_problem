@@ -84,6 +84,29 @@ var simulations = (function(){
       timeScaleFactorSlider: { min: 0.00, max: 20, power: 1 },
       positions: [{r:1,theta:0},{r:1,theta:2*Math.PI/3},{r:1,theta:4*Math.PI/3}],
       velocities: [{r:0.55,theta:Math.PI/2},{r:0.55,theta:2*Math.PI/3+Math.PI/2},{r:0.55,theta:4*Math.PI/3+Math.PI/2}]
+    },
+    "Arenstorf": {
+      name: "Arenstorf",
+      dimensionless: true,
+      presetMode: "arenstorf",
+      mu: 0.012277471,
+      masses: [1 - 0.012277471, 0.012277471, 1e-9],
+      densities: [1410, 1410, 1410],
+      massSlider: { min: 0.001, max: 1, power: 2 },
+      timeScaleFactor: 0.2,
+      timeScaleFactorSlider: { min: 0.01, max: 4, power: 1 },
+      positions: [
+        { r: 0.012277471, theta: Math.PI },
+        { r: 1 - 0.012277471, theta: 0 },
+        { r: 0.994, theta: 0 }
+      ],
+      velocities: [
+        { r: 0, theta: 0 },
+        { r: 0, theta: 0 },
+        { r: 2.0015851063790825, theta: -Math.PI / 2 }
+      ],
+      arenstorfState: { x: 0.994, y: 0, vx: 0, vy: -2.0015851063790825 },
+      largestDistanceOverride: 2.2,
     }
   };
 
@@ -724,6 +747,8 @@ var userInput = (function(){
     if (mass1Button && !cssHelper.hasClass(mass1Button, 'is-disabled')) { didClickMass1(); return; }
     if (mass2Button && !cssHelper.hasClass(mass2Button, 'is-disabled')) { didClickMass2(); return; }
     if (mass3Button && !cssHelper.hasClass(mass3Button, 'is-disabled')) { didClickMass3(); return; }
+    if (speedButton && !cssHelper.hasClass(speedButton, 'is-disabled')) { didClickSpeed(); return; }
+    if (softeningButton && !cssHelper.hasClass(softeningButton, 'is-disabled')) { didClickSoftening(); }
   }
 
   function updateLockedButtons(lockedMasses, lockedControls) {
@@ -822,6 +847,9 @@ var userInput = (function(){
   }
 
   function bodyNameFromIndex(i){
+    if (physics.initialConditions.presetMode === 'arenstorf') {
+      return ["Земля","Луна","Зонд"][i] || "Тело";
+    }
     if (physics.initialConditions.dimensionless === true) {
       return ["Тело 1 (красное)","Тело 2 (синее)","Тело 3 (зелёное)"][i] || "Тело";
     }
@@ -972,6 +1000,7 @@ var userInput = (function(){
 
     updateMassButtonsAppearance(model.dimensionless === true);
     updateLockedButtons(model.lockedMasses, model.lockedControls);
+    switchToFirstUnlockedMass();
 
     didClickRestart();
     resetSlider();
@@ -1053,11 +1082,17 @@ var userInput = (function(){
     var sceneData = {
       name: "Custom Scene",
       dimensionless: physics.initialConditions.dimensionless,
+      presetMode: physics.initialConditions.presetMode || null,
+      mu: physics.initialConditions.mu,
       masses: physics.initialConditions.masses,
       positions: physics.initialConditions.positions,
       velocities: physics.initialConditions.velocities,
+      arenstorfState: physics.initialConditions.arenstorfState,
       timeScaleFactor: physics.initialConditions.timeScaleFactor,
-      softeningParameterSquared: physics.initialConditions.softeningParameterSquared
+      softeningParameterSquared: physics.initialConditions.softeningParameterSquared,
+      largestDistanceOverride: physics.initialConditions.largestDistanceOverride,
+      lockedMasses: currentModel && currentModel.lockedMasses ? currentModel.lockedMasses : null,
+      lockedControls: currentModel && currentModel.lockedControls ? currentModel.lockedControls : null
     };
 
     var jsonString = JSON.stringify(sceneData, null, 2);
@@ -1090,18 +1125,35 @@ var userInput = (function(){
     reader.onload = function(e) {
       try {
         var data = JSON.parse(e.target.result);
+        var isArenstorf = data.presetMode === 'arenstorf';
+        var derivedArenstorfState = data.arenstorfState;
+        if (isArenstorf && !derivedArenstorfState && data.positions && data.velocities && data.positions[2] && data.velocities[2]) {
+          derivedArenstorfState = {
+            x: data.positions[2].r * Math.cos(data.positions[2].theta),
+            y: data.positions[2].r * Math.sin(data.positions[2].theta),
+            vx: data.velocities[2].r * Math.cos(data.velocities[2].theta),
+            vy: data.velocities[2].r * Math.sin(data.velocities[2].theta)
+          };
+        }
+
         var customPreset = {
           name: "Custom",
           dimensionless: data.dimensionless,
+          presetMode: data.presetMode || null,
+          mu: (typeof data.mu === 'number') ? data.mu : 0.012277471,
           masses: data.masses,
           positions: data.positions,
           velocities: data.velocities,
+          arenstorfState: derivedArenstorfState || null,
           timeScaleFactor: data.timeScaleFactor,
           softeningParameterSquared: data.softeningParameterSquared,
-          massSlider: data.dimensionless ? { min: 0.1, max: 10, power: 3 } : { min: 3e10, max: 3e31, power: 5 },
-          timeScaleFactorSlider: data.dimensionless ? { min: 0.00, max: 20, power: 1 } : { min: 0, max: 3600*24*365*1000, power: 5 },
+          largestDistanceOverride: data.largestDistanceOverride,
+          massSlider: isArenstorf ? { min: 0.001, max: 1, power: 2 } : (data.dimensionless ? { min: 0.1, max: 10, power: 3 } : { min: 3e10, max: 3e31, power: 5 }),
+          timeScaleFactorSlider: isArenstorf ? { min: 0.01, max: 3, power: 1 } : (data.dimensionless ? { min: 0.00, max: 20, power: 1 } : { min: 0, max: 3600*24*365*1000, power: 5 }),
           densities: null,
-          paleOrbitalPaths: false
+          paleOrbitalPaths: false,
+          lockedMasses: data.lockedMasses || (isArenstorf ? [true, true, true] : null),
+          lockedControls: data.lockedControls || (isArenstorf ? { speed: false, softening: true } : null)
         };
         didChangeModel(customPreset);
         forcePause();
