@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Симулятор трёх тел</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script id="MathJax-script" async src="libs/tex-svg.js"></script>
+  
+
+</head>
+<body>
+
+  <div id="loader-wrapper">
+    <div class="loader">
+      <div class="inner one"></div>
+      <div class="inner two"></div>
+      <div class="inner three"></div>
+    </div>
+    <div class="loader">
+      <div class="inner one"></div>
+      <div class="inner two"></div>
+      <div class="inner three"></div>
+    </div>
+  </div>
+
+  <h1>Симулятор трёх тел</h1>
+  <p id="ThreeBodyProblem-notSupportedMessage" class="ThreeBodyProblem-alert ThreeBodyProblem-isHiddenBlock">
+    Пожалуйста, используйте современный браузер для просмотра симуляции.
+  </p>
+
+  <div class="ThreeBodyProblem-container isFullScreenWide isUnselectable">
+    <div class="ThreeBodyProblem-sun">
+      <img src="images/sun.png" class="ThreeBodyProblem-spin ThreeBodyProblem-bodyImage" alt="Солнце" />
+    </div>
+    <div class="ThreeBodyProblem-earth">
+      <img src="images/earth.png" alt="Земля" class="ThreeBodyProblem-spin ThreeBodyProblem-bodyImage"/>
+    </div>
+    <div class="ThreeBodyProblem-jupiter">
+      <img src="images/jupiter_juno.png" alt="Юпитер" class="ThreeBodyProblem-spin ThreeBodyProblem-bodyImage" />
+    </div>
+    <img src="images/center_of_mass.png" alt="Центр масс" class="ThreeBodyProblem-centerOfMass" />
+    <canvas class="ThreeBodyProblem-canvas"></canvas>
+
+    <div class="ThreeBodyProblem-hudContainer">
+      <div class="ThreeBodyProblem-hudContainerChild"></div>
+      
+      <div class="ThreeBodyProblem-leftBottomButtonCantainer">
+        <a id="info-button" class="ThreeBodyProblem-leftBottomButton ThreeBodyProblem-doesChangeOpacityOnHover" href="#" title="Инструкция">
+          Инструкция
+        </a>
+        <a class="ThreeBodyProblem-leftBottomButton ThreeBodyProblem-mass1Button ThreeBodyProblem-doesChangeOpacityOnHover" href="#" title="Масса 1">
+          <img src="images/mass_one_icon.png" alt="Масса 1" class="ThreeBodyProblem-leftBottomImage mass-icon-image">
+          <span class="mass-circle mass-icon-circle" style="background:#ff8b22"></span>
+        </a>
+        <a class="ThreeBodyProblem-leftBottomButton ThreeBodyProblem-mass2Button ThreeBodyProblem-doesChangeOpacityOnHover" href="#" title="Масса 2">
+          <img src="images/mass_two_icon.png" alt="Масса 2" class="ThreeBodyProblem-leftBottomImage mass-icon-image">
+          <span class="mass-circle mass-icon-circle" style="background:#6c81ff"></span>
+        </a>
+        <a class="ThreeBodyProblem-leftBottomButton ThreeBodyProblem-mass3Button ThreeBodyProblem-doesChangeOpacityOnHover" href="#" title="Масса 3">
+          <img src="images/mass_three_icon.png" alt="Масса 3" class="ThreeBodyProblem-leftBottomImage mass-icon-image">
+          <span class="mass-circle mass-icon-circle" style="background:#4ccd7a"></span>
+        </a>
+        <a class="ThreeBodyProblem-leftBottomButton ThreeBodyProblem-speedButton ThreeBodyProblem-doesChangeOpacityOnHover" href="#" title="Скорость">
+          <img src="images/clock_icon.png" alt="Скорость" class="ThreeBodyProblem-leftBottomImage">
+        </a>
+        <a class="ThreeBodyProblem-leftBottomButton ThreeBodyProblem-softeningButton ThreeBodyProblem-doesChangeOpacityOnHover" href="#" title="Смягчение">
+          <img src="images/softening_icon.png" alt="Смягчение" class="ThreeBodyProblem-leftBottomImage">
+        </a>
+      </div>
+      
+      <div class="ThreeBodyProblem-rightBottomButtonContainer">
+          <button class="ThreeBodyProblem-pause ThreeBodyProblem-button">Пауза</button>
+          <a class="ThreeBodyProblem-reload ThreeBodyProblem-doesChangeOpacityOnHover" href="#" title="Перезапуск">
+            <img src="images/reload_icon.png" alt="Перезапуск" class="ThreeBodyProblem-reloadIcon">
+          </a>
+      </div>
+    </div>
+  </div>
+  
+  <div class="ThreeBodyProblem-controlsArea">
+    <div class="ThreeBodyProblem-isTextCentered ThreeBodyProblem-hasTopMarginSmall ThreeBodyProblem-hasNegativeBottomMarginNormal isUnselectable">
+      <span class="ThreeBodyProblem-sliderLabel">0.01</span>
+    </div>
+    <div class="SickSlider ThreeBodyProblem-slider isUnselectable">
+      <div class="SickSlider-stripe"></div>
+      <div class="SickSlider-head"></div>
+    </div>
+    <div class="ThreeBodyProblem-isTextCentered ThreeBodyProblem-presetDeck">
+      <button class="ThreeBodyProblem-preset ThreeBodyProblem-button ThreeBodyProblem-button--isSelected" data-name="FigureEight">Восьмёрка</button>
+      <button class="ThreeBodyProblem-preset ThreeBodyProblem-button" data-name="SunEarthJupiter">Солнце, Земля и Юпитер</button>
+      <button class="ThreeBodyProblem-preset ThreeBodyProblem-button" data-name="LagrangePoint5">Точка Лагранжа L5</button>
+      <button class="ThreeBodyProblem-preset ThreeBodyProblem-button" data-name="Kepler16">Кеплер-16</button>
+      <button class="ThreeBodyProblem-preset ThreeBodyProblem-button" data-name="Chaotic">Хаотический</button>
+      <button class="ThreeBodyProblem-preset ThreeBodyProblem-button" data-name="Arenstorf">Орбита Аренсторфа</button>
+      
+      <button class="ThreeBodyProblem-button" id="download-scene-button">Скачать сцену</button>
+      <button class="ThreeBodyProblem-button" id="upload-scene-button">Загрузить сцену</button>
+      <input type="file" id="scene-uploader" accept="application/json, .json" style="display: none;" />
+
+      <button class="ThreeBodyProblem-button" id="check-activity-button" style="display:none; border-color:#7bf0ff; color:#d7fbff;">
+        Проверить
+      </button>
+
+      <button class="ThreeBodyProblem-button" id="labs-menu-button" style="border-color: #ff8b22; color: #ffcd9c;">Тренажёр</button>
+    </div>
+
+    <div class="ThreeBodyProblem-integratorCompact">
+      <select id="integrator-select" class="ThreeBodyProblem-integratorSelect">
+        <option value="rk4">Рунге–Кутты 4-го порядка (RK4)</option>
+      </select>
+      <label class="ThreeBodyProblem-switchToggle" title="Отражение от границ стены" aria-label="Отражение от границ стены">
+        <span class="ThreeBodyProblem-switchToggleLabel">Стенки</span>
+        <span class="ThreeBodyProblem-switchToggleSwitch">
+          <input type="checkbox" id="walls-toggle" checked>
+          <span class="ThreeBodyProblem-switchToggleSlider" aria-hidden="true"></span>
+        </span>
+      </label>
+      <label class="ThreeBodyProblem-switchToggle" title="Ограничивать длину траекторий" aria-label="Ограничивать длину траекторий">
+        <span class="ThreeBodyProblem-switchToggleLabel">Лимит траекторий</span>
+        <span class="ThreeBodyProblem-switchToggleSwitch">
+          <input type="checkbox" id="trail-limit-toggle">
+          <span class="ThreeBodyProblem-switchToggleSlider" aria-hidden="true"></span>
+        </span>
+      </label>
+    </div>
+  </div>
+
+  <div class="ThreeBodyProblem-methodStatsWrap">
+    <div class="ThreeBodyProblem-energyPanel">
+      <div class="ThreeBodyProblem-energyGrid">
+        <div class="ThreeBodyProblem-energyMetric">
+          <span class="ThreeBodyProblem-energyMetricLabel">Метод</span>
+          <span class="ThreeBodyProblem-energyMetricValue is-neutral" id="energy-metric-method">—</span>
+        </div>
+        <div class="ThreeBodyProblem-energyMetric">
+          <span class="ThreeBodyProblem-energyMetricLabel">Абсолютное изменение ΔE</span>
+          <span class="ThreeBodyProblem-energyMetricValue is-neutral" id="energy-metric-delta">—</span>
+        </div>
+        <div class="ThreeBodyProblem-energyMetric">
+          <span class="ThreeBodyProblem-energyMetricLabel">Относительный дрейф δE</span>
+          <span class="ThreeBodyProblem-energyMetricValue is-neutral" id="energy-metric-relative">—</span>
+        </div>
+        <div class="ThreeBodyProblem-energyMetric">
+          <span class="ThreeBodyProblem-energyMetricLabel">Время расчёта кадра</span>
+          <span class="ThreeBodyProblem-energyMetricValue is-neutral" id="speed-metric-frame">—</span>
+        </div>
+        <div class="ThreeBodyProblem-energyMetric">
+          <span class="ThreeBodyProblem-energyMetricLabel">Физических шагов/сек</span>
+          <span class="ThreeBodyProblem-energyMetricValue is-neutral" id="speed-metric-steps">—</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="charts-container" style="max-width: 1100px; margin: 20px auto;">
+    <details id="vel-details" style="margin-bottom: 10px;">
+      <summary style="cursor:pointer; font-weight:600;">График скоростей (раскрыть/свернуть)</summary>
+      <div style="width: 100%; height: 360px; margin-top: 10px;">
+        <canvas id="velocityChart" style="width:100%; height:100%;"></canvas>
+      </div>
+    </details>
+    <details id="eng-details" style="margin-bottom: 10px;">
+      <summary style="cursor:pointer; font-weight:600;">График ускорений (раскрыть/свернуть)</summary>
+      <div style="width: 100%; height: 360px; margin-top: 10px;">
+        <canvas id="accelerationChart" style="width:100%; height:100%;"></canvas>
+      </div>
+    </details>
+
+    <details id="approx-details">
+      <summary style="cursor:pointer; font-weight:600;">Мгновенные аппроксимации траекторий (раскрыть/свернуть)</summary>
+      <div id="approximation-display" class="approximation-display-style">
+        <h4>Мгновенные аппроксимации траекторий</h4>
+        <div style="text-align: center; margin-bottom: 15px;">
+           <button class="ThreeBodyProblem-button" id="download-log-button">Скачать лог формул</button>
+        </div>
+        <pre id="formula-text-0"></pre>
+        <pre id="formula-text-1"></pre>
+        <pre id="formula-text-2"></pre>
+      </div>
+    </details>
+  </div>
+
+  <div id="info-modal" class="modal-overlay is-hidden">
+    <div class="modal-content">
+      <button class="modal-close-button" title="Закрыть">&times;</button>
+      <div class="instruction-container">
+        <h2>Инструкция по использованию симулятора</h2>
+        <p>
+          Добро пожаловать в интерактивный симулятор задачи трёх тел! Эта программа позволяет моделировать движение трёх объектов в пространстве под действием их взаимного гравитационного притяжения.
+        </p>
+
+        <h3>Как пользоваться</h3>
+        <ol>
+          <li><strong>Выберите пресет</strong> внизу или откройте <strong>«Тренажёр»</strong>.</li>
+          <li><strong>Настройте параметры.</strong></li>
+          <li><strong>Наблюдайте</strong> траектории и анализируйте графики ниже.</li>
+        </ol>
+
+        <h3>Элементы управления</h3>
+        <ul>
+          <li><strong>Кнопки пресетов:</strong> ("Восьмёрка", "Солнце, Земля и Юпитер" и т.д.) — загружают предопределённые начальные условия.</li>
+          <li><strong>Пауза / Продолжить:</strong> приостанавливает или возобновляет симуляцию.</li>
+          <li><strong>Перезапуск (иконка со стрелкой):</strong> сбрасывает текущий пресет/активность к начальному состоянию.</li>
+          <li><strong>Кнопки параметров (слева внизу):</strong>
+            <ul>
+              <li><strong>Масса 1, 2, 3:</strong> выберите тело и меняйте его массу слайдером.</li>
+              <li><strong>Скорость:</strong> скорость течения времени в симуляции.</li>
+              <li><strong>Смягчение (ε):</strong> параметр для численной устойчивости при сильных сближениях.</li>
+            </ul>
+          </li>
+          <li><strong>Слайдер:</strong> основной инструмент изменения выбранного параметра. Также можно нажать на текст над слайдером (в режиме массы), чтобы ввести число вручную.</li>
+          <li><strong>Скачать / Загрузить сцену:</strong> сохранение/загрузка текущих начальных условий (JSON).</li>
+        </ul>
+
+        <h3>Тренажёр (лабораторные и задания)</h3>
+        <p>
+          Кнопка <strong>«Тренажёр»</strong> открывает меню активностей:
+        </p>
+        <ul>
+          <li><strong>Лабораторные работы</strong> — учебные сценарии для исследования явлений (манёвр, двойные системы, побег и т.п.).</li>
+          <li><strong>Задания</strong> — сценарии с <strong>автопроверкой</strong>: нужно добиться заданного поведения системы (например, удержать орбиту, выполнить побег, удержать конфигурацию около L4/L5). В конце показывается окно результата, можно скачать отчёт (JSON).</li>
+        </ul>
+        <p>
+          В тренажёре часть параметров может быть <strong>заблокирована</strong> (по условиям задачи). Обычно порядок работы такой:
+          прочитать брифинг → перейти к настройке (симуляция на паузе) → запустить «Продолжить».
+        </p>
+
+        <h3>Графики и аппроксимации</h3>
+        <p>
+          Ниже симуляции доступны графики скоростей и ускорений, а также блок мгновенных аппроксимаций траекторий.
+          Можно скачать лог формул кнопкой «Скачать лог формул».
+        </p>
+
+        <h3>Описание пресетов</h3>
+        <ul>
+          <li><strong>Восьмёрка:</strong> классическое устойчивое решение задачи трёх тел.</li>
+          <li><strong>Солнце, Земля и Юпитер:</strong> упрощённая модель Солнечной системы.</li>
+          <li><strong>Точка Лагранжа L5:</strong> демонстрация точек стабильности.</li>
+          <li><strong>Кеплер-16:</strong> модель экзопланетной системы с двумя звёздами.</li>
+          <li><strong>Хаотический:</strong> демонстрация непредсказуемости системы.</li>
+          <li><strong>Орбита Аренсторфа:</strong> специальный пресет ограниченной круговой задачи трёх тел во вращающейся системе отсчёта (массы зафиксированы).</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div id="error-modal" class="modal-overlay is-hidden">
+    <div class="modal-content error-modal-content">
+      <div class="error-icon">⚠️</div>
+      <div class="error-title">Ошибка</div>
+      <div class="error-message">Произошла ошибка.</div>
+      <button class="error-ok-button">OK</button>
+    </div>
+  </div>
+
+  <div id="lab-selection-modal" class="modal-overlay is-hidden">
+    <div class="modal-content instruction-container" style="max-width: 900px !important; text-align:center;">
+      <button class="modal-close-button" title="Закрыть">&times;</button>
+      <h2 style="color: #ff8b22 !important; margin-bottom: 5px !important;">Тренажёр: выберите активность</h2>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 20px; text-align: left;">
+
+        <div>
+          <h3 style="margin: 0 0 15px 0; color:#ffcd9c; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; padding-left: 20px;">
+            Лабораторные работы
+          </h3>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <button class="ThreeBodyProblem-button select-lab-btn" data-lab-id="lab1" style="width:100%; height: 50px; font-size: 15px; border-color: rgba(255, 139, 34, 0.4); justify-content: flex-start; text-align: left; padding-left: 20px;">
+              Лаб. №1: Гравитационный манёвр
+            </button>
+            <button class="ThreeBodyProblem-button select-lab-btn" data-lab-id="lab2" style="width:100%; height: 50px; font-size: 15px; border-color: rgba(255, 139, 34, 0.4); justify-content: flex-start; text-align: left; padding-left: 20px;">
+              Лаб. №2: Двойная звезда
+            </button>
+            <button class="ThreeBodyProblem-button select-lab-btn" data-lab-id="lab3" style="width:100%; height: 50px; font-size: 15px; border-color: rgba(255, 139, 34, 0.4); justify-content: flex-start; text-align: left; padding-left: 20px;">
+              Лаб. №3: Побег с орбиты
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <h3 style="margin: 0 0 15px 0; color:#7bf0ff; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; padding-left: 20px;">
+            Задания (автопроверка)
+          </h3>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <button class="ThreeBodyProblem-button select-task-btn" data-task-id="task1"
+                    style="width:100%; height: 50px; font-size: 15px; border-color: rgba(123, 240, 255, 0.35); justify-content: flex-start; text-align: left; padding-left: 20px;">
+              Задание №1: Побег с орбиты
+            </button>
+
+            <button class="ThreeBodyProblem-button select-task-btn" data-task-id="task2"
+                    style="width:100%; height: 50px; font-size: 15px; border-color: rgba(123, 240, 255, 0.35); justify-content: flex-start; text-align: left; padding-left: 20px;">
+              Задание №2: Удержать орбиту
+            </button>
+
+            <button class="ThreeBodyProblem-button select-task-btn" data-task-id="task3"
+                    style="width:100%; height: 50px; font-size: 15px; border-color: rgba(123, 240, 255, 0.35); justify-content: flex-start; text-align: left; padding-left: 20px;">
+              Задание №3: Точка Лагранжа L4
+            </button>
+
+            <button class="ThreeBodyProblem-button select-task-btn" data-task-id="task4"
+                    style="width:100%; height: 50px; font-size: 15px; border-color: rgba(123, 240, 255, 0.35); justify-content: flex-start; text-align: left; padding-left: 20px;">
+              Задание №4: Побег (сложнее)
+            </button>
+
+            <button class="ThreeBodyProblem-button select-task-btn" data-task-id="task5"
+                    style="width:100%; height: 50px; font-size: 15px; border-color: rgba(123, 240, 255, 0.35); justify-content: flex-start; text-align: left; padding-left: 20px;">
+              Задание №5: Спасти от падения
+            </button>
+
+            <button class="ThreeBodyProblem-button select-task-btn" data-task-id="task6"
+                    style="width:100%; height: 50px; font-size: 15px; border-color: rgba(123, 240, 255, 0.35); justify-content: flex-start; text-align: left; padding-left: 20px;">
+              Задание №6: Дальняя орбита
+            </button>
+
+            <button class="ThreeBodyProblem-button select-task-btn" data-task-id="task7"
+                    style="width:100%; height: 50px; font-size: 15px; border-color: rgba(123, 240, 255, 0.35); justify-content: flex-start; text-align: left; padding-left: 20px;">
+              Задание №7: Точка Лагранжа L5
+            </button>
+
+            <button class="ThreeBodyProblem-button select-task-btn" data-task-id="task8"
+                    style="width:100%; height: 50px; font-size: 15px; border-color: rgba(123, 240, 255, 0.35); justify-content: flex-start; text-align: left; padding-left: 20px; box-shadow: 0 0 10px rgba(123, 240, 255, 0.2);">
+              Задание №8: Сбор данных (Кольца) 🏆
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div id="lab-modal" class="modal-overlay is-hidden">
+    <div class="modal-content instruction-container" style="border-color: #ff8b22 !important; max-width: 600px !important;">
+      <button class="modal-close-button" title="Закрыть">&times;</button>
+
+      <h3 style="color: #ff8b22 !important; margin-top:0 !important; text-transform: uppercase; font-size: 14px;">Тренажёр</h3>
+      <h2 id="lab-title" style="margin-bottom: 20px !important; margin-top: 5px !important;">Название</h2>
+      
+      <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+        <h4 style="margin: 0 0 10px 0; color: #fff;">Цель:</h4>
+        <p id="lab-description" style="margin: 0;">Описание...</p>
+      </div>
+
+      <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;">
+        <h4 style="margin: 0 0 10px 0; color: #fff;">Инструкция:</h4>
+        <ul id="lab-steps" style="margin: 0; padding-left: 20px; color: #eaf0ff;">
+          <li>Шаг 1</li>
+        </ul>
+      </div>
+
+      <div style="text-align: center; margin-top: 25px;">
+        <button id="start-lab-button" class="ThreeBodyProblem-button ThreeBodyProblem-button--isSelected"
+                style="background: linear-gradient(135deg, #ff8b22 0%, #d85c00 100%); border:none; padding: 0 40px; height: 48px; font-size: 16px;">
+          Перейти к настройке
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="activity-result-modal" class="modal-overlay is-hidden">
+    <div class="modal-content instruction-container" style="max-width: 620px !important; border-color: rgba(123, 240, 255, 0.35) !important;">
+      <button class="modal-close-button" title="Закрыть">&times;</button>
+      <h3 style="margin-top:0; color:#7bf0ff; text-transform: uppercase; font-size: 13px;">Результат</h3>
+      <h2 id="activity-result-title" style="margin: 6px 0 14px 0;">...</h2>
+
+      <div id="activity-result-body" style="background: rgba(0,0,0,0.2); padding: 14px; border-radius: 10px;">
+        ...
+      </div>
+
+      <div style="display:flex; gap:10px; justify-content:center; margin-top: 18px; flex-wrap:wrap;">
+        <button class="ThreeBodyProblem-button" id="activity-result-ok">OK</button>
+        <button class="ThreeBodyProblem-button" id="activity-result-download" style="border-color: rgba(123, 240, 255, 0.35);">
+          Скачать отчёт (JSON)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <p class="ThreeBodyProblem-debugOutput"></p>
+
+  <script src="script.js"></script>
+  <script src="physics.js"></script>
+  <script src="graphics.js"></script>
+  
+  <script src="libs/chart.js"></script>
+  
+  <script src="simulation.js"></script>
+
+  <script src="labEngine.js"></script>
+
+  <script src="ui-core.js"></script>
+  <script src="ui-log.js"></script>
+  <script src="ui-modals.js"></script>
+  <script src="ui-scene-io.js"></script>
+  <script src="ui-slider-controls.js"></script>
+  <script src="ui-controls.js"></script>
+  <script src="ui.js"></script>
+
+  <script>
+    (function() {
+      window.chartManager = {};
+      const MAX_POINTS = 2000;
+      const ENERGY_EPS = 1e-12;
+
+      let chartsInited = false;
+      let velocityChart = null;
+      let accelerationChart = null;
+      let frameIndex = 0;
+      let energyReference = null;
+
+      const energyMethodEl = document.getElementById('energy-metric-method');
+      const energyDeltaEl = document.getElementById('energy-metric-delta');
+      const energyRelativeEl = document.getElementById('energy-metric-relative');
+      const speedMetricFrameEl = document.getElementById('speed-metric-frame');
+      const speedMetricStepsEl = document.getElementById('speed-metric-steps');
+
+      function trimData(chart) {
+        const data = chart.data;
+        while (data.labels.length > MAX_POINTS) {
+          data.labels.shift();
+          chart.data.datasets.forEach(ds => ds.data.shift());
+        }
+      }
+
+      function formatScientific(value) {
+        if (!Number.isFinite(value)) return '—';
+        if (value === 0) return '0';
+        const abs = Math.abs(value);
+        if (abs >= 1e4 || abs < 1e-3) return value.toExponential(4);
+        return value.toFixed(6);
+      }
+
+      function formatPercent(value) {
+        if (!Number.isFinite(value)) return '—';
+        const percent = value * 100;
+        if (Math.abs(percent) >= 1e4 || (Math.abs(percent) > 0 && Math.abs(percent) < 1e-4)) {
+          return percent.toExponential(3) + ' %';
+        }
+        return percent.toFixed(6) + ' %';
+      }
+
+      function setMetricState(el, value) {
+        if (!el) return;
+        el.classList.remove('is-positive', 'is-negative', 'is-neutral');
+        if (!Number.isFinite(value) || Math.abs(value) < 1e-18) {
+          el.classList.add('is-neutral');
+          return;
+        }
+        el.classList.add(value > 0 ? 'is-positive' : 'is-negative');
+      }
+
+      function getEnergySnapshot() {
+        if (!window.physics || typeof physics.getTotalEnergy !== 'function') return null;
+
+        const currentEnergy = physics.getTotalEnergy();
+        if (!Number.isFinite(currentEnergy)) return null;
+
+        if (!Number.isFinite(energyReference)) {
+          energyReference = currentEnergy;
+        }
+
+        const deltaEnergy = currentEnergy - energyReference;
+        const relativeDrift = Math.abs(deltaEnergy) / Math.max(Math.abs(energyReference), ENERGY_EPS);
+
+        return {
+          reference: energyReference,
+          current: currentEnergy,
+          delta: deltaEnergy,
+          relative: relativeDrift
+        };
+      }
+
+      
+function updateEnergyPanel(snapshot) {
+  if (energyMethodEl && window.physics && typeof physics.getIntegratorLabel === 'function') {
+    energyMethodEl.textContent = physics.getIntegratorLabel();
+  }
+
+  if (!snapshot) {
+    if (energyDeltaEl) energyDeltaEl.textContent = '—';
+    if (energyRelativeEl) energyRelativeEl.textContent = '—';
+    return;
+  }
+
+  if (energyDeltaEl) {
+    energyDeltaEl.textContent = formatScientific(snapshot.delta);
+    setMetricState(energyDeltaEl, snapshot.delta);
+  }
+  if (energyRelativeEl) {
+    energyRelativeEl.textContent = formatPercent(snapshot.relative);
+    setMetricState(energyRelativeEl, snapshot.relative);
+  }
+}
+
+      
+function resetEnergyReference() {
+  if (!window.physics || typeof physics.getTotalEnergy !== 'function') {
+    energyReference = null;
+    updateEnergyPanel(null);
+    return;
+  }
+
+  const energyNow = physics.getTotalEnergy();
+  energyReference = Number.isFinite(energyNow) ? energyNow : null;
+  updateEnergyPanel(getEnergySnapshot());
+}
+
+      
+function resetCharts() {
+  frameIndex = 0;
+
+  if (chartsInited) {
+    velocityChart.data.labels = [];
+    velocityChart.data.datasets.forEach(dataset => { dataset.data = []; });
+    velocityChart.update('none');
+
+    accelerationChart.data.labels = [];
+    accelerationChart.data.datasets.forEach(dataset => { dataset.data = []; });
+    accelerationChart.update('none');
+  }
+
+  resetEnergyReference();
+  if (window.simulation && typeof simulation.resetPerformanceStats === 'function') {
+    simulation.resetPerformanceStats();
+  }
+}
+window.chartManager.reset = resetCharts;
+
+      function initCharts() {
+        if (chartsInited) return;
+
+        const velCanvas = document.getElementById('velocityChart');
+        const accCanvas = document.getElementById('accelerationChart');
+        if (!velCanvas || !accCanvas || !window.Chart) return;
+
+        const velCtx = velCanvas.getContext('2d');
+        const accCtx = accCanvas.getContext('2d');
+
+        velocityChart = new Chart(velCtx, {
+          type: 'line',
+          data: {
+            labels: [],
+            datasets: [
+              { label: 'Скорость тела 1', data: [], borderColor: '#ff8b22', pointRadius: 0, tension: 0.1 },
+              { label: 'Скорость тела 2', data: [], borderColor: '#6c81ff', pointRadius: 0, tension: 0.1 },
+              { label: 'Скорость тела 3', data: [], borderColor: '#4ccd7a', pointRadius: 0, tension: 0.1 }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: false,
+            interaction: { mode: 'nearest', intersect: false },
+            plugins: { legend: { display: true }, tooltip: { enabled: true } },
+            scales: {
+              x: { title: { display: true, text: 'Шаг симуляции' }, ticks: { maxTicksLimit: 8 } },
+              y: { title: { display: true, text: 'Скорость (|v|)' }, ticks: { maxTicksLimit: 8 } }
+            }
+          }
+        });
+
+        accelerationChart = new Chart(accCtx, {
+          type: 'line',
+          data: {
+            labels: [],
+            datasets: [
+              { label: 'Ускорение тела 1', data: [], borderColor: '#ff8b22', pointRadius: 0, tension: 0.1 },
+              { label: 'Ускорение тела 2', data: [], borderColor: '#6c81ff', pointRadius: 0, tension: 0.1 },
+              { label: 'Ускорение тела 3', data: [], borderColor: '#4ccd7a', pointRadius: 0, tension: 0.1 }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: false,
+            interaction: { mode: 'nearest', intersect: false },
+            plugins: { legend: { display: true }, tooltip: { enabled: true } },
+            scales: {
+              x: { title: { display: true, text: 'Шаг симуляции' }, ticks: { maxTicksLimit: 8 } },
+              y: { title: { display: true, text: 'Ускорение (|a|)' }, ticks: { maxTicksLimit: 8 } }
+            }
+          }
+        });
+
+
+        chartsInited = true;
+
+        document.getElementById('vel-details')?.addEventListener('toggle', () => setTimeout(() => velocityChart?.resize(), 0));
+        document.getElementById('eng-details')?.addEventListener('toggle', () => setTimeout(() => accelerationChart?.resize(), 0));
+
+        window.addEventListener('resize', () => {
+          velocityChart?.resize();
+          accelerationChart?.resize();
+        });
+      }
+
+      function updateCharts() {
+        if (!chartsInited) initCharts();
+
+        const energySnapshot = getEnergySnapshot();
+        updateEnergyPanel(energySnapshot);
+        const perfStats = (window.simulation && typeof simulation.getPerformanceStats === 'function') ? simulation.getPerformanceStats() : null;
+        if (speedMetricFrameEl) {
+          speedMetricFrameEl.textContent = perfStats && Number.isFinite(perfStats.computeMsAvg) && perfStats.computeMsAvg > 0
+            ? perfStats.computeMsAvg.toFixed(2) + ' мс'
+            : '—';
+          setMetricState(speedMetricFrameEl, 0);
+        }
+        if (speedMetricStepsEl) {
+          speedMetricStepsEl.textContent = perfStats && Number.isFinite(perfStats.physicsStepsPerSecond) && perfStats.physicsStepsPerSecond > 0
+            ? perfStats.physicsStepsPerSecond.toFixed(0)
+            : '—';
+          setMetricState(speedMetricStepsEl, 0);
+        }
+
+        if (!(window.simulation && typeof simulation.isPaused === 'function' && simulation.isPaused()) &&
+            window.physics && typeof physics.getSpeeds === 'function' && typeof physics.getAccelerations === 'function' && chartsInited) {
+          const speeds = physics.getSpeeds();
+          const accelerations = physics.getAccelerations();
+          frameIndex += 1;
+          const label = String(frameIndex);
+
+          velocityChart.data.labels.push(label);
+          for (let i = 0; i < 3; i++) {
+            velocityChart.data.datasets[i].data.push(speeds[i] ?? null);
+          }
+          trimData(velocityChart);
+          velocityChart.update('none');
+
+          accelerationChart.data.labels.push(label);
+          for (let i = 0; i < 3; i++) {
+            const accMagnitude = accelerations[i] ? Math.sqrt(accelerations[i].ax ** 2 + accelerations[i].ay ** 2) : null;
+            accelerationChart.data.datasets[i].data.push(accMagnitude);
+          }
+          trimData(accelerationChart);
+          accelerationChart.update('none');
+        }
+
+        requestAnimationFrame(updateCharts);
+      }
+
+      window.addEventListener('load', () => {
+        initCharts();
+        resetEnergyReference();
+        requestAnimationFrame(updateCharts);
+      });
+    })();
+  </script>
+</body>
+</html>
