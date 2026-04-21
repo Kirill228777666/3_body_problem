@@ -137,11 +137,11 @@ h1:hover {
   height: 56px !important; 
   width: 56px !important; 
   border-radius: 14px; 
-  background: var(--ui-bg); 
-  border:1px solid var(--ui-border);
-  -webkit-backdrop-filter: saturate(140%) blur(8px);
-  backdrop-filter: saturate(140%) blur(8px);
-  box-shadow: var(--ui-shadow);
+  background: transparent; 
+  border:1px solid rgba(255,255,255,0.14);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: none;
   display:flex; 
   align-items:center; 
   justify-content:center;
@@ -171,7 +171,7 @@ h1:hover {
   font-weight: 700;
   letter-spacing: 0.5px;
   color: #7bf0ff;
-  background: rgba(123, 240, 255, 0.08);
+  background: transparent;
   border: 1px solid rgba(123, 240, 255, 0.25);
 }
 
@@ -213,9 +213,9 @@ h1:hover {
 
 .ThreeBodyProblem-reload {
   width: 56px; height: 56px;
-  border-radius: 14px; background: var(--ui-bg); border: 1px solid var(--ui-border);
-  -webkit-backdrop-filter: saturate(140%) blur(8px); backdrop-filter: saturate(140%) blur(8px);
-  box-shadow: var(--ui-shadow);
+  border-radius: 14px; background: transparent; border: 1px solid rgba(255,255,255,0.14);
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+  box-shadow: none;
   display: flex; align-items: center; justify-content: center;
   transition: transform .15s ease, box-shadow .2s ease, border-color .2s ease, background .2s ease;
 }
@@ -278,6 +278,144 @@ button.ThreeBodyProblem-pause { }
 .ThreeBodyProblem-sliderSun .SickSlider-head { background: #ffaa44; box-shadow: 0 0 15px #ff8b22, 0 0 30px rgba(255, 139, 34, 0.4); }
 .ThreeBodyProblem-sliderEarth .SickSlider-head { background: #8899ff; box-shadow: 0 0 15px #6c81ff, 0 0 30px rgba(108, 129, 255, 0.4); }
 .ThreeBodyProblem-sliderJupiter .SickSlider-head { background: #66eebb; box-shadow: 0 0 15px #4ccd7a, 0 0 30px rgba(76, 205, 122, 0.4); }
+
+.ThreeBodyProblem-integratorCompact {
+  width: min(900px, 85%);
+  margin: 10px auto 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.ThreeBodyProblem-integratorLabel {
+  font-weight: 700;
+  color: #dff8ff;
+  letter-spacing: 0.3px;
+}
+
+.ThreeBodyProblem-integratorSelect {
+  min-width: 320px;
+  max-width: 100%;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(11, 19, 43, 0.82);
+  color: #f0f0f0;
+  font-size: 14px;
+  outline: none;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.2);
+}
+
+.ThreeBodyProblem-integratorSelect:focus {
+  border-color: #7bf0ff;
+  box-shadow: 0 0 0 3px rgba(123,240,255,0.16);
+}
+
+.ThreeBodyProblem-integratorSelect:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
+.ThreeBodyProblem-energyPanel {
+  width: 100%;
+  margin: 14px 0 0 0;
+  padding: 16px 18px;
+  border-radius: 12px;
+  border: 1px solid rgba(123,240,255,0.14);
+  background: linear-gradient(180deg, rgba(123,240,255,0.05) 0%, rgba(255,255,255,0.03) 100%);
+  box-sizing: border-box;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+}
+
+.ThreeBodyProblem-energyPanel--insideDetails {
+  margin-top: 12px;
+}
+
+.ThreeBodyProblem-energyPanelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.ThreeBodyProblem-energyPanelTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: #dff8ff;
+}
+
+.ThreeBodyProblem-energyPanelSubtitle {
+  margin-top: 4px;
+  color: rgba(240,240,240,0.78);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.ThreeBodyProblem-button--small {
+  height: 38px;
+  padding: 0 18px;
+  min-width: 0;
+}
+
+.ThreeBodyProblem-energyGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 12px;
+}
+
+.ThreeBodyProblem-energyMetric {
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(11, 19, 43, 0.52);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+}
+
+.ThreeBodyProblem-energyMetricLabel {
+  display: block;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: rgba(240,240,240,0.65);
+  margin-bottom: 6px;
+}
+
+.ThreeBodyProblem-energyMetricValue {
+  display: block;
+  font-family: "Consolas", "SFMono-Regular", monospace;
+  font-size: 16px;
+  font-weight: 700;
+  color: #ffffff;
+  word-break: break-word;
+}
+
+.ThreeBodyProblem-energyMetricValue.is-positive {
+  color: #ffbd73;
+}
+
+.ThreeBodyProblem-energyMetricValue.is-negative {
+  color: #7bf0ff;
+}
+
+.ThreeBodyProblem-energyMetricValue.is-neutral {
+  color: #eaf0ff;
+}
+
+@media (max-width: 720px) {
+  .ThreeBodyProblem-energyGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .ThreeBodyProblem-integratorSelect {
+    min-width: 0;
+    width: 100%;
+  }
+}
 
 .ThreeBodyProblem-controlsArea {
   background-color: rgba(28, 37, 65, 0.7);
@@ -407,3 +545,485 @@ button.ThreeBodyProblem-pause { }
 @keyframes rotate-one { 0% { transform: rotateX(35deg) rotateY(-45deg) rotateZ(0deg); } 100% { transform: rotateX(35deg) rotateY(-45deg) rotateZ(360deg); } }
 @keyframes rotate-two { 0% { transform: rotateX(50deg) rotateY(10deg) rotateZ(0deg); } 100% { transform: rotateX(50deg) rotateY(10deg) rotateZ(360deg); } }
 @keyframes rotate-three { 0% { transform: rotateX(35deg) rotateY(55deg) rotateZ(0deg); } 100% { transform: rotateX(35deg) rotateY(55deg) rotateZ(360deg); } }
+
+.ThreeBodyProblem-methodStatsWrap .ThreeBodyProblem-energyPanel { margin-top: 0; }
+
+/* === Creative HUD refresh === */
+.ThreeBodyProblem-controlsArea {
+  position: relative;
+  max-width: 1100px;
+  margin: 20px auto 0 auto;
+  padding: 24px 26px 18px;
+  border-radius: 22px;
+  background:
+    linear-gradient(180deg, rgba(16,24,48,0.78) 0%, rgba(10,16,33,0.56) 100%),
+    radial-gradient(circle at top center, rgba(123,240,255,0.10) 0%, transparent 58%);
+  border: 1px solid rgba(123,240,255,0.14);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.06),
+    0 18px 44px rgba(0,0,0,0.30),
+    0 0 0 1px rgba(255,255,255,0.02);
+  overflow: hidden;
+}
+.ThreeBodyProblem-controlsArea::before,
+.ThreeBodyProblem-controlsArea::after {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  pointer-events: none;
+  border-radius: 16px;
+}
+.ThreeBodyProblem-controlsArea::before {
+  border: 1px solid rgba(123,240,255,0.06);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+}
+.ThreeBodyProblem-controlsArea::after {
+  inset: auto 28px 0 28px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(123,240,255,0.65), transparent);
+}
+
+.ThreeBodyProblem-presetDeck {
+  position: relative;
+  margin-top: 18px !important;
+  padding-top: 18px;
+}
+.ThreeBodyProblem-presetDeck::before {
+  content: none;
+  position: absolute;
+  top: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10px;
+  letter-spacing: 0.38em;
+  color: rgba(123,240,255,0.62);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.ThreeBodyProblem-button {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.13);
+  color: #dceaf8;
+  border-radius: 999px;
+  box-shadow: none;
+  position: relative;
+  overflow: hidden;
+}
+.ThreeBodyProblem-button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.07), transparent);
+  transform: translateX(-100%);
+  transition: transform .45s ease;
+}
+.ThreeBodyProblem-button:hover::before { transform: translateX(100%); }
+.ThreeBodyProblem-button:hover {
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(123,240,255,0.40);
+  box-shadow: 0 0 0 1px rgba(123,240,255,0.08), 0 8px 24px rgba(0,0,0,0.20);
+}
+.ThreeBodyProblem-button--isSelected {
+  background: rgba(123,240,255,0.10);
+  border-color: rgba(123,240,255,0.75);
+  color: #f6feff;
+  box-shadow: 0 0 18px rgba(123,240,255,0.18), inset 0 0 18px rgba(123,240,255,0.07);
+}
+.ThreeBodyProblem-button--isSelected:hover {
+  background: rgba(123,240,255,0.16);
+  border-color: rgba(123,240,255,0.95);
+  box-shadow: 0 0 22px rgba(123,240,255,0.24), inset 0 0 22px rgba(123,240,255,0.10);
+}
+#labs-menu-button {
+  border-color: rgba(255,139,34,0.5) !important;
+  color: #ffd6ae !important;
+  box-shadow: 0 0 14px rgba(255,139,34,0.10);
+}
+#labs-menu-button:hover {
+  border-color: rgba(255,139,34,0.85) !important;
+  box-shadow: 0 0 20px rgba(255,139,34,0.22);
+}
+
+.ThreeBodyProblem-integratorCompact {
+  position: relative;
+  width: min(940px, 88%);
+  margin: 26px auto 6px auto;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 18px 14px 18px;
+  border-top: 1px solid rgba(123,240,255,0.14);
+}
+.ThreeBodyProblem-integratorEyebrow {
+  position: absolute;
+  top: -8px;
+  left: 18px;
+  padding: 0 8px;
+  font-size: 10px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: rgba(123,240,255,0.66);
+  background: #13203a;
+}
+.ThreeBodyProblem-integratorLabel {
+  font-weight: 600;
+  font-size: 13px;
+  color: #e9f8ff;
+  opacity: 0.9;
+}
+.ThreeBodyProblem-integratorSelect {
+  min-width: 340px;
+  padding: 12px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(123,240,255,0.18);
+  background:
+    linear-gradient(180deg, rgba(4,10,22,0.82) 0%, rgba(15,24,46,0.96) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.05),
+    0 0 18px rgba(123,240,255,0.06);
+}
+.ThreeBodyProblem-integratorSelect:hover {
+  border-color: rgba(123,240,255,0.38);
+}
+
+.ThreeBodyProblem-methodStatsWrap {
+  max-width: 1100px;
+  margin: 16px auto 0 auto;
+  position: relative;
+  padding: 10px 0 0;
+}
+.ThreeBodyProblem-methodStatsWrap::before {
+  content: none;
+  display: block;
+  margin: 0 0 8px 6px;
+  font-size: 10px;
+  letter-spacing: 0.36em;
+  text-transform: uppercase;
+  color: rgba(123,240,255,0.62);
+}
+.ThreeBodyProblem-methodStatsWrap .ThreeBodyProblem-energyPanel {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+}
+.ThreeBodyProblem-energyGrid {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0;
+  border-top: 1px solid rgba(123,240,255,0.18);
+  border-bottom: 1px solid rgba(123,240,255,0.10);
+  background:
+    linear-gradient(90deg, rgba(123,240,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
+}
+.ThreeBodyProblem-energyMetric {
+  position: relative;
+  padding: 16px 18px 14px;
+  background: transparent;
+  border: none;
+  border-right: 1px solid rgba(255,255,255,0.08);
+  border-radius: 0;
+  box-shadow: none;
+}
+.ThreeBodyProblem-energyMetric:last-child { border-right: none; }
+.ThreeBodyProblem-energyMetric::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 18px;
+  width: 28px;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(123,240,255,0.9), transparent);
+}
+.ThreeBodyProblem-energyMetricLabel {
+  font-size: 10px;
+  letter-spacing: 0.26em;
+  color: rgba(228,245,255,0.55);
+  margin-bottom: 8px;
+}
+.ThreeBodyProblem-energyMetricValue {
+  font-size: 18px;
+  letter-spacing: 0.02em;
+  text-shadow: 0 0 12px rgba(123,240,255,0.10);
+}
+#energy-metric-method {
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 15px;
+}
+
+#charts-container details {
+  background: linear-gradient(180deg, rgba(18,27,49,0.68) 0%, rgba(11,18,34,0.58) 100%);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 18px;
+  box-shadow: 0 14px 30px rgba(0,0,0,0.20);
+  backdrop-filter: blur(10px);
+}
+#charts-container details:hover {
+  background: linear-gradient(180deg, rgba(20,31,58,0.78) 0%, rgba(11,18,34,0.68) 100%);
+  border-color: rgba(123,240,255,0.18);
+  box-shadow: 0 18px 36px rgba(0,0,0,0.24), 0 0 0 1px rgba(123,240,255,0.04);
+}
+#charts-container summary {
+  padding: 18px 22px;
+  font-size: 15px;
+  letter-spacing: 0.02em;
+}
+#charts-container details > div {
+  padding: 0 18px 18px;
+}
+
+@media (max-width: 920px) {
+  .ThreeBodyProblem-energyGrid { grid-template-columns: 1fr 1fr; }
+  .ThreeBodyProblem-energyMetric:nth-child(2n) { border-right: none; }
+}
+@media (max-width: 720px) {
+  .ThreeBodyProblem-controlsArea {
+    padding: 18px 14px 14px;
+    border-radius: 18px;
+  }
+  .ThreeBodyProblem-integratorCompact {
+    width: 100%;
+    padding: 16px 0 0;
+    justify-content: center;
+  }
+  .ThreeBodyProblem-integratorEyebrow {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .ThreeBodyProblem-integratorSelect {
+    min-width: 0;
+    width: 100%;
+  }
+  .ThreeBodyProblem-energyGrid { grid-template-columns: 1fr; }
+  .ThreeBodyProblem-energyMetric { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .ThreeBodyProblem-energyMetric:last-child { border-bottom: none; }
+  .ThreeBodyProblem-presetDeck::before,
+  .ThreeBodyProblem-methodStatsWrap::before,
+  .ThreeBodyProblem-integratorEyebrow { letter-spacing: 0.22em; }
+}
+
+
+/* polish fixes */
+.ThreeBodyProblem-integratorEyebrow { display: none; }
+.ThreeBodyProblem-integratorSelect { color: #eefaff; -webkit-text-fill-color: #eefaff; }
+.ThreeBodyProblem-integratorSelect option { background: #0f182e; color: #eefaff; }
+.ThreeBodyProblem-leftBottomButton, .ThreeBodyProblem-reload { opacity: 0.82; }
+.ThreeBodyProblem-leftBottomButton:hover, .ThreeBodyProblem-reload:hover, #info-button:hover { opacity: 1; }
+#charts-container { max-width: 1100px !important; }
+
+
+/* fix3 width + compact method selector */
+.ThreeBodyProblem-controlsArea,
+.ThreeBodyProblem-methodStatsWrap,
+#charts-container {
+  box-sizing: border-box;
+}
+
+.ThreeBodyProblem-controlsArea {
+  width: min(1100px, calc(100% - 32px));
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ThreeBodyProblem-methodStatsWrap,
+#charts-container {
+  width: min(1100px, calc(100% - 32px)) !important;
+  max-width: 1100px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.ThreeBodyProblem-integratorCompact {
+  width: 100%;
+  max-width: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 18px 0 0;
+  margin: 18px auto 0;
+}
+
+.ThreeBodyProblem-integratorLabel { display: none !important; }
+
+.ThreeBodyProblem-integratorSelect {
+  width: min(520px, calc(100% - 54px));
+  min-width: 0;
+  margin: 0;
+  display: block;
+  text-align: center;
+  text-align-last: center;
+}
+
+.ThreeBodyProblem-switchToggle,
+.ThreeBodyProblem-wallsToggle {
+  position: relative;
+  height: 40px;
+  min-width: 118px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.04);
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  cursor: pointer;
+  transition: transform .15s ease, box-shadow .2s ease, border-color .2s ease, background .2s ease;
+  box-shadow: 0 8px 24px rgba(0,0,0,.18);
+  user-select: none;
+  box-sizing: border-box;
+}
+
+.ThreeBodyProblem-switchToggle:hover,
+.ThreeBodyProblem-wallsToggle:hover {
+  transform: translateY(-1px);
+  border-color: rgba(123,240,255,0.7);
+  background: rgba(255,255,255,0.08);
+  box-shadow: 0 10px 26px rgba(0,0,0,.24);
+}
+
+.ThreeBodyProblem-switchToggleLabel,
+.ThreeBodyProblem-wallsToggleLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: #e9f8ff;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.ThreeBodyProblem-switchToggleSwitch,
+.ThreeBodyProblem-wallsToggleSwitch {
+  position: relative;
+  width: 34px;
+  height: 20px;
+  flex: 0 0 auto;
+}
+
+.ThreeBodyProblem-switchToggleSwitch input,
+.ThreeBodyProblem-wallsToggleSwitch input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.ThreeBodyProblem-switchToggleSlider,
+.ThreeBodyProblem-wallsToggleSlider {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.20);
+  border: 1px solid rgba(255,255,255,0.18);
+  box-sizing: border-box;
+  transition: background .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+
+.ThreeBodyProblem-switchToggleSlider::before,
+.ThreeBodyProblem-wallsToggleSlider::before {
+  content: '';
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  left: 2px;
+  top: 2px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.82);
+  transition: transform .18s ease, background .18s ease, box-shadow .18s ease;
+}
+
+.ThreeBodyProblem-switchToggleSwitch input:checked + .ThreeBodyProblem-switchToggleSlider,
+.ThreeBodyProblem-wallsToggleSwitch input:checked + .ThreeBodyProblem-wallsToggleSlider {
+  background: rgba(123,240,255,0.28);
+  border-color: rgba(123,240,255,0.7);
+  box-shadow: 0 0 12px rgba(123,240,255,0.18);
+}
+
+.ThreeBodyProblem-switchToggleSwitch input:checked + .ThreeBodyProblem-switchToggleSlider::before,
+.ThreeBodyProblem-wallsToggleSwitch input:checked + .ThreeBodyProblem-wallsToggleSlider::before {
+  transform: translateX(14px);
+  background: #7bf0ff;
+  box-shadow: 0 0 8px rgba(123,240,255,0.45);
+}
+
+.ThreeBodyProblem-switchToggleSwitch input:focus-visible + .ThreeBodyProblem-switchToggleSlider,
+.ThreeBodyProblem-wallsToggleSwitch input:focus-visible + .ThreeBodyProblem-wallsToggleSlider {
+  outline: 2px solid rgba(123,240,255,0.9);
+  outline-offset: 3px;
+}
+
+@media (max-width: 720px) {
+  .ThreeBodyProblem-controlsArea,
+  .ThreeBodyProblem-methodStatsWrap,
+  #charts-container {
+    width: calc(100% - 20px) !important;
+  }
+
+  .ThreeBodyProblem-integratorCompact {
+    padding-top: 14px;
+    gap: 8px;
+  }
+
+  .ThreeBodyProblem-integratorSelect {
+    width: 100%;
+  }
+
+  }
+
+
+.mass-icon-circle { display: none !important; }
+.is-circles-mode .mass-icon-image { display: none !important; }
+.is-circles-mode .mass-icon-circle { display: inline-block !important; }
+
+.mass-circle {
+  display: inline-block;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  box-shadow: 0 0 6px rgba(0,0,0,0.35);
+  vertical-align: middle;
+}
+
+.as-circle {
+  border-radius: 50%;
+  box-shadow: 0 0 6px rgba(0,0,0,0.35);
+}
+
+.is-circles-mode .ThreeBodyProblem-bodyImage {
+  display: none !important;
+}
+
+.approximation-display-style {
+  background-color: rgba(28, 37, 65, 0.7);
+  padding: 15px 20px;
+  margin: 10px auto 0 auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  max-width: 700px;
+  color: #f0f0f0;
+}
+
+.approximation-display-style h4 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.approximation-display-style pre {
+  font-family: monospace;
+  font-size: 1.1em;
+  text-align: left;
+  margin: 10px auto;
+  padding: 10px;
+  background: rgba(0,0,0,0.2);
+  border-radius: 4px;
+  white-space: pre-wrap;
+}
+
+#formula-text-0 { color: #ff8b22; }
+#formula-text-1 { color: #6c81ff; }
+#formula-text-2 { color: #4ccd7a; }

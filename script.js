@@ -1,11 +1,6 @@
 (function(){
   "use strict";
 
-  window.MathJax = window.MathJax || {
-    tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] },
-    svg: { fontCache: 'global' }
-  };
-
   function SickSlider(sliderElementSelector) {
     var that = {
       onSliderChange: null,
@@ -97,41 +92,5 @@
     return that.init(sliderElementSelector);
   }
 
-  function debug(text){
-    var output = document.querySelector(".ThreeBodyProblem-debugOutput");
-    if (output) output.textContent = text;
-    else console.log(text);
-  }
-
-  var rungeKutta = (function(){
-    function calculate(h, u, derivative) {
-      var n = u.length;
-      var u0 = u.slice();
-      var k1 = derivative();
-      var tmp = new Array(n);
-
-      for (var i=0;i<n;i++) tmp[i] = u0[i] + (h/2) * k1[i];
-      var save = u.slice();
-      for (var i2=0;i2<n;i2++) u[i2] = tmp[i2];
-      var k2 = derivative();
-
-      for (var j=0;j<n;j++) tmp[j] = u0[j] + (h/2) * k2[j];
-      for (var i3=0;i3<n;i3++) u[i3] = tmp[i3];
-      var k3 = derivative();
-
-      for (var j2=0;j2<n;j2++) tmp[j2] = u0[j2] + h * k3[j2];
-      for (var i4=0;i4<n;i4++) u[i4] = tmp[i4];
-      var k4 = derivative();
-
-      for (var m=0;m<n;m++) {
-        u[m] = u0[m] + (h/6) * (k1[m] + 2*k2[m] + 2*k3[m] + k4[m]);
-      }
-    }
-    return { calculate: calculate };
-  })();
-
   window.SickSlider = SickSlider;
-  window.debug = debug;
-  window.rungeKutta = rungeKutta;
-
 })();

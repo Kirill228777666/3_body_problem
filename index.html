@@ -17,53 +17,6 @@
   </script>
   <script id="MathJax-script" async src="libs/tex-svg.js"></script>
   
-  <style>
-    .mass-icon-circle { display: none !important; }
-    .is-circles-mode .mass-icon-image { display: none !important; }
-    .is-circles-mode .mass-icon-circle { display: inline-block !important; }
-    .mass-circle {
-      display: inline-block;
-      width: 26px;
-      height: 26px;
-      border-radius: 50%;
-      box-shadow: 0 0 6px rgba(0,0,0,0.35);
-      vertical-align: middle;
-    }
-    .as-circle {
-      border-radius: 50%;
-      box-shadow: 0 0 6px rgba(0,0,0,0.35);
-    }
-    .is-circles-mode .ThreeBodyProblem-bodyImage { display: none !important; }
-
-    .approximation-display-style {
-      background-color: rgba(28, 37, 65, 0.7);
-      padding: 15px 20px;
-      margin: 10px auto 0 auto;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-      max-width: 700px;
-      color: #f0f0f0;
-    }
-    .approximation-display-style h4 {
-      margin-top: 0;
-      margin-bottom: 15px;
-      text-align: center;
-      font-weight: 600;
-    }
-    .approximation-display-style pre {
-      font-family: monospace;
-      font-size: 1.1em;
-      text-align: left;
-      margin: 10px auto;
-      padding: 10px;
-      background: rgba(0,0,0,0.2);
-      border-radius: 4px;
-      white-space: pre-wrap;
-    }
-    #formula-text-0 { color: #ff8b22; }
-    #formula-text-1 { color: #6c81ff; }
-    #formula-text-2 { color: #4ccd7a; }
-  </style>
 
 </head>
 <body>
@@ -143,8 +96,7 @@
       <div class="SickSlider-stripe"></div>
       <div class="SickSlider-head"></div>
     </div>
-    
-    <div class="ThreeBodyProblem-isTextCentered" style="margin-top: 20px;">
+    <div class="ThreeBodyProblem-isTextCentered ThreeBodyProblem-presetDeck">
       <button class="ThreeBodyProblem-preset ThreeBodyProblem-button ThreeBodyProblem-button--isSelected" data-name="FigureEight">Восьмёрка</button>
       <button class="ThreeBodyProblem-preset ThreeBodyProblem-button" data-name="SunEarthJupiter">Солнце, Земля и Юпитер</button>
       <button class="ThreeBodyProblem-preset ThreeBodyProblem-button" data-name="LagrangePoint5">Точка Лагранжа L5</button>
@@ -162,6 +114,53 @@
 
       <button class="ThreeBodyProblem-button" id="labs-menu-button" style="border-color: #ff8b22; color: #ffcd9c;">Тренажёр</button>
     </div>
+
+    <div class="ThreeBodyProblem-integratorCompact">
+      <select id="integrator-select" class="ThreeBodyProblem-integratorSelect">
+        <option value="rk4">Рунге–Кутты 4-го порядка (RK4)</option>
+      </select>
+      <label class="ThreeBodyProblem-switchToggle" title="Отражение от границ стены" aria-label="Отражение от границ стены">
+        <span class="ThreeBodyProblem-switchToggleLabel">Стенки</span>
+        <span class="ThreeBodyProblem-switchToggleSwitch">
+          <input type="checkbox" id="walls-toggle" checked>
+          <span class="ThreeBodyProblem-switchToggleSlider" aria-hidden="true"></span>
+        </span>
+      </label>
+      <label class="ThreeBodyProblem-switchToggle" title="Ограничивать длину траекторий" aria-label="Ограничивать длину траекторий">
+        <span class="ThreeBodyProblem-switchToggleLabel">Лимит траекторий</span>
+        <span class="ThreeBodyProblem-switchToggleSwitch">
+          <input type="checkbox" id="trail-limit-toggle">
+          <span class="ThreeBodyProblem-switchToggleSlider" aria-hidden="true"></span>
+        </span>
+      </label>
+    </div>
+  </div>
+
+  <div class="ThreeBodyProblem-methodStatsWrap">
+    <div class="ThreeBodyProblem-energyPanel">
+      <div class="ThreeBodyProblem-energyGrid">
+        <div class="ThreeBodyProblem-energyMetric">
+          <span class="ThreeBodyProblem-energyMetricLabel">Метод</span>
+          <span class="ThreeBodyProblem-energyMetricValue is-neutral" id="energy-metric-method">—</span>
+        </div>
+        <div class="ThreeBodyProblem-energyMetric">
+          <span class="ThreeBodyProblem-energyMetricLabel">Абсолютное изменение ΔE</span>
+          <span class="ThreeBodyProblem-energyMetricValue is-neutral" id="energy-metric-delta">—</span>
+        </div>
+        <div class="ThreeBodyProblem-energyMetric">
+          <span class="ThreeBodyProblem-energyMetricLabel">Относительный дрейф δE</span>
+          <span class="ThreeBodyProblem-energyMetricValue is-neutral" id="energy-metric-relative">—</span>
+        </div>
+        <div class="ThreeBodyProblem-energyMetric">
+          <span class="ThreeBodyProblem-energyMetricLabel">Время расчёта кадра</span>
+          <span class="ThreeBodyProblem-energyMetricValue is-neutral" id="speed-metric-frame">—</span>
+        </div>
+        <div class="ThreeBodyProblem-energyMetric">
+          <span class="ThreeBodyProblem-energyMetricLabel">Физических шагов/сек</span>
+          <span class="ThreeBodyProblem-energyMetricValue is-neutral" id="speed-metric-steps">—</span>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div id="charts-container" style="max-width: 1100px; margin: 20px auto;">
@@ -177,6 +176,7 @@
         <canvas id="accelerationChart" style="width:100%; height:100%;"></canvas>
       </div>
     </details>
+
     <details id="approx-details">
       <summary style="cursor:pointer; font-weight:600;">Мгновенные аппроксимации траекторий (раскрыть/свернуть)</summary>
       <div id="approximation-display" class="approximation-display-style">
@@ -398,42 +398,151 @@
 
   <script src="labEngine.js"></script>
 
+  <script src="ui-core.js"></script>
+  <script src="ui-log.js"></script>
+  <script src="ui-modals.js"></script>
+  <script src="ui-scene-io.js"></script>
+  <script src="ui-slider-controls.js"></script>
+  <script src="ui-controls.js"></script>
   <script src="ui.js"></script>
 
   <script>
     (function() {
       window.chartManager = {};
       const MAX_POINTS = 2000;
+      const ENERGY_EPS = 1e-12;
+
       let chartsInited = false;
       let velocityChart = null;
       let accelerationChart = null;
       let frameIndex = 0;
+      let energyReference = null;
+
+      const energyMethodEl = document.getElementById('energy-metric-method');
+      const energyDeltaEl = document.getElementById('energy-metric-delta');
+      const energyRelativeEl = document.getElementById('energy-metric-relative');
+      const speedMetricFrameEl = document.getElementById('speed-metric-frame');
+      const speedMetricStepsEl = document.getElementById('speed-metric-steps');
 
       function trimData(chart) {
-        const d = chart.data;
-        while (d.labels.length > MAX_POINTS) {
-          d.labels.shift();
+        const data = chart.data;
+        while (data.labels.length > MAX_POINTS) {
+          data.labels.shift();
           chart.data.datasets.forEach(ds => ds.data.shift());
         }
       }
 
-      function resetCharts() {
-        if (!chartsInited) return;
-        frameIndex = 0;
-        velocityChart.data.labels = [];
-        velocityChart.data.datasets.forEach(dataset => { dataset.data = []; });
-        velocityChart.update('none');
-        accelerationChart.data.labels = [];
-        accelerationChart.data.datasets.forEach(dataset => { dataset.data = []; });
-        accelerationChart.update('none');
+      function formatScientific(value) {
+        if (!Number.isFinite(value)) return '—';
+        if (value === 0) return '0';
+        const abs = Math.abs(value);
+        if (abs >= 1e4 || abs < 1e-3) return value.toExponential(4);
+        return value.toFixed(6);
       }
-      window.chartManager.reset = resetCharts;
+
+      function formatPercent(value) {
+        if (!Number.isFinite(value)) return '—';
+        const percent = value * 100;
+        if (Math.abs(percent) >= 1e4 || (Math.abs(percent) > 0 && Math.abs(percent) < 1e-4)) {
+          return percent.toExponential(3) + ' %';
+        }
+        return percent.toFixed(6) + ' %';
+      }
+
+      function setMetricState(el, value) {
+        if (!el) return;
+        el.classList.remove('is-positive', 'is-negative', 'is-neutral');
+        if (!Number.isFinite(value) || Math.abs(value) < 1e-18) {
+          el.classList.add('is-neutral');
+          return;
+        }
+        el.classList.add(value > 0 ? 'is-positive' : 'is-negative');
+      }
+
+      function getEnergySnapshot() {
+        if (!window.physics || typeof physics.getTotalEnergy !== 'function') return null;
+
+        const currentEnergy = physics.getTotalEnergy();
+        if (!Number.isFinite(currentEnergy)) return null;
+
+        if (!Number.isFinite(energyReference)) {
+          energyReference = currentEnergy;
+        }
+
+        const deltaEnergy = currentEnergy - energyReference;
+        const relativeDrift = Math.abs(deltaEnergy) / Math.max(Math.abs(energyReference), ENERGY_EPS);
+
+        return {
+          reference: energyReference,
+          current: currentEnergy,
+          delta: deltaEnergy,
+          relative: relativeDrift
+        };
+      }
+
       
+function updateEnergyPanel(snapshot) {
+  if (energyMethodEl && window.physics && typeof physics.getIntegratorLabel === 'function') {
+    energyMethodEl.textContent = physics.getIntegratorLabel();
+  }
+
+  if (!snapshot) {
+    if (energyDeltaEl) energyDeltaEl.textContent = '—';
+    if (energyRelativeEl) energyRelativeEl.textContent = '—';
+    return;
+  }
+
+  if (energyDeltaEl) {
+    energyDeltaEl.textContent = formatScientific(snapshot.delta);
+    setMetricState(energyDeltaEl, snapshot.delta);
+  }
+  if (energyRelativeEl) {
+    energyRelativeEl.textContent = formatPercent(snapshot.relative);
+    setMetricState(energyRelativeEl, snapshot.relative);
+  }
+}
+
+      
+function resetEnergyReference() {
+  if (!window.physics || typeof physics.getTotalEnergy !== 'function') {
+    energyReference = null;
+    updateEnergyPanel(null);
+    return;
+  }
+
+  const energyNow = physics.getTotalEnergy();
+  energyReference = Number.isFinite(energyNow) ? energyNow : null;
+  updateEnergyPanel(getEnergySnapshot());
+}
+
+      
+function resetCharts() {
+  frameIndex = 0;
+
+  if (chartsInited) {
+    velocityChart.data.labels = [];
+    velocityChart.data.datasets.forEach(dataset => { dataset.data = []; });
+    velocityChart.update('none');
+
+    accelerationChart.data.labels = [];
+    accelerationChart.data.datasets.forEach(dataset => { dataset.data = []; });
+    accelerationChart.update('none');
+  }
+
+  resetEnergyReference();
+  if (window.simulation && typeof simulation.resetPerformanceStats === 'function') {
+    simulation.resetPerformanceStats();
+  }
+}
+window.chartManager.reset = resetCharts;
+
       function initCharts() {
         if (chartsInited) return;
+
         const velCanvas = document.getElementById('velocityChart');
         const accCanvas = document.getElementById('accelerationChart');
         if (!velCanvas || !accCanvas || !window.Chart) return;
+
         const velCtx = velCanvas.getContext('2d');
         const accCtx = accCanvas.getContext('2d');
 
@@ -448,7 +557,9 @@
             ]
           },
           options: {
-            responsive: true, maintainAspectRatio: false, animation: false,
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: false,
             interaction: { mode: 'nearest', intersect: false },
             plugins: { legend: { display: true }, tooltip: { enabled: true } },
             scales: {
@@ -469,7 +580,9 @@
             ]
           },
           options: {
-            responsive: true, maintainAspectRatio: false, animation: false,
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: false,
             interaction: { mode: 'nearest', intersect: false },
             plugins: { legend: { display: true }, tooltip: { enabled: true } },
             scales: {
@@ -479,10 +592,12 @@
           }
         });
 
+
         chartsInited = true;
 
         document.getElementById('vel-details')?.addEventListener('toggle', () => setTimeout(() => velocityChart?.resize(), 0));
         document.getElementById('eng-details')?.addEventListener('toggle', () => setTimeout(() => accelerationChart?.resize(), 0));
+
         window.addEventListener('resize', () => {
           velocityChart?.resize();
           accelerationChart?.resize();
@@ -490,44 +605,53 @@
       }
 
       function updateCharts() {
-        if (window.simulation && typeof simulation.isPaused === 'function' && simulation.isPaused()) {
-          requestAnimationFrame(updateCharts);
-          return;
+        if (!chartsInited) initCharts();
+
+        const energySnapshot = getEnergySnapshot();
+        updateEnergyPanel(energySnapshot);
+        const perfStats = (window.simulation && typeof simulation.getPerformanceStats === 'function') ? simulation.getPerformanceStats() : null;
+        if (speedMetricFrameEl) {
+          speedMetricFrameEl.textContent = perfStats && Number.isFinite(perfStats.computeMsAvg) && perfStats.computeMsAvg > 0
+            ? perfStats.computeMsAvg.toFixed(2) + ' мс'
+            : '—';
+          setMetricState(speedMetricFrameEl, 0);
+        }
+        if (speedMetricStepsEl) {
+          speedMetricStepsEl.textContent = perfStats && Number.isFinite(perfStats.physicsStepsPerSecond) && perfStats.physicsStepsPerSecond > 0
+            ? perfStats.physicsStepsPerSecond.toFixed(0)
+            : '—';
+          setMetricState(speedMetricStepsEl, 0);
         }
 
-        if (window.physics && typeof physics.getSpeeds === 'function' && typeof physics.getAccelerations === 'function') {
-          if (!chartsInited) initCharts();
-          if (chartsInited) {
-            const speeds = physics.getSpeeds();
-            const totalSpeed = speeds.reduce((sum, speed) => sum + (speed || 0), 0);
+        if (!(window.simulation && typeof simulation.isPaused === 'function' && simulation.isPaused()) &&
+            window.physics && typeof physics.getSpeeds === 'function' && typeof physics.getAccelerations === 'function' && chartsInited) {
+          const speeds = physics.getSpeeds();
+          const accelerations = physics.getAccelerations();
+          frameIndex += 1;
+          const label = String(frameIndex);
 
-            if (totalSpeed > 0) {
-              const accelerations = physics.getAccelerations();
-              frameIndex += 1;
-              const label = String(frameIndex);
-
-              velocityChart.data.labels.push(label);
-              for (let i = 0; i < 3; i++) {
-                velocityChart.data.datasets[i].data.push(speeds[i] ?? null);
-              }
-              trimData(velocityChart);
-              velocityChart.update('none');
-
-              accelerationChart.data.labels.push(label);
-              for (let i = 0; i < 3; i++) {
-                const accMagnitude = accelerations[i] ? Math.sqrt(accelerations[i].ax**2 + accelerations[i].ay**2) : null;
-                accelerationChart.data.datasets[i].data.push(accMagnitude);
-              }
-              trimData(accelerationChart);
-              accelerationChart.update('none');
-            }
+          velocityChart.data.labels.push(label);
+          for (let i = 0; i < 3; i++) {
+            velocityChart.data.datasets[i].data.push(speeds[i] ?? null);
           }
+          trimData(velocityChart);
+          velocityChart.update('none');
+
+          accelerationChart.data.labels.push(label);
+          for (let i = 0; i < 3; i++) {
+            const accMagnitude = accelerations[i] ? Math.sqrt(accelerations[i].ax ** 2 + accelerations[i].ay ** 2) : null;
+            accelerationChart.data.datasets[i].data.push(accMagnitude);
+          }
+          trimData(accelerationChart);
+          accelerationChart.update('none');
         }
+
         requestAnimationFrame(updateCharts);
       }
 
       window.addEventListener('load', () => {
         initCharts();
+        resetEnergyReference();
         requestAnimationFrame(updateCharts);
       });
     })();
